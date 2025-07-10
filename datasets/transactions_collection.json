@@ -1,0 +1,259 @@
+{
+  "name": "transactions_collection",
+  "description": "Colección de transacciones con estructura anidada de dispositivos y puntos de servicio",
+  "fields": {
+    "Date": {
+      "name": "Date",
+      "type": "date",
+      "path": "Date",
+      "description": "Fecha y hora de la transacción",
+      "examples": [
+        "2024-01-15T10:30:00Z",
+        "2024-01-15 10:30:00"
+      ],
+      "synonyms": [
+        "fecha",
+        "fechahora",
+        "timestamp",
+        "date"
+      ],
+      "is_required": true,
+      "is_indexed": true,
+      "validation_rules": null
+    },
+    "Devices": {
+      "name": "Devices",
+      "type": "array",
+      "path": "Devices",
+      "description": "Array de dispositivos",
+      "examples": [
+        "[device1, device2]"
+      ],
+      "synonyms": [
+        "dispositivos",
+        "devices",
+        "equipos"
+      ],
+      "is_required": true,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "deviceId": {
+      "name": "deviceId",
+      "type": "string",
+      "path": "Devices.Id",
+      "description": "Identificador único del dispositivo",
+      "examples": [
+        "DEV001",
+        "DEV002"
+      ],
+      "synonyms": [
+        "id de dispositivo",
+        "deviceid",
+        "dispositivo"
+      ],
+      "is_required": true,
+      "is_indexed": true,
+      "validation_rules": null
+    },
+    "branchCode": {
+      "name": "branchCode",
+      "type": "string",
+      "path": "Devices.BranchCode",
+      "description": "Código de la sucursal",
+      "examples": [
+        "PE240",
+        "PE241"
+      ],
+      "synonyms": [
+        "código de sucursal",
+        "branchcode",
+        "sucursal"
+      ],
+      "is_required": true,
+      "is_indexed": true,
+      "validation_rules": null
+    },
+    "ServicePoints": {
+      "name": "ServicePoints",
+      "type": "array",
+      "path": "Devices.ServicePoints",
+      "description": "Array de puntos de servicio",
+      "examples": [
+        "[sp1, sp2]"
+      ],
+      "synonyms": [
+        "puntos de servicio",
+        "servicepoints",
+        "puntos"
+      ],
+      "is_required": true,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "ShipOutCycles": {
+      "name": "ShipOutCycles",
+      "type": "array",
+      "path": "Devices.ServicePoints.ShipOutCycles",
+      "description": "Array de ciclos de envío",
+      "examples": [
+        "[cycle1, cycle2]"
+      ],
+      "synonyms": [
+        "ciclos de envío",
+        "shipoutcycles",
+        "ciclos"
+      ],
+      "is_required": true,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "Transactions": {
+      "name": "Transactions",
+      "type": "array",
+      "path": "Devices.ServicePoints.ShipOutCycles.Transactions",
+      "description": "Array de transacciones",
+      "examples": [
+        "[tx1, tx2]"
+      ],
+      "synonyms": [
+        "transacciones",
+        "transactions",
+        "operaciones"
+      ],
+      "is_required": true,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "total": {
+      "name": "total",
+      "type": "number",
+      "path": "Devices.ServicePoints.ShipOutCycles.Transactions.Total",
+      "description": "Monto total de la transacción",
+      "examples": [
+        "100.50",
+        "250.75"
+      ],
+      "synonyms": [
+        "total",
+        "monto",
+        "amount",
+        "valor"
+      ],
+      "is_required": true,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "currencyCode": {
+      "name": "currencyCode",
+      "type": "string",
+      "path": "Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode",
+      "description": "Código de moneda",
+      "examples": [
+        "PEN",
+        "USD"
+      ],
+      "synonyms": [
+        "moneda",
+        "currencycode",
+        "código de moneda"
+      ],
+      "is_required": true,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "subChannelCode": {
+      "name": "subChannelCode",
+      "type": "string",
+      "path": "Devices.ServicePoints.ShipOutCycles.SubChannelCode",
+      "description": "Código del subcanal",
+      "examples": [
+        "CH001",
+        "CH002"
+      ],
+      "synonyms": [
+        "subcanal",
+        "subchannelcode",
+        "canal"
+      ],
+      "is_required": true,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "shipOutCode": {
+      "name": "shipOutCode",
+      "type": "string",
+      "path": "Devices.ServicePoints.ShipOutCycles.Code",
+      "description": "Código de envío",
+      "examples": [
+        "SO001",
+        "SO002"
+      ],
+      "synonyms": [
+        "código de envío",
+        "shipoutcode",
+        "envio"
+      ],
+      "is_required": true,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "confirmationCode": {
+      "name": "confirmationCode",
+      "type": "string",
+      "path": "Devices.ServicePoints.ShipOutCycles.ConfirmationCode",
+      "description": "Código de confirmación",
+      "examples": [
+        "CONF001",
+        "CONF002"
+      ],
+      "synonyms": [
+        "código de confirmación",
+        "confirmationcode",
+        "confirmacion"
+      ],
+      "is_required": true,
+      "is_indexed": false,
+      "validation_rules": null
+    }
+  },
+  "indexes": [],
+  "sample_documents": [
+    {
+      "Date": "2024-01-15T10:30:00Z",
+      "Devices": [
+        {
+          "Id": "DEV001",
+          "BranchCode": "PE240",
+          "ServicePoints": [
+            {
+              "ShipOutCycles": [
+                {
+                  "SubChannelCode": "CH001",
+                  "Code": "SO001",
+                  "ConfirmationCode": "CONF001",
+                  "Transactions": [
+                    {
+                      "Total": 100.5,
+                      "CurrencyCode": "PEN"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "query_patterns": [
+    "desanidar devices hasta transactions",
+    "agrupar por fecha deviceid branchcode",
+    "crear campo reg con formato concatenado",
+    "ordenar por deviceid",
+    "suma de total",
+    "filtro por moneda PEN"
+  ],
+  "created_at": "2025-07-10T18:48:06.836100",
+  "updated_at": "2025-07-10T18:48:06.836100"
+}
