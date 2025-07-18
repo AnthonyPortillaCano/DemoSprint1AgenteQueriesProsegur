@@ -1,0 +1,5 @@
+fastapi
+uvicorn
+typing-extensions
+#azure-openai
+openai 
