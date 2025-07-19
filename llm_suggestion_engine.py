@@ -1,5 +1,5 @@
 """
-🎯 MOTOR DE SUGERENCIAS LLM - AZURE OPENAI (usando openai)
+🎯 MOTOR DE SUGERENCIAS LLM - AZURE OPENAI (usando openai>=1.0.0)
 """
 
 import os
@@ -15,13 +15,18 @@ class LLMSuggestionEngine:
         self.api_key = api_key or os.getenv("AZURE_OPENAI_API_KEY")
         self.endpoint = endpoint or os.getenv("AZURE_OPENAI_ENDPOINT")
         self.deployment = deployment or os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-35-turbo")
-        openai.api_type = "azure"
-        openai.api_key = self.api_key
-        openai.api_base = self.endpoint
-        openai.api_version = "2023-05-15"  # Cambia si tu Azure OpenAI usa otra versión
+        self.api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2023-05-15")
+        if self.api_key and self.endpoint:
+            self.client = openai.AzureOpenAI(
+                api_key=self.api_key,
+                api_version=self.api_version,
+                azure_endpoint=self.endpoint
+            )
+        else:
+            self.client = None
 
     def suggest_query_improvement(self, natural_text: str, current_result: Optional[str] = None) -> Dict[str, Any]:
-        if not self.api_key or not self.endpoint or not self.deployment:
+        if not self.client or not self.deployment:
             return {
                 "suggestions": "LLM no disponible - verificar configuración de Azure OpenAI",
                 "model_used": None,
@@ -40,8 +45,8 @@ class LLMSuggestionEngine:
                 user_prompt += f"\nResultado actual: {current_result}"
             user_prompt += "\n\nSugiere mejoras específicas para esta consulta:"
 
-            response = openai.ChatCompletion.create(
-                engine=self.deployment,  # Nombre del deployment/modelo en Azure
+            response = self.client.chat.completions.create(
+                model=self.deployment,  # Nombre del deployment/modelo en Azure
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
@@ -51,7 +56,7 @@ class LLMSuggestionEngine:
             )
             tokens_used = response.usage.total_tokens if hasattr(response, 'usage') else None
             return {
-                "suggestions": response.choices[0].message["content"],
+                "suggestions": response.choices[0].message.content,
                 "model_used": self.deployment,
                 "tokens_used": tokens_used,
                 "cost_estimate": None
@@ -65,7 +70,7 @@ class LLMSuggestionEngine:
             }
 
     def suggest_field_mapping(self, unknown_field: str, available_fields: list) -> Dict[str, Any]:
-        if not self.api_key or not self.endpoint or not self.deployment:
+        if not self.client or not self.deployment:
             return {
                 "suggestions": "LLM no disponible para sugerencias de campos",
                 "model_used": None,
@@ -82,8 +87,8 @@ class LLMSuggestionEngine:
                 f"Campos disponibles: {', '.join(available_fields)}\n"
                 "Sugiere los 3 campos más similares y explica por qué:"
             )
-            response = openai.ChatCompletion.create(
-                engine=self.deployment,
+            response = self.client.chat.completions.create(
+                model=self.deployment,
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": user_prompt}
@@ -93,7 +98,7 @@ class LLMSuggestionEngine:
             )
             tokens_used = response.usage.total_tokens if hasattr(response, 'usage') else None
             return {
-                "suggestions": response.choices[0].message["content"],
+                "suggestions": response.choices[0].message.content,
                 "model_used": self.deployment,
                 "tokens_used": tokens_used,
                 "cost_estimate": None
@@ -108,7 +113,7 @@ class LLMSuggestionEngine:
 
     def get_usage_stats(self) -> Dict[str, Any]:
         return {
-            "llm_available": bool(self.api_key and self.endpoint and self.deployment),
-            "model": self.deployment if (self.api_key and self.endpoint and self.deployment) else None,
-            "endpoint": self.endpoint if (self.api_key and self.endpoint and self.deployment) else None
+            "llm_available": bool(self.client and self.deployment),
+            "model": self.deployment if (self.client and self.deployment) else None,
+            "endpoint": self.endpoint if (self.client and self.deployment) else None
         } 
