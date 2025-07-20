@@ -346,6 +346,39 @@ class SmartMongoQueryGenerator:
         
         return generated_query
 
+    def generate_pipeline(self, collection: str, natural_text: str) -> List[Dict]:
+        """
+        🎯 GENERACIÓN DE PIPELINE - PRINCIPIOS INTEGRADOS
+        
+        Genera el pipeline de MongoDB como objeto Python (lista de diccionarios)
+        integrando validación semántica y aprendizaje de patrones desde el dataset.
+        
+        Args:
+            collection: Nombre de la colección
+            natural_text: Query en lenguaje natural
+            
+        Returns:
+            Pipeline de MongoDB como lista de diccionarios
+        """
+        # 🧠 Aprendizaje de patrones (SmBoP)
+        if self.dataset_manager:
+            # Validar campos mencionados en la query
+            self._validate_query_fields(natural_text, collection)
+        
+        # Generar pipeline
+        self.pipeline = self.parse_natural_language(natural_text)
+        if not self.pipeline:
+            normalized_text = self._normalize_text(natural_text)
+            self._process_query_components(normalized_text)
+            self._validate_pipeline()
+        
+        # 🧠 Aprender del patrón generado (SmBoP)
+        if self.dataset_manager:
+            generated_query = f'db.getCollection("{collection}").aggregate({json.dumps(self.pipeline, indent=2)})'
+            self.dataset_manager.learn_from_query(collection, natural_text, generated_query)
+        
+        return self.pipeline.copy()  # Devolver una copia para evitar modificaciones externas
+
     def _validate_query_fields(self, natural_text: str, collection: str):
         """
         🎯 VALIDACIÓN DE CAMPOS EN QUERY - PRINCIPIO DE "BRIDGING THE GAP"

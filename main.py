@@ -10,6 +10,7 @@ print("DEPLOYMENT:", os.getenv("AZURE_OPENAI_DEPLOYMENT"))
 
 from AgenteGeneradorQueryMongo import SmartMongoQueryGenerator
 from llm_suggestion_engine import LLMSuggestionEngine
+import json
 
 app = FastAPI(
     title="MongoDB Query Generator API",
@@ -20,6 +21,19 @@ app = FastAPI(
 generator = SmartMongoQueryGenerator()
 llm_engine = LLMSuggestionEngine()
 
+def format_query_for_mongodb(collection: str, pipeline: list) -> str:
+    """
+    Formatea la query para MongoDB sin caracteres de escape,
+    lista para copiar y pegar en editores como NoSQLBooster.
+    """
+    # Convertir el pipeline a JSON sin escape de comillas
+    pipeline_json = json.dumps(pipeline, indent=2, separators=(',', ': '))
+    # Reemplazar las comillas escapadas por comillas normales
+    pipeline_json = pipeline_json.replace('\\"', '"')
+    # Crear la query completa
+    query = f'db.getCollection("{collection}").aggregate({pipeline_json})'
+    return query
+
 @app.post("/assist/")
 def assist(
     collection: str = Body(..., description="Nombre de la colección MongoDB"),
@@ -27,12 +41,16 @@ def assist(
 ):
     """
     Endpoint único que genera la query y sugiere mejoras o ayuda usando LLM.
+    Devuelve la query lista para pegar en editores MongoDB sin caracteres de escape.
     """
     try:
-        query = generator.generate_query(collection, natural_text)
-        suggestions = llm_engine.suggest_query_improvement(natural_text, query)
+        # Generar el pipeline como objeto Python
+        pipeline = generator.generate_pipeline(collection, natural_text)
+        # Formatear la query para MongoDB (sin caracteres de escape)
+        query_str = format_query_for_mongodb(collection, pipeline)
+        suggestions = llm_engine.suggest_query_improvement(natural_text, query_str)
         return {
-            "query": query,
+            "query": query_str,
             "suggestions": suggestions["suggestions"],
             "status": "success"
         }
