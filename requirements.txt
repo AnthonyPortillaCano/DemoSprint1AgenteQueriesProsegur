@@ -3,4 +3,6 @@ uvicorn
 gunicorn
 typing-extensions
 openai
-python-dotenv 
+python-dotenv
+streamlit
+requests
