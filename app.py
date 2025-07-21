@@ -8,7 +8,8 @@ Este frontend te permite generar queries MongoDB desde lenguaje natural usando t
 """)
 
 # Cambia esta URL si tu API está desplegada en Azure o en otro servidor
-API_URL = "http://localhost:8000/assist/"
+#API_URL = "http://localhost:8000/assist/"
+API_URL = "https://apppythonnek-graufac6ducma6ee.eastus-01.azurewebsites.net/assist/"
 
 # Entradas del usuario
 collection = st.text_input("Nombre de la colección", value="lab")
