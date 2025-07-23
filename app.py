@@ -4,7 +4,7 @@ import requests
 st.title("Generador de Queries MongoDB con LLM")
 
 st.markdown("""
-Este frontend te permite generar queries MongoDB desde lenguaje natural usando tu API.
+Este app te permite generar queries MongoDB desde lenguaje natural.
 """)
 
 # Nombre de la colección fijo
