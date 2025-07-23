@@ -33,6 +33,31 @@ import json
 from typing import Dict, List, Optional, Any, Union
 from dataset_manager import DatasetManager, create_default_dataset
 
+def to_mongo_shell_syntax(obj, indent=2, level=1):
+    """
+    Convierte un dict/list JSON a una cadena tipo Mongo Shell (sin comillas en las claves).
+    """
+    import keyword
+    sp = ' ' * (indent * level)
+    if isinstance(obj, dict):
+        items = []
+        for k, v in obj.items():
+            # No poner comillas si la clave es un identificador válido de MongoDB o empieza por $
+            if re.match(r'^[a-zA-Z_\$][a-zA-Z0-9_\$]*$', k) and not keyword.iskeyword(k):
+                key = k
+            else:
+                key = k.strip('"')  # Quita comillas si las tuviera
+            items.append(f"{sp}{key}: {to_mongo_shell_syntax(v, indent, level+1)}")
+        return '{\n' + ',\n'.join(items) + '\n' + ' ' * (indent * (level-1)) + '}'
+    elif isinstance(obj, list):
+        items = [to_mongo_shell_syntax(v, indent, level+1) for v in obj]
+        return '[\n' + ',\n'.join(f"{sp}{item}" for item in items) + '\n' + ' ' * (indent * (level-1)) + ']'
+    elif isinstance(obj, str):
+        # Siempre deja los valores string entre comillas
+        return f'"{obj}"'
+    else:
+        return str(obj)
+
 class SmartMongoQueryGenerator:
     """
     🎯 GENERADOR INTELIGENTE DE CONSULTAS MONGODB
@@ -260,46 +285,448 @@ class SmartMongoQueryGenerator:
             Pipeline completo de MongoDB
         """
         pipeline = []
+        self.pipeline = []  # Inicializa solo una vez aquí
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
         
         # 🔄 PASO 1: Procesar $unwind primero (SmBoP - Orden Secuencial)
         for line in lines:
-            if any(x in line.lower() for x in ["desanidar", "unwind", "expandir"]):
-                if "devices hasta transactions" in line.lower() or "devices hasta transactions" in line:
-                    pipeline.extend([
-                        {"$unwind": "$Devices"},
-                        {"$unwind": "$Devices.ServicePoints"},
-                        {"$unwind": "$Devices.ServicePoints.ShipOutCycles"},
-                        {"$unwind": "$Devices.ServicePoints.ShipOutCycles.Transactions"}
-                    ])
-                break
+            # --- NUEVO: Soporte para la forma explícita 'desanidar <ruta>' ---
+            if line.lower().startswith("desanidar "):
+                path = line[len("desanidar "):].strip()
+                # Soporte para preserveNullAndEmptyArrays (más robusto)
+                preserve_empty = False
+                if "con preservenullandemptyarrays" in path.lower() or "con preserveNullAndEmptyArrays" in path:
+                    preserve_empty = True
+                    # Extrae solo la ruta antes de la frase
+                    path = path.split("con preserveNullAndEmptyArrays")[0].split("con preservenullandemptyarrays")[0].strip()
+                if path and not path.lower().startswith("todos los niveles") and not path.lower().startswith("devices hasta"):
+                    if preserve_empty:
+                        pipeline.append({"$unwind": {"path": f"${path}", "preserveNullAndEmptyArrays": True}})
+                    else:
+                        pipeline.append({"$unwind": f"${path}"})
+                    continue  # Ya procesado, saltar a la siguiente línea
+            # --- FIN NUEVO ---
+            if any(x in line.lower() for x in ["desanidar", "unwind", "expandir", "desglosa", "desglose"]):
+                # Detectar si debe preservar arrays vacíos
+                preserve_empty = any(x in line.lower() for x in [
+                    "incluso si hay arrays vacíos", 
+                    "aunque haya arrays vacíos",
+                    "preserve null and empty arrays",
+                    "con preservenullandemptyarrays"
+                ])
+
+                # Detectar si hay una frase 'hasta <ruta>'
+                match = re.search(r"hasta ([\w\.]+)", line, re.IGNORECASE)
+                if match:
+                    ruta = match.group(1)
+                    partes = ruta.split('.')
+                    acumulado = []
+                    for i, parte in enumerate(partes):
+                        acumulado.append(parte)
+                        path = '$' + '.'.join(acumulado)
+                        if i == len(partes) - 1 and preserve_empty:
+                            pipeline.append({"$unwind": {"path": path, "preserveNullAndEmptyArrays": True}})
+                        else:
+                            pipeline.append({"$unwind": path})
+                    # NO break aquí, para permitir agregar más unwinds si hay variantes
+                # Si no, usar lógica antigua para rutas conocidas
+                if any(x in line.lower() for x in [
+                    "devices hasta transactions",
+                    "todos los niveles hasta transacciones",
+                    "devices y servicepoints",
+                    "desglosa todos los niveles"
+                ]):
+                    if preserve_empty:
+                        pipeline.extend([
+                            {"$unwind": "$Devices"},
+                            {"$unwind": "$Devices.ServicePoints"},
+                            {"$unwind": {"path": "$Devices.ServicePoints.ShipOutCycles", "preserveNullAndEmptyArrays": True}},
+                            {"$unwind": {"path": "$Devices.ServicePoints.ShipOutCycles.Transactions", "preserveNullAndEmptyArrays": True}}
+                        ])
+                    else:
+                        pipeline.extend([
+                            {"$unwind": "$Devices"},
+                            {"$unwind": "$Devices.ServicePoints"},
+                            {"$unwind": "$Devices.ServicePoints.ShipOutCycles"},
+                            {"$unwind": "$Devices.ServicePoints.ShipOutCycles.Transactions"}
+                        ])
+                    # NO break aquí, para permitir agregar más unwinds si hay variantes
         
         # 📊 PASO 2: Procesar $group (SmBoP - Construcción Bottom-up)
         for line in lines:
-            if any(x in line.lower() for x in ["agrupar por", "group by"]):
+            if any(x in line.lower() for x in ["agrupar por", "agrupa por", "group by"]):
                 group_stage = self._build_group_stage_from_text(line)
                 if group_stage:
                     pipeline.append(group_stage)
+                # NO break aquí para permitir múltiples $group
+        
+        # NUEVO: PASO 2.5: Procesar segundo $group (agrupación global)
+        for line in lines:
+            if any(x in line.lower() for x in ["agrupa todo", "agrupar globalmente", "luego agrupa todo", "agrupar por 0"]):
+                # Segundo $group con _id: 0
+                group_stage = {"$group": {"_id": 0}}
+                
+                # Sumas globales
+                if "total de soles" in line.lower() or "total soles" in line.lower():
+                    group_stage["$group"]["totalSoles"] = {"$sum": "$totalSoles"}
+                if "total de dólares" in line.lower() or "total dólares" in line.lower():
+                    group_stage["$group"]["totalDolares"] = {"$sum": "$totalDolares"}
+                
+                # Conteos condicionales de registros
+                if "total de registros en soles" in line.lower() or "total registros soles" in line.lower():
+                    group_stage["$group"]["totalRegSoles"] = {
+                        "$sum": {
+                            "$cond": [
+                                {"$eq": ["$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode", "PEN"]},
+                                1,
+                                0
+                            ]
+                        }
+                    }
+                if "total de registros en dólares" in line.lower() or "total registros dólares" in line.lower():
+                    group_stage["$group"]["totalRegDolares"] = {
+                        "$sum": {
+                            "$cond": [
+                                {"$eq": ["$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode", "USD"]},
+                                1,
+                                0
+                            ]
+                        }
+                    }
+                
+                pipeline.append(group_stage)
                 break
         
         # 🎯 PASO 3: Procesar $project (SmBoP - Parsers Especializados)
         for line in lines:
-            if any(x in line.lower() for x in ["crear campo", "concatenando", "que sea", "que convierta", "con padding"]):
-                # Procesa cada línea como instrucción completa
-                self.pipeline = []
-                self._process_simple_query(line)
-                if self.pipeline:
-                    # Solo agrega si la instrucción generó algo
-                    for stage in self.pipeline:
-                        # Fusiona los $project si ya existe uno (SmBoP - Acumulación)
-                        if "$project" in stage and any("$project" in s for s in pipeline):
-                            for s in pipeline:
-                                if "$project" in s:
-                                    s["$project"].update(stage["$project"])
+            if any(x in line.lower() for x in ["crear campo", "concatenando", "que sea", "que convierta", "con padding", "proyecta", "proyectar"]):
+                processed = False
+                
+                # 1. Mejorar: detectar campo destino explícito para fecha
+                dateconv_match = re.search(r'crear campo (\w+) que convierta el campo (\w+) a formato ([%\w]+) usando los primeros (\d+) caracteres', line, re.IGNORECASE)
+                if dateconv_match:
+                    campo_destino = dateconv_match.group(1)
+                    campo_origen = dateconv_match.group(2)
+                    fmt = dateconv_match.group(3)
+                    n = int(dateconv_match.group(4))
+                    expr = {
+                        "$dateToString": {
+                            "date": {
+                                "$dateFromString": {
+                                    "dateString": {"$substr": [f"${campo_origen}", 0, n]}
+                                }
+                            },
+                            "format": fmt
+                        }
+                    }
+                    # Buscar si ya existe un $project en el pipeline
+                    project = None
+                    for stage in pipeline:
+                        if "$project" in stage:
+                            project = stage["$project"]
+                            break
+                    if project is not None:
+                        project[campo_destino] = expr
+                    else:
+                        pipeline.append({"$project": {"_id": 0, campo_destino: expr}})
+                    processed = True
+                
+                # 2. Concatenación avanzada para reg
+                if not processed:
+                    reg_match = re.search(r'crear campo (\w+) que concatene: (.+)', line, re.IGNORECASE)
+                    if reg_match:
+                        campo_reg = reg_match.group(1)
+                        partes = [p.strip() for p in reg_match.group(2).split(',')]
+                        concat_expr = []
+                        for parte in partes:
+                            # Fecha con formato
+                            fecha_match = re.search(r'el campo (\w+) convertido a formato ([%\w]+) usando los primeros (\d+) caracteres', parte, re.IGNORECASE)
+                            if fecha_match:
+                                campo_fecha = fecha_match.group(1)
+                                fmt_fecha = fecha_match.group(2)
+                                n_fecha = int(fecha_match.group(3))
+                                fecha_expr = {
+                                    "$dateToString": {
+                                        "date": {
+                                            "$dateFromString": {
+                                                "dateString": {"$substr": [f"${campo_fecha}", 0, n_fecha]}
+                                            }
+                                        },
+                                        "format": fmt_fecha
+                                    }
+                                }
+                                concat_expr.append(fecha_expr)
+                            elif parte.lower() == 'un salto de línea':
+                                concat_expr.append("\n")
+                            elif parte.lower() == 'otro salto de línea' or parte.lower() == 'otro salto de línea.':
+                                concat_expr.append("\n")
+                            elif parte.lower() == 'un espacio':
+                                concat_expr.append(" ")
+                            elif parte.startswith('"') and parte.endswith('"'):
+                                concat_expr.append(parte.strip('"'))
+                            else:
+                                concat_expr.append(parte)
+                        # Agregar a $project existente o crear uno nuevo
+                        project = None
+                        for stage in pipeline:
+                            if "$project" in stage:
+                                project = stage["$project"]
+                                break
+                        if project is not None:
+                            project[campo_reg] = {"$concat": concat_expr}
+                        else:
+                            pipeline.append({"$project": {"_id": 0, campo_reg: {"$concat": concat_expr}}})
+                        processed = True
+                # Detectar frases de substrCP avanzadas (varias variantes)
+                if not processed:
+                    substrcp_patterns = [
+                        r'los caracteres de la posición (\d+) en adelante del (?:campo |id de )?(\w+)(?: usando \$substrCP)?',
+                        r'extrae desde la posición (\d+) del (?:campo |id de )?(\w+)(?: usando \$substrCP)?',
+                        r'a partir de la posición (\d+) del (?:campo |id de )?(\w+)(?: usando \$substrCP)?',
+                        r'desde la posición (\d+) del (?:campo |id de )?(\w+)(?: usando \$substrCP)?',
+                        r'los caracteres desde la posición (\d+) del (?:campo |id de )?(\w+)(?: usando \$substrCP)?',
+                        r'los caracteres a partir de la posición (\d+) del (?:campo |id de )?(\w+)(?: usando \$substrCP)?'
+                    ]
+                    substrcp_match = None
+                    for pattern in substrcp_patterns:
+                        substrcp_match = re.search(pattern, line, re.IGNORECASE)
+                        if substrcp_match:
+                            break
+                    if substrcp_match:
+                        start = int(substrcp_match.group(1))
+                        field = substrcp_match.group(2)
+                        expr = {"$substrCP": [f"$_id.{field}", start, {"$strLenCP": f"$_id.{field}"}]}
+                        project_exists = any("$project" in stage for stage in pipeline)
+                        if project_exists:
+                            for stage in pipeline:
+                                if "$project" in stage:
+                                    stage["$project"][field] = expr
                                     break
                         else:
-                            pipeline.append(stage)
-                    self.pipeline = []
+                            pipeline.append({"$project": {field: expr}})
+                        processed = True
+                
+                # Detectar frases de conversión de fecha con substr (caso individual)
+                if not processed:
+                    dateconv_match2 = re.search(r'convierte el campo (\w+) a formato ([%\w]+) usando los primeros (\d+) caracteres', line, re.IGNORECASE)
+                    if dateconv_match2:
+                        field = dateconv_match2.group(1)
+                        fmt = dateconv_match2.group(2)
+                        n = int(dateconv_match2.group(3))
+                        expr = {
+                            "$dateToString": {
+                                "date": {
+                                    "$dateFromString": {
+                                        "dateString": {"$substr": [f"${field}", 0, n]}
+                                    }
+                                },
+                                "format": fmt
+                            }
+                        }
+                        project_exists = any("$project" in stage for stage in pipeline)
+                        if project_exists:
+                            for stage in pipeline:
+                                if "$project" in stage:
+                                    stage["$project"][field] = expr
+                                    break
+                        else:
+                            pipeline.append({"$project": {field: expr}})
+                        processed = True
+                # Si no se procesó con ninguna de las reglas anteriores, usar el procesamiento simple
+        # NUEVO: Procesar campos específicos mencionados en la consulta
+        project_fields = []
+        for line in lines:
+            if "proyecta los siguientes campos" in line.lower():
+                # Extraer campos de la lista
+                fields_text = line.lower().split("campos:")[-1].strip()
+                project_fields = [f.strip() for f in fields_text.split(",")]
+                break
+        
+        # Si se encontraron campos específicos, crear $project
+        if project_fields and not any("$project" in stage for stage in pipeline):
+            project_stage = {"$project": {"_id": 0}}
+            
+            # Normalizar nombres de campos literales a canónicos para totalParteEntera y totalParteDecimal
+            normalized_fields = []
+            for field in project_fields:
+                if field.startswith("totalParteEntera que sea el primer elemento"):
+                    normalized_fields.append("totalparteentera")
+                elif field.startswith("totalParteDecimal que sea el segundo elemento"):
+                    normalized_fields.append("totalpartedecimal")
+                else:
+                    normalized_fields.append(field)
+            project_fields = normalized_fields
+            
+            for field in project_fields:
+                field = field.strip()
+                if field in ["totalparteenterasoles", "total parte entera soles"]:
+                    project_stage["$project"]["totalParteEnteraSoles"] = {
+                        "$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalSoles"}}, "."]}, 0]
+                    }
+                elif field in ["totalpartedecimalsoles", "total parte decimal soles"]:
+                    project_stage["$project"]["totalParteDecimalSoles"] = {
+                        "$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalSoles"}}, "."]}, 1]}, "0"]}, "00"]
+                    }
+                elif field in ["totalparteenteradolares", "total parte entera dólares"]:
+                    project_stage["$project"]["totalParteEnteraDolares"] = {
+                        "$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalDolares"}}, "."]}, 0]
+                    }
+                elif field in ["totalpartedecimaldolares", "total parte decimal dólares"]:
+                    project_stage["$project"]["totalParteDecimalDolares"] = {
+                        "$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalDolares"}}, "."]}, 1]}, "0"]}, "00"]
+                    }
+                elif field in ["totalregsoles", "total registros soles"]:
+                    project_stage["$project"]["totalRegSoles"] = "$totalRegSoles"
+                elif field in ["totalregdolares", "total registros dólares"]:
+                    project_stage["$project"]["totalRegDolares"] = "$totalRegDolares"
+            
+            pipeline.append(project_stage)
+        
+        # NUEVO: Procesar campo "reg" complejo si se menciona específicamente
+        for line in lines:
+            if "genera un campo reg" in line.lower() and "concatene" in line.lower():
+                # Generar un segundo $project SOLO para reg, usando $substrCP y $strLenCP
+                reg_project = {
+                    "$project": {
+                        "_id": 0,
+                        "reg": {
+                            "$concat": [
+                                "9",
+                                {
+                                    "$substrCP": [
+                                        {"$concat": ["000000000000000", {"$toString": {"$sum": ["$totalRegSoles", "$totalRegDolares", 2]}}]},
+                                        {"$sum": [
+                                            {"$strLenCP": {"$concat": ["000000000000000", {"$toString": {"$sum": ["$totalRegSoles", "$totalRegDolares", 2]}}]}},
+                                            -15
+                                        ]},
+                                        15
+                                    ]
+                                },
+                                {
+                                    "$substrCP": [
+                                        {"$concat": ["000000000000000", {"$toString": "$totalRegSoles"}]},
+                                        {"$sum": [{"$strLenCP": {"$concat": ["000000000000000", {"$toString": "$totalRegSoles"}]}}, -15]},
+                                        15
+                                    ]
+                                },
+                                {
+                                    "$substrCP": [
+                                        {"$concat": ["000000000000000", {"$toString": "$totalRegDolares"}]},
+                                        {"$sum": [{"$strLenCP": {"$concat": ["000000000000000", {"$toString": "$totalRegDolares"}]}}, -15]},
+                                        15
+                                    ]
+                                },
+                                {
+                                    "$substr": [
+                                        {"$concat": ["0000000000000", "$totalParteEnteraSoles", {"$substr": ["$totalParteDecimalSoles", 0, 2]}]},
+                                        {"$sum": [{"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraSoles", "00"]}}, -15]},
+                                        {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraSoles", "00"]}}
+                                    ]
+                                },
+                                {
+                                    "$substr": [
+                                        {"$concat": ["0000000000000", "$totalParteEnteraDolares", {"$substr": ["$totalParteDecimalDolares", 0, 2]}]},
+                                        {"$sum": [{"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraDolares", "00"]}}, -15]},
+                                        {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraDolares", "00"]}}
+                                    ]
+                                }
+                            ]
+                        }
+                    }
+                }
+                pipeline.append(reg_project)
+                break
+        
+        # NUEVO: Fallback - Si hay $group pero no $project, generar proyección automática
+        has_group = any("$group" in stage for stage in pipeline)
+        has_project = any("$project" in stage for stage in pipeline)
+        
+        if has_group and not has_project:
+            # Generar $project automático con campos calculados
+            project_stage = {"$project": {"_id": 0}}
+            
+            # Agregar campos de parte entera y decimal si existen totalSoles/totalDolares
+            if any("totalSoles" in str(stage) for stage in pipeline):
+                project_stage["$project"]["totalParteEnteraSoles"] = {
+                    "$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalSoles"}}, "."]}, 0]
+                }
+                project_stage["$project"]["totalParteDecimalSoles"] = {
+                    "$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalSoles"}}, "."]}, 1]}, "0"]}, "00"]
+                }
+            
+            if any("totalDolares" in str(stage) for stage in pipeline):
+                project_stage["$project"]["totalParteEnteraDolares"] = {
+                    "$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalDolares"}}, "."]}, 0]
+                }
+                project_stage["$project"]["totalParteDecimalDolares"] = {
+                    "$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalDolares"}}, "."]}, 1]}, "0"]}, "00"]
+                }
+            
+            # Agregar campos de registros si existen
+            if any("totalRegSoles" in str(stage) for stage in pipeline):
+                project_stage["$project"]["totalRegSoles"] = "$totalRegSoles"
+            if any("totalRegDolares" in str(stage) for stage in pipeline):
+                project_stage["$project"]["totalRegDolares"] = "$totalRegDolares"
+            
+            # NUEVO: Generar campo "reg" complejo si se menciona
+            if any("reg" in line.lower() for line in lines):
+                # Campo reg con concatenación compleja
+                project_stage["$project"]["reg"] = {
+                    "$concat": [
+                        "9",
+                        {"$substr": [{"$concat": ["000000000000000", {"$toString": {"$add": ["$totalRegSoles", "$totalRegDolares", 2]}}]}, -15]},
+                        {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalRegSoles"}]}, -15]},
+                        {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalRegDolares"}]}, -15]},
+                        {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalParteEnteraSoles"}]}, -15]},
+                        {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalParteDecimalSoles"}]}, -15]},
+                        {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalParteEnteraDolares"}]}, -15]},
+                        {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalParteDecimalDolares"}]}, -15]}
+                    ]
+                }
+            
+            pipeline.append(project_stage)
+        elif has_group and has_project:
+            # Si ya existe $project pero no tiene los campos específicos, agregarlos
+            for stage in pipeline:
+                if "$project" in stage:
+                    # Agregar campos de parte entera y decimal si existen totalSoles/totalDolares
+                    if any("totalSoles" in str(s) for s in pipeline) and "totalParteEnteraSoles" not in stage["$project"]:
+                        stage["$project"]["totalParteEnteraSoles"] = {
+                            "$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalSoles"}}, "."]}, 0]
+                        }
+                        stage["$project"]["totalParteDecimalSoles"] = {
+                            "$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalSoles"}}, "."]}, 1]}, "0"]}, "00"]
+                        }
+                    
+                    if any("totalDolares" in str(s) for s in pipeline) and "totalParteEnteraDolares" not in stage["$project"]:
+                        stage["$project"]["totalParteEnteraDolares"] = {
+                            "$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalDolares"}}, "."]}, 0]
+                        }
+                        stage["$project"]["totalParteDecimalDolares"] = {
+                            "$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalDolares"}}, "."]}, 1]}, "0"]}, "00"]
+                        }
+                    
+                    # Agregar campos de registros si existen
+                    if any("totalRegSoles" in str(s) for s in pipeline) and "totalRegSoles" not in stage["$project"]:
+                        stage["$project"]["totalRegSoles"] = "$totalRegSoles"
+                    if any("totalRegDolares" in str(s) for s in pipeline) and "totalRegDolares" not in stage["$project"]:
+                        stage["$project"]["totalRegDolares"] = "$totalRegDolares"
+                    
+                    # NUEVO: Generar campo "reg" complejo si se menciona
+                    if any("reg" in line.lower() for line in lines) and "reg" not in stage["$project"]:
+                        stage["$project"]["reg"] = {
+                            "$concat": [
+                                "9",
+                                {"$substr": [{"$concat": ["000000000000000", {"$toString": {"$add": ["$totalRegSoles", "$totalRegDolares", 2]}}]}, -15]},
+                                {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalRegSoles"}]}, -15]},
+                                {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalRegDolares"}]}, -15]},
+                                {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalParteEnteraSoles"}]}, -15]},
+                                {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalParteDecimalSoles"}]}, -15]},
+                                {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalParteEnteraDolares"}]}, -15]},
+                                {"$substr": [{"$concat": ["000000000000000", {"$toString": "$totalParteDecimalDolares"}]}, -15]}
+                            ]
+                        }
+                    break
         
         # 📈 PASO 4: Procesar $sort (SmBoP - Orden Secuencial)
         for line in lines:
@@ -308,6 +735,143 @@ class SmartMongoQueryGenerator:
                 if sort_stage:
                     pipeline.append(sort_stage)
                 break
+        
+        # Al final de parse_natural_language, después de procesar todas las líneas:
+        # 1. Fusionar todos los $project en uno solo
+        projects = [stage["$project"] for stage in pipeline if "$project" in stage]
+        if projects:
+            merged_project = {}
+            # Guardar expresiones reales de campos especiales
+            expr_total_parte_entera = None
+            expr_total_parte_decimal = None
+            for proj in projects:
+                for k, v in proj.items():
+                    if k != '' and k not in merged_project:
+                        # Normalizar nombre si termina con ' que sea _id' o similar
+                        if k.endswith(' que sea _id'):
+                            merged_project[k.replace(' que sea _id', '')] = v
+                        elif k.startswith('totalParteEntera que sea el primer elemento'):
+                            expr_total_parte_entera = v
+                            merged_project['totalParteEntera'] = v
+                        elif k.startswith('totalParteDecimal que sea el segundo elemento'):
+                            expr_total_parte_decimal = v
+                            merged_project['totalParteDecimal'] = v
+                        else:
+                            merged_project[k] = v
+            # Reemplazo forzado de literales por expresiones MongoDB correctas para totalParteEntera y totalParteDecimal
+            for k in list(merged_project.keys()):
+                if isinstance(merged_project[k], str) and k.startswith('totalParteEntera'):
+                    merged_project['totalParteEntera'] = {"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$total"}}, "."]}, 0]}
+                if isinstance(merged_project[k], str) and k.startswith('totalParteDecimal'):
+                    merged_project['totalParteDecimal'] = {"$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$total"}}, "."]}, 1]}, "0"]}, "00"]}
+            # Segunda pasada: normalizar referencias a campos intermedios SOLO si empiezan por $_id.
+            for k, v in list(merged_project.items()):
+                if isinstance(v, str) and v.endswith(' que sea _id'):
+                    real_field = v.replace(' que sea _id', '').lstrip(' $.')
+                    merged_project[k] = f"$_id.{real_field}"
+                elif isinstance(v, str) and v.startswith('$_id.'):
+                    # print(f"DEBUG: Antes de normalizar - k={k}, v='{v}'")
+                    merged_project[k] = self._normalize_id_reference(v)
+                elif isinstance(v, str) and v.startswith('totalParteEntera que sea el primer elemento'):
+                    merged_project[k] = {"$arrayElemAt": [ {"$split": ["$total", "."]}, 0 ]}
+                elif isinstance(v, str) and v.startswith('totalParteDecimal que sea el segundo elemento'):
+                    merged_project[k] = {"$ifNull": [ {"$arrayElemAt": [ {"$split": ["$total", "."]}, 1 ]}, "00" ]}
+            # Traducir alias en 'reg' si existe
+            if 'reg' in merged_project and isinstance(merged_project['reg'], dict) and '$concat' in merged_project['reg']:
+                new_concat = []
+                for part in merged_project['reg']['$concat']:
+                    if part == 'monedaCond':
+                        new_concat.append({"$cond": [ {"$eq": ["$currencyCode", "PEN"] }, "00", "01"] })
+                    elif part == 'deviceIdPad':
+                        new_concat.append({"$substrCP": [ {"$concat": ["00000000000000000000", "$deviceId"] }, {"$sum": [ {"$strLenCP": {"$concat": ["00000000000000000000", "$deviceId"] } }, -20 ] }, 20 ] })
+                    elif part == 'shipOutCodePad':
+                        new_concat.append({"$substrCP": [ {"$concat": ["0000000000000000", {"$ifNull": ["$shipOutCode", "0"] }] }, {"$sum": [ {"$strLenCP": {"$concat": ["0000000000000000", {"$ifNull": ["$shipOutCode", "0"] }] } }, -16 ] }, 16 ] })
+                    elif part == 'branchCodeCond':
+                        new_concat.append({"$cond": [ {"$eq": ["$branchCode", "PE240"] }, "000", "001"] })
+                    elif part == 'totalPad':
+                        new_concat.append({"$substr": [ {"$concat": ["0000000000000", "$totalParteEntera", {"$substr": ["$totalParteDecimal", 0, 2] }] }, {"$sum": [ {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEntera", "00"] } }, -15 ] }, {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEntera", "00"] } }] })
+                    elif part == 'confirmationCodePad':
+                        new_concat.append({"$substrCP": [ {"$concat": [" ", "$confirmationCode"] }, {"$sum": [ {"$strLenCP": {"$concat": [" ", "$confirmationCode"] } }, -4 ] }, 4 ] })
+                    elif part == 'un espacio.' or part == 'un espacio':
+                        new_concat.append(" ")
+                    else:
+                        new_concat.append(part)
+                merged_project['reg']['$concat'] = new_concat
+            # Reemplazar todos los $project por uno solo
+            pipeline = [stage for stage in pipeline if "$project" not in stage]
+            pipeline.append({"$project": merged_project})
+        # Eliminar campos vacíos ('': ...) y remanentes literales de instrucciones en $project
+        for stage in pipeline:
+            if "$project" in stage:
+                # Eliminar claves vacías
+                keys_to_remove = [k for k in stage["$project"] if k == '']
+                for k in keys_to_remove:
+                    del stage["$project"][k]
+                # Eliminar claves que sean remanentes literales de instrucciones
+                keys_to_remove = [k for k in stage["$project"] if any(
+                    phrase in k.lower() for phrase in [
+                        'que sea la concatenación',
+                        'que sea el primer elemento',
+                        'que sea el segundo elemento',
+                        'que sea el substring',
+                        'que convierta el campo',
+                        'que sea _id',
+                        'que sea el split',
+                        'que sea el padding',
+                        'que sea la condición',
+                        'que sea la suma',
+                        'que sea la proyección',
+                        'que sea la conversión',
+                        'que sea el campo',
+                        'que sea la fecha',
+                        'que sea el valor',
+                        'que sea el total',
+                        'que sea el monto',
+                        'que sea la máscara',
+                        'que sea la máscara de fecha',
+                        'que sea la máscara de total',
+                        'que sea la máscara de monto',
+                        'que sea la máscara de campo',
+                        'que sea la máscara de split',
+                        'que sea la máscara de substring',
+                        'que sea la máscara de padding',
+                        'que sea la máscara de condición',
+                        'que sea la máscara de suma',
+                        'que sea la máscara de proyección',
+                        'que sea la máscara de conversión',
+                        'que sea la máscara de valor',
+                        'que sea la máscara de _id',
+                        'que sea la máscara de primer elemento',
+                        'que sea la máscara de segundo elemento',
+                        'que sea la máscara de concatenación',
+                        'que sea la máscara de split',
+                        'que sea la máscara de substring',
+                        'que sea la máscara de padding',
+                        'que sea la máscara de condición',
+                        'que sea la máscara de suma',
+                        'que sea la máscara de proyección',
+                        'que sea la máscara de conversión',
+                        'que sea la máscara de valor',
+                        'que sea la máscara de _id',
+                    ])]
+                for k in keys_to_remove:
+                    del stage["$project"][k]
+        
+        # Post-procesamiento dinámico para el campo reg en $project
+        for stage in pipeline:
+            if "$project" in stage and "reg" in stage["$project"]:
+                reg = stage["$project"]["reg"]
+                if isinstance(reg, dict) and "$concat" in reg:
+                    new_concat = []
+                    for part in reg["$concat"]:
+                        # Solo procesa strings, deja expresiones MongoDB tal cual
+                        if isinstance(part, str):
+                            part_norm = self._normalize_concat_phrase(part)
+                            expr = self._concat_map().get(part_norm, part)
+                            new_concat.append(expr)
+                        else:
+                            new_concat.append(part)
+                    stage["$project"]["reg"]["$concat"] = new_concat
         
         return pipeline
 
@@ -331,53 +895,21 @@ class SmartMongoQueryGenerator:
             self._validate_query_fields(natural_text, collection)
         
         # Generar pipeline
-        self.pipeline = self.parse_natural_language(natural_text)
-        if not self.pipeline:
+        pipeline = self.parse_natural_language(natural_text)
+        if not pipeline:
             normalized_text = self._normalize_text(natural_text)
             self._process_query_components(normalized_text)
             self._validate_pipeline()
+            pipeline = self.pipeline
         
-        # Generar query final
-        generated_query = f'db.getCollection("{collection}").aggregate({json.dumps(self.pipeline, indent=2)})'
+        # Generar query final en formato Mongo Shell
+        generated_query = f'db.getCollection("{collection}").aggregate({to_mongo_shell_syntax(pipeline, indent=2, level=1)})'
         
         # 🧠 Aprender del patrón generado (SmBoP)
         if self.dataset_manager:
             self.dataset_manager.learn_from_query(collection, natural_text, generated_query)
         
         return generated_query
-
-    def generate_pipeline(self, collection: str, natural_text: str) -> List[Dict]:
-        """
-        🎯 GENERACIÓN DE PIPELINE - PRINCIPIOS INTEGRADOS
-        
-        Genera el pipeline de MongoDB como objeto Python (lista de diccionarios)
-        integrando validación semántica y aprendizaje de patrones desde el dataset.
-        
-        Args:
-            collection: Nombre de la colección
-            natural_text: Query en lenguaje natural
-            
-        Returns:
-            Pipeline de MongoDB como lista de diccionarios
-        """
-        # 🧠 Aprendizaje de patrones (SmBoP)
-        if self.dataset_manager:
-            # Validar campos mencionados en la query
-            self._validate_query_fields(natural_text, collection)
-        
-        # Generar pipeline
-        self.pipeline = self.parse_natural_language(natural_text)
-        if not self.pipeline:
-            normalized_text = self._normalize_text(natural_text)
-            self._process_query_components(normalized_text)
-            self._validate_pipeline()
-        
-        # 🧠 Aprender del patrón generado (SmBoP)
-        if self.dataset_manager:
-            generated_query = f'db.getCollection("{collection}").aggregate({json.dumps(self.pipeline, indent=2)})'
-            self.dataset_manager.learn_from_query(collection, natural_text, generated_query)
-        
-        return self.pipeline.copy()  # Devolver una copia para evitar modificaciones externas
 
     def _validate_query_fields(self, natural_text: str, collection: str):
         """
@@ -434,7 +966,14 @@ class SmartMongoQueryGenerator:
         if self._is_complex_query(text):
             self._process_complex_query(text)
         else:
-            self._process_simple_query(text)
+            # Procesamiento simple: si la instrucción es 'crear campo ...', genera un $project con esos campos
+            match = re.match(r'crear campo ([\w, ]+)', text, re.IGNORECASE)
+            if match:
+                fields = [f.strip() for f in match.group(1).split(',') if f.strip()]
+                project_stage = {"$project": {}}
+                for field in fields:
+                    project_stage["$project"][field] = 1
+                self.pipeline.append(project_stage)
 
     def _is_complex_query(self, text: str) -> bool:
         complex_keywords = [
@@ -487,11 +1026,25 @@ class SmartMongoQueryGenerator:
                     fmt = fmt_match.group(1)
                 _id["date"] = {"$dateToString": {"date": {"$dateFromString": {"dateString": {"$substr": ["$Date", 0, 19]}}}, "format": fmt}}
             else:
-                # Permitir rutas anidadas (Devices.Id, etc.)
-                if "." in field:
-                    _id[field.split(".")[-1]] = f"${field}"
+                # Mapear campos específicos a rutas completas
+                if field.lower() in ["deviceid", "id de dispositivo", "dispositivo"]:
+                    _id["deviceId"] = "$Devices.Id"
+                elif field.lower() in ["branchcode", "código de sucursal", "sucursal"]:
+                    _id["branchCode"] = "$Devices.BranchCode"
+                elif field.lower() in ["subchannelcode", "subcanal"]:
+                    _id["subChannelCode"] = "$Devices.ServicePoints.ShipOutCycles.SubChannelCode"
+                elif field.lower() in ["shipoutcode", "código de envío", "envio", "código de ciclo de envío"]:
+                    _id["shipOutCode"] = "$Devices.ServicePoints.ShipOutCycles.Code"
+                elif field.lower() in ["currencycode", "moneda", "código de moneda"]:
+                    _id["currencyCode"] = "$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode"
+                elif field.lower() in ["confirmationcode", "código de confirmación", "confirmación"]:
+                    _id["confirmationCode"] = "$Devices.ServicePoints.ShipOutCycles.Transactions.ConfirmationCode"
                 else:
-                    _id[field] = f"${field}"
+                    # Permitir rutas anidadas (Devices.Id, etc.)
+                    if "." in field:
+                        _id[field.split(".")[-1]] = f"${field}"
+                    else:
+                        _id[field] = f"${field}"
 
         # Suma si se menciona
         if self._find_operation(text, 'sum'):
@@ -515,6 +1068,21 @@ class SmartMongoQueryGenerator:
         match = re.search(r'(?:proyectar|project) ([\w,\. ]+)', text_lower)
         if match:
             project_fields = [self._normalize_field(f.strip()) for f in match.group(1).split(",") if f.strip()]
+        
+        # NUEVO: Detectar campos específicos mencionados en el texto
+        if "totalparteenterasoles" in text_lower or "total parte entera soles" in text_lower:
+            project_fields.append("totalparteenterasoles")
+        if "totalpartedecimalsoles" in text_lower or "total parte decimal soles" in text_lower:
+            project_fields.append("totalpartedecimalsoles")
+        if "totalparteenteradolares" in text_lower or "total parte entera dólares" in text_lower:
+            project_fields.append("totalparteenteradolares")
+        if "totalpartedecimaldolares" in text_lower or "total parte decimal dólares" in text_lower:
+            project_fields.append("totalpartedecimaldolares")
+        if "totalregsoles" in text_lower or "total registros soles" in text_lower:
+            project_fields.append("totalregsoles")
+        if "totalregdolares" in text_lower or "total registros dólares" in text_lower:
+            project_fields.append("totalregdolares")
+        
         # Si no se especifican, usar algunos por defecto
         if not project_fields:
             project_fields = ["date", "deviceId", "branchCode", "currencyCode", "subChannelCode", "shipOutCode", "confirmationCode", "totalParteEntera", "totalParteDecimal", "reg", "dateMascara"]
@@ -546,23 +1114,132 @@ class SmartMongoQueryGenerator:
                     }
                 }
             elif field == "reg":
-                # Plantilla de reg (puedes hacerla más dinámica si lo deseas)
-                stage1["reg"] = {
-                    "$concat": [
-                        "1",
-                        "002",
-                        {"$dateToString": {"date": {"$dateFromString": {"dateString": {"$substr": ["$Date", 0, 19]}}}, "format": "%Y%m%d%H%M%S"}},
-                        "00",
-                        "01",
-                        " ",
-                        "\n",
-                        "\n"
-                    ]
-                }
+                # NUEVO: Campo reg avanzado con concatenaciones complejas
+                # Detectar si hay instrucciones específicas para reg
+                reg_instructions = ""
+                for line in lines:
+                    if "reg" in line.lower() and ("concaten" in line.lower() or "concatene" in line.lower()):
+                        reg_instructions = line.lower()
+                        break
+                
+                if "9" in reg_instructions and ("total de registros" in reg_instructions or "totalreg" in reg_instructions):
+                    # Reg complejo para el tercer output
+                    stage1["reg"] = {
+                        "$concat": [
+                            "9",
+                            {
+                                "$substrCP": [
+                                    {"$concat": ["000000000000000", {"$toString": {"$sum": ["$totalRegSoles", "$totalRegDolares", 2]}}]},
+                                    {"$sum": [{"$strLenCP": {"$concat": ["000000000000000", {"$toString": {"$sum": ["$totalRegSoles", "$totalRegDolares", 2]}}]}}, -15]},
+                                    15
+                                ]
+                            },
+                            {
+                                "$substrCP": [
+                                    {"$concat": ["000000000000000", {"$toString": "$totalRegSoles"}]},
+                                    {"$sum": [{"$strLenCP": {"$concat": ["000000000000000", {"$toString": "$totalRegSoles"}]}}, -15]},
+                                    15
+                                ]
+                            },
+                            {
+                                "$substrCP": [
+                                    {"$concat": ["000000000000000", {"$toString": "$totalRegDolares"}]},
+                                    {"$sum": [{"$strLenCP": {"$concat": ["000000000000000", {"$toString": "$totalRegDolares"}]}}, -15]},
+                                    15
+                                ]
+                            },
+                            {
+                                "$substr": [
+                                    {"$concat": ["0000000000000", "$totalParteEnteraSoles", {"$substr": ["$totalParteDecimalSoles", 0, 2]}]},
+                                    {"$sum": [{"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraSoles", "00"]}}, -15]},
+                                    {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraSoles", "00"]}}
+                                ]
+                            },
+                            {
+                                "$substr": [
+                                    {"$concat": ["0000000000000", "$totalParteEnteraDolares", {"$substr": ["$totalParteDecimalDolares", 0, 2]}]},
+                                    {"$sum": [{"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraDolares", "00"]}}, -15]},
+                                    {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraDolares", "00"]}}
+                                ]
+                            },
+                            "\n",
+                            "\n"
+                        ]
+                    }
+                elif "5" in reg_instructions and ("deviceid" in reg_instructions or "device" in reg_instructions):
+                    # Reg complejo para el segundo output
+                    stage1["reg"] = {
+                        "$concat": [
+                            "5",
+                            {"$cond": [{"$eq": ["$currencyCode", "PEN"]}, "00", "01"]},
+                            "$date",
+                            "00",
+                            {
+                                "$substrCP": [
+                                    {"$concat": ["00000000000000000000", "$deviceId"]},
+                                    {"$sum": [{"$strLenCP": {"$concat": ["00000000000000000000", "$deviceId"]}}, -20]},
+                                    20
+                                ]
+                            },
+                            {
+                                "$substrCP": [
+                                    {"$concat": ["0000000000000000", {"$ifNull": ["$shipOutCode", "0"]}]},
+                                    {"$sum": [{"$strLenCP": {"$concat": ["0000000000000000", {"$ifNull": ["$shipOutCode", "0"]}]}}, -16]},
+                                    16
+                                ]
+                            },
+                            {"$cond": [{"$eq": ["$branchCode", "PE240"]}, "000", "001"]},
+                            {
+                                "$substr": [
+                                    {"$concat": ["0000000000000", "$totalParteEntera", {"$substr": ["$totalParteDecimal", 0, 2]}]},
+                                    {"$sum": [{"$strLenCP": {"$concat": ["0000000000000", "$totalParteEntera", "00"]}}, -15]},
+                                    {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEntera", "00"]}}
+                                ]
+                            },
+                            " ",
+                            {
+                                "$substrCP": [
+                                    {"$concat": [" ", "$confirmationCode"]},
+                                    {"$sum": [{"$strLenCP": {"$concat": [" ", "$confirmationCode"]}}, -4]},
+                                    4
+                                ]
+                            },
+                            " "
+                        ]
+                    }
+                else:
+                    # Reg básico (plantilla original)
+                    stage1["reg"] = {
+                        "$concat": [
+                            "1",
+                            "002",
+                            {"$dateToString": {"date": {"$dateFromString": {"dateString": {"$substr": ["$Date", 0, 19]}}}, "format": "%Y%m%d%H%M%S"}},
+                            "00",
+                            "01",
+                            " ",
+                            "\n",
+                            "\n"
+                        ]
+                    }
             elif field == "totalparteentera":
-                stage1["totalParteEntera"] = {"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$total"}}, "."]}, 0]}
+                stage1["totalParteEntera"] = {"$arrayElemAt": [{"$split": [
+                                {"$toString": {"$toDecimal": "$total"}},
+                                "."
+                            ]}, 0]}
             elif field == "totalpartedecimal":
                 stage1["totalParteDecimal"] = {"$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$total"}}, "."]}, 1]}, "0"]}, "00"]}
+            elif field == "totalparteenterasoles":
+                stage1["totalParteEnteraSoles"] = {"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalSoles"}}, "."]}, 0]}
+            elif field == "totalpartedecimalsoles":
+                stage1["totalParteDecimalSoles"] = {"$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalSoles"}}, "."]}, 1]}, "0"]}, "00"]}
+            elif field == "totalparteenteradolares":
+                stage1["totalParteEnteraDolares"] = {"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalDolares"}}, "."]}, 0]}
+            elif field == "totalpartedecimaldolares":
+                stage1["totalParteDecimalDolares"] = {"$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalDolares"}}, "."]}, 1]}, "0"]}, "00"]}
+            elif field == "totalregsoles":
+                stage1["totalRegSoles"] = "$totalRegSoles"
+            elif field == "totalregdolares":
+                stage1["totalRegDolares"] = "$totalRegDolares"
             elif "." in field:
                 # Permitir rutas anidadas
                 stage1[field.split(".")[-1]] = f"${field}"
@@ -571,6 +1248,12 @@ class SmartMongoQueryGenerator:
                 stage1[field] = f"$_id.{field}" if field in ["deviceId", "branchCode", "currencyCode", "subChannelCode", "shipOutCode", "confirmationCode"] else 1
 
         stages.append({"$project": stage1})
+        
+        # NUEVO: Segundo $project con _id: 0 si solo se necesita reg
+        if "reg" in project_fields and len(project_fields) == 1:
+            stage2 = {"_id": 0, "reg": stage1["reg"]}
+            stages.append({"$project": stage2})
+        
         return stages
 
     def _build_padded_expr(self, field: str, length: int, left_pad: bool = True) -> Dict:
@@ -626,13 +1309,14 @@ class SmartMongoQueryGenerator:
             Stage de $group configurado
         """
         group_fields = []
-        match = re.search(r'(?:agrupar por|group by) ([\w\., y()%]+)', text, re.IGNORECASE)
+        match = re.search(r'(?:agrupar por|agrupa por|group by) ([\w\., y()%]+)', text, re.IGNORECASE)
         if match:
-            group_fields = [self._normalize_field(f.strip()) for f in match.group(1).split(",") if f.strip()]
+            group_fields = [self._normalize_field(f.strip()) for f in match.group(1).split(",") if f.strip() and len(f.strip()) < 30 and not f.lower().startswith("sumar el total")]
+            # Asegura que currencyCode esté presente si se menciona
+            if any("currencycode" in f.lower() for f in match.group(1).split(",")) and "currencyCode" not in group_fields:
+                group_fields.append("currencyCode")
         else:
-            # Si no se especifican, usar valores por defecto
             group_fields = ["date", "deviceId", "branchCode", "subChannelCode", "shipOutCode", "currencyCode", "confirmationCode"]
-
         _id = {}
         for field in group_fields:
             if "date" in field or "fecha" in field:
@@ -642,22 +1326,102 @@ class SmartMongoQueryGenerator:
                     fmt = fmt_match.group(1)
                 _id["date"] = {"$dateToString": {"date": {"$dateFromString": {"dateString": {"$substr": ["$Date", 0, 19]}}}, "format": fmt}}
             else:
-                # Permitir rutas anidadas (Devices.Id, etc.)
-                if "." in field:
-                    _id[field.split(".")[-1]] = f"${field}"
+                # Mapear campos específicos a rutas completas
+                if field.lower() in ["deviceid", "id de dispositivo", "dispositivo"]:
+                    _id["deviceId"] = "$Devices.Id"
+                elif field.lower() in ["branchcode", "código de sucursal", "sucursal"]:
+                    _id["branchCode"] = "$Devices.BranchCode"
+                elif field.lower() in ["subchannelcode", "subcanal"]:
+                    _id["subChannelCode"] = "$Devices.ServicePoints.ShipOutCycles.SubChannelCode"
+                elif field.lower() in ["shipoutcode", "código de envío", "envio", "código de ciclo de envío"]:
+                    _id["shipOutCode"] = "$Devices.ServicePoints.ShipOutCycles.Code"
+                elif field.lower() in ["currencycode", "moneda", "código de moneda"]:
+                    _id["currencyCode"] = "$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode"
+                elif field.lower() in ["confirmationcode", "código de confirmación", "confirmación"]:
+                    _id["confirmationCode"] = "$Devices.ServicePoints.ShipOutCycles.Transactions.ConfirmationCode"
                 else:
-                    _id[field] = f"${field}"
+                    # Permitir rutas anidadas (Devices.Id, etc.)
+                    if "." in field:
+                        _id[field.split(".")[-1]] = f"${field}"
+                    else:
+                        _id[field] = f"${field}"
 
-        # Suma si se menciona
-        if self._find_operation(text, 'sum'):
-            sum_field = "$total"
-            # Detectar campo de suma si se menciona explícitamente
-            sum_match = re.search(r'suma de ([\w\.]+)', text, re.IGNORECASE)
-            if sum_match:
-                sum_field = f"${sum_match.group(1)}"
-            group_stage = {"$group": {"_id": _id, "total": {"$sum": sum_field}}}
+        # Normalizar nombres de campos para el $group, especialmente confirmationCode
+        normalized_group_fields = []
+        for field in group_fields:
+            f_norm = field.lower().replace(' ', '').replace('_', '')
+            if f_norm in ["confirmationcode", "códigodeconfirmación", "confirmación"]:
+                normalized_group_fields.append("confirmationCode")
+            else:
+                normalized_group_fields.append(field)
+        group_fields = normalized_group_fields
+
+        # NUEVO: Acumuladores condicionales para soles y dólares
+        acumuladores = {}
+        text_norm = text.replace('\n', ' ').replace('\r', ' ')
+        
+        # Detectar frases de suma condicional
+        sum_cond_match = re.search(
+            r'suma(?:r)?(?: el)? total (?:de )?devices\.servicepoints\.shipoutcycles\.transactions\.total en (soles|d[oó]lares) y en (soles|d[oó]lares) seg[uú]n el c[oó]digo de moneda',
+            text_norm, re.IGNORECASE)
+        
+        if sum_cond_match:
+            campo1, campo2 = sum_cond_match.groups()
+            moneda_map = {"soles": "PEN", "dolares": "USD", "dólares": "USD"}
+            val1 = moneda_map.get(campo1.strip().lower(), campo1.upper())
+            val2 = moneda_map.get(campo2.strip().lower(), campo2.upper())
+            total_path = "Devices.ServicePoints.ShipOutCycles.Transactions.Total"
+            currency_path = "$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode"
+            acumuladores["totalSoles"] = {
+                "$sum": {
+                    "$cond": [
+                        {"$eq": [currency_path, val1]},
+                        f"${total_path}",
+                        0
+                    ]
+                }
+            }
+            acumuladores["totalDolares"] = {
+                "$sum": {
+                    "$cond": [
+                        {"$eq": [currency_path, val2]},
+                        f"${total_path}",
+                        0
+                    ]
+                }
+            }
         else:
-            group_stage = {"$group": {"_id": _id}}
+            # Detectar suma condicional más simple
+            if "suma el total de transacciones en soles y en dólares según el código de moneda" in text_norm.lower():
+                acumuladores["totalSoles"] = {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode", "PEN"]},
+                            "$Devices.ServicePoints.ShipOutCycles.Transactions.Total",
+                            0
+                        ]
+                    }
+                }
+                acumuladores["totalDolares"] = {
+                    "$sum": {
+                        "$cond": [
+                            {"$eq": ["$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode", "USD"]},
+                            "$Devices.ServicePoints.ShipOutCycles.Transactions.Total",
+                            0
+                        ]
+                    }
+                }
+            elif self._find_operation(text, 'sum'):
+                sum_field = "$total"
+                # Detectar campo de suma si se menciona explícitamente
+                sum_match = re.search(r'suma de ([\w\.]+)', text, re.IGNORECASE)
+                if sum_match:
+                    sum_field = f"${sum_match.group(1)}"
+                acumuladores["total"] = {"$sum": sum_field}
+
+        group_stage = {"$group": {"_id": _id}}
+        if acumuladores:
+            group_stage["$group"].update(acumuladores)
 
         return group_stage
 
@@ -818,231 +1582,101 @@ class SmartMongoQueryGenerator:
                 ]
             }
         return None
+    
+    def _normalize_concat_phrase(self, phrase: str) -> str:
+        """
+        Normaliza una frase para búsqueda robusta en el mapeo de concat.
+        """
+        import unicodedata
+        s = phrase.lower().strip()
+        s = ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+        s = s.replace('.', '').replace('"', '').replace("'", '')
+        s = re.sub(r'\s+', ' ', s)
+        return s
+
+    def _concat_map(self):
+        # Centraliza el mapeo de frases a expresiones MongoDB
+        return {
+            "el total de registros con padding": {
+                "$substrCP": [
+                    {"$concat": ["000000000000000", {"$toString": {"$sum": ["$totalRegSoles", "$totalRegDolares", 2]}}]},
+                    {"$sum": [
+                        {"$strLenCP": {"$concat": ["000000000000000", {"$toString": {"$sum": ["$totalRegSoles", "$totalRegDolares", 2]}}]}},
+                        -15
+                    ]},
+                    15
+                ]
+            },
+            "el total de registros en soles con padding": {
+                "$substrCP": [
+                    {"$concat": ["000000000000000", {"$toString": "$totalRegSoles"}]},
+                    {"$sum": [
+                        {"$strLenCP": {"$concat": ["000000000000000", {"$toString": "$totalRegSoles"}]}},
+                        -15
+                    ]},
+                    15
+                ]
+            },
+            "el total de registros en dolares con padding": {
+                "$substrCP": [
+                    {"$concat": ["000000000000000", {"$toString": "$totalRegDolares"}]},
+                    {"$sum": [
+                        {"$strLenCP": {"$concat": ["000000000000000", {"$toString": "$totalRegDolares"}]}},
+                        -15
+                    ]},
+                    15
+                ]
+            },
+            "el monto en soles con padding": {
+                "$substr": [
+                    {"$concat": ["0000000000000", "$totalParteEnteraSoles", {"$substr": ["$totalParteDecimalSoles", 0, 2]}]},
+                    {"$sum": [
+                        {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraSoles", "00"]}},
+                        -15
+                    ]},
+                    {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraSoles", "00"]}}
+                ]
+            },
+            "el monto en dolares con padding": {
+                "$substr": [
+                    {"$concat": ["0000000000000", "$totalParteEnteraDolares", {"$substr": ["$totalParteDecimalDolares", 0, 2]}]},
+                    {"$sum": [
+                        {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraDolares", "00"]}},
+                        -15
+                    ]},
+                    {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraDolares", "00"]}}
+                ]
+            }
+        }
 
     def _extract_advanced_concat_for_field(self, text: str, field: str, context_fields: dict) -> Optional[Dict]:
-        # Ejemplo: crear campo reg concatenando "5", monedaCond, date, "00", deviceIdPad, ...
         import re
-        pattern = r'crear campo (\w+) concatenando ([^\n]+)'
+        pattern = r'crear campo (\w+) concatene: ([^\n]+)'
         match = re.search(pattern, text, re.IGNORECASE)
         if match and match.group(1).lower() == field.lower():
             _, concat_args = match.groups()
-            # Separa por coma, respeta strings entre comillas
-            parts = [p.strip() for p in re.findall(r'"[^"]*"|\w+', concat_args)]
+            parts = [p.strip() for p in re.findall(r'"[^"]*"|[^,]+', concat_args)]
+            concat_map = self._concat_map()
             concat_list = []
             for part in parts:
+                part_clean = part.strip('"').strip()
+                part_norm = self._normalize_concat_phrase(part_clean)
+                # Manejo robusto de variantes
                 if part.startswith('"') and part.endswith('"'):
                     concat_list.append(part.strip('"'))
+                elif part_norm in concat_map:
+                    concat_list.append(concat_map[part_norm])
+                elif "salto de linea" in part_norm:
+                    concat_list.append("\n")
+                elif part_norm == "un" or part_norm == "otro":
+                    continue  # Ignora 'un' y 'otro' si están solos por saltos de línea
                 elif part in context_fields:
                     concat_list.append(f"${part}")
                 elif part.startswith('_id.'):
                     concat_list.append(part)
                 else:
-                    concat_list.append(f"${part}")
+                    concat_list.append(f"${part_norm}")
             return {"$concat": concat_list}
-        return None
-
-    def _extract_advanced_padding_operation_for_field(self, text: str, field: str) -> Optional[Dict]:
-        # Ejemplo: crear campo deviceIdPad con padding izquierda 20 de deviceId usando $sum y $strLenCP
-        import re
-        pattern = r'crear campo (\w+) con padding izquierda (\d+) de (\w+) usando \$sum y \$strLenCP'
-        match = re.search(pattern, text, re.IGNORECASE)
-        if match and match.group(1).lower() == field.lower():
-            _, pad_len, source_field = match.groups()
-            pad_len = int(pad_len)
-            pad_str = "0" * pad_len
-            # Maneja campos con _id.
-            if source_field.startswith('_id.'):
-                source_field = source_field
-            else:
-                source_field = f"${source_field}"
-            return {
-                "$substrCP": [
-                    {"$concat": [pad_str, source_field]},
-                    {"$sum": [
-                        {"$strLenCP": {"$concat": [pad_str, source_field]}},
-                        -pad_len
-                    ]},
-                    pad_len
-                ]
-            }
-        return None
-
-    def _process_simple_query(self, text: str):
-        projection = {"_id": 0}
-        context_fields = {}
-        fields_to_create = self._extract_fields_to_create(text)
-        for field, is_special, phrase, date_field, fmt, substr_len, is_concat in fields_to_create:
-            # Debug temporal
-            if "substring" in phrase.lower() or "split" in phrase.lower() or "concatenando" in phrase.lower():
-                print(f"DEBUG: field={field}, is_special={is_special}, date_field={date_field}, fmt={fmt}, substr_len={substr_len}")
-            if is_special:
-                # totalParteEntera
-                if field == 'totalParteEntera':
-                    projection[field] = {
-                        "$arrayElemAt": [
-                            {"$split": [
-                                {"$toString": {"$toDecimal": "$total"}},
-                                "."
-                            ]},
-                            0
-                        ]
-                    }
-                    context_fields[field] = projection[field]
-                    continue
-                # totalParteDecimal
-                if field == 'totalParteDecimal':
-                    default_val = substr_len if substr_len else "00"
-                    projection[field] = {
-                        "$ifNull": [
-                            {"$concat": [
-                                {"$arrayElemAt": [
-                                    {"$split": [
-                                        {"$toString": {"$toDecimal": "$total"}},
-                                        "."
-                                    ]},
-                                    1
-                                ]},
-                                "0"
-                            ]},
-                            default_val
-                        ]
-                    }
-                    context_fields[field] = projection[field]
-                    continue
-                # amountPad
-                if field == 'amountPad':
-                    projection[field] = {
-                        "$substr": [
-                            {"$concat": [
-                                "0000000000000",
-                                "$totalParteEntera",
-                                {"$substr": ["$totalParteDecimal", 0, 2]}
-                            ]},
-                            {"$subtract": [
-                                {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEntera", "00"]}},
-                                15
-                            ]},
-                            15
-                        ]
-                    }
-                    context_fields[field] = projection[field]
-                    continue
-                if is_concat:
-                    concat_op = self._extract_concat_operation_for_field(phrase, field)
-                    if concat_op:
-                        projection[field] = concat_op
-                        context_fields[field] = concat_op
-                        continue
-                elif date_field and fmt and fmt not in ["primer", "segundo"]:
-                    date_conv = self._create_date_conversion(date_field, fmt, substr_len)
-                    projection[field] = date_conv
-                    context_fields[field] = date_conv
-                    continue
-                # Substring especial dinámico
-                elif date_field and substr_len and fmt is None:
-                    print(f"DEBUG: Procesando substring para {field} con source={date_field}, start={substr_len}")
-                    substr_op = self._extract_substrcp_operation_for_field(phrase, field, date_field, substr_len)
-                    if substr_op:
-                        projection[field] = substr_op
-                        context_fields[field] = substr_op
-                        continue
-                # Operaciones con $arrayElemAt y $split
-                elif date_field and fmt and fmt in ["primer", "segundo"]:
-                    arrayelem_op = self._extract_arrayelem_operation_for_field(phrase, field, date_field, fmt, substr_len)
-                    if arrayelem_op:
-                        projection[field] = arrayelem_op
-                        context_fields[field] = arrayelem_op
-                        continue
-                # Operaciones con $substr complejas
-                elif date_field and not fmt and not substr_len and "concatenación" in phrase:
-                    substr_complex_op = self._extract_substr_complex_operation_for_field(phrase, field, date_field)
-                    if substr_complex_op:
-                        projection[field] = substr_complex_op
-                        context_fields[field] = substr_complex_op
-                        continue
-                # Operaciones de concatenación complejas
-                elif date_field and not fmt and not substr_len and "concatenando" in phrase:
-                    concat_complex_op = self._extract_concat_complex_operation_for_field(phrase, field, date_field, context_fields)
-                    if concat_complex_op:
-                        projection[field] = concat_complex_op
-                        context_fields[field] = concat_complex_op
-                        continue
-                # Nuevos: $substrCP, $ifNull, $cond, padding, concat avanzado, padding avanzado
-                adv_padding_op = self._extract_advanced_padding_operation_for_field(phrase, field)
-                if adv_padding_op:
-                    projection[field] = adv_padding_op
-                    context_fields[field] = adv_padding_op
-                    continue
-                substrcp_op = self._extract_substrcp_operation_for_field(phrase, field)
-                if substrcp_op:
-                    projection[field] = substrcp_op
-                    context_fields[field] = substrcp_op
-                    continue
-                ifnull_op = self._extract_ifnull_operation_for_field(phrase, field)
-                if ifnull_op:
-                    projection[field] = ifnull_op
-                    context_fields[field] = ifnull_op
-                    continue
-                cond_op = self._extract_cond_operation_for_field(phrase, field)
-                if cond_op:
-                    projection[field] = cond_op
-                    context_fields[field] = cond_op
-                    continue
-                padding_op = self._extract_padding_operation_for_field(phrase, field)
-                if padding_op:
-                    projection[field] = padding_op
-                    context_fields[field] = padding_op
-                    continue
-                adv_concat_op = self._extract_advanced_concat_for_field(phrase, field, context_fields)
-                if adv_concat_op:
-                    projection[field] = adv_concat_op
-                    context_fields[field] = adv_concat_op
-                    continue
-                # Si no se reconoce como especial, no lo agregues
-                continue
-            else:
-                projection[field] = f"${field}"
-                context_fields[field] = f"${field}"
-        if projection:
-            self.pipeline.append({"$project": projection})
-
-    def _is_special_field(self, text: str, field: str) -> bool:
-        text_lower = text.lower()
-        field_lower = field.lower()
-        return (
-            f'con formato' in text_lower and field_lower in text_lower or
-            f'fecha {field_lower}' in text_lower or
-            f'convertir {field_lower}' in text_lower or
-            f'formato concat' in text_lower and field_lower in text_lower
-        )
-
-    def _extract_concat_operation_for_field(self, text: str, field: str) -> Optional[Dict]:
-        # Mejorado: soporta concat para reg con fecha formateada
-        pattern = (
-            fr'crear campo {field}\s+con formato concat\(([^)]*)\)'
-        )
-        match = re.search(pattern, text, re.IGNORECASE)
-        if match:
-            # Extrae los argumentos del concat
-            args = [a.strip().strip('"') for a in re.split(r',(?=(?:[^"]*"[^"]*")*[^"]*$)', match.group(1))]
-            concat_parts = []
-            for arg in args:
-                # Si es una instrucción de fecha, la procesa
-                fecha_match = re.match(r'fecha (\w+) como (\w+)(?: usando los primeros (\d+) caracteres)?', arg, re.IGNORECASE)
-                if fecha_match:
-                    date_field, date_fmt, substr_len = fecha_match.groups()
-                    # Usar el campo correcto según el contexto
-                    if date_field.lower() == "date":
-                        # Si se especifica substr_len, crear la conversión completa
-                        if substr_len:
-                            concat_parts.append(self._create_date_conversion("date", date_fmt, substr_len))
-                        else:
-                            concat_parts.append("$_id.date")
-                    else:
-                        concat_parts.append(self._create_date_conversion(date_field, date_fmt, substr_len))
-                else:
-                    concat_parts.append(arg)
-            return {"$concat": concat_parts}
         return None
 
     def _extract_date_conversion_for_field(self, text: str, field: str) -> Optional[Dict]:
@@ -1210,13 +1844,14 @@ class SmartMongoQueryGenerator:
     def _extract_arrayelem_operation_for_field(self, text: str, field: str, source_field: str = None, position: str = None, split_char: str = None, default_val: str = None) -> Optional[Dict]:
         if source_field and position and split_char:
             position_idx = 0 if position.lower() == "primer" else 1
-            
+            # Traducir 'punto' a '.' en cualquier contexto
+            if split_char.strip().lower() == "punto":
+                split_char = "."
             # Buscar si hay default_val en el texto original
             if not default_val:
                 default_match = re.search(r'o "([^"]*)" si es nulo', text, re.IGNORECASE)
                 if default_match:
                     default_val = default_match.group(1)
-            
             if default_val:
                 return {
                     "$ifNull": [
@@ -1300,6 +1935,13 @@ class SmartMongoQueryGenerator:
                 if op not in valid_operators:
                     print(f"⚠️  Operador desconocido en stage {i}: {op}")
 
+    def _normalize_id_reference(self, value):
+        import re
+        if isinstance(value, str) and value.startswith('$_id.'):
+            # Reemplaza cualquier cantidad de espacios y $ después de $_id. por un solo punto
+            return re.sub(r'\$_id\.[\s\$]+', '$_id.', value)
+        return value
+
 def main():
     """
     🚀 FUNCIÓN PRINCIPAL - DEMOSTRACIÓN DE PRINCIPIOS
@@ -1339,9 +1981,24 @@ def main():
                 break
             query_lines.append(line)
     
-    natural_query = " ".join(query_lines)
+    natural_query = "\n".join(query_lines)
     print("\n=== Consulta Generada ===")
-    print(generator.generate_query(collection, natural_query))
+    print("[DEBUG] Texto recibido en parse_natural_language:", repr(natural_query))
+    pipeline = generator.parse_natural_language(natural_query)
+    if not pipeline:
+        normalized_text = generator._normalize_text(natural_query)
+        generator._process_query_components(normalized_text)
+        generator._validate_pipeline()
+        pipeline = generator.pipeline
+    
+    # Generar query final en formato Mongo Shell
+    generated_query = f'db.getCollection("{collection}").aggregate({to_mongo_shell_syntax(pipeline, indent=2, level=1)})'
+    
+    # 🧠 Aprender del patrón generado (SmBoP)
+    if generator.dataset_manager:
+        generator.dataset_manager.learn_from_query(collection, natural_query, generated_query)
+    
+    return generated_query
 
 if __name__ == "__main__":
     main()

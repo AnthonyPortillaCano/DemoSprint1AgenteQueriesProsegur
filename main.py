@@ -11,6 +11,7 @@ print("DEPLOYMENT:", os.getenv("AZURE_OPENAI_DEPLOYMENT"))
 from AgenteGeneradorQueryMongo import SmartMongoQueryGenerator
 from llm_suggestion_engine import LLMSuggestionEngine
 import json
+from pydantic import BaseModel
 
 app = FastAPI(
     title="MongoDB Query Generator API",
@@ -20,6 +21,9 @@ app = FastAPI(
 
 generator = SmartMongoQueryGenerator()
 llm_engine = LLMSuggestionEngine()
+
+class QueryRequest(BaseModel):
+    natural_text: str
 
 def format_query_for_mongodb(collection: str, pipeline: list) -> str:
     """
@@ -35,19 +39,12 @@ def format_query_for_mongodb(collection: str, pipeline: list) -> str:
     return query
 
 @app.post("/assist/")
-def assist(
-    collection: str = Body(..., description="Nombre de la colección MongoDB"),
-    natural_text: str = Body(..., description="Instrucción en lenguaje natural")
-):
-    """
-    Endpoint único que genera la query y sugiere mejoras o ayuda usando LLM.
-    Devuelve la query lista para pegar en editores MongoDB sin caracteres de escape.
-    """
+def assist(request: QueryRequest):
+    natural_text = request.natural_text
     try:
-        # Generar el pipeline como objeto Python
-        pipeline = generator.generate_pipeline(collection, natural_text)
-        # Formatear la query para MongoDB (sin caracteres de escape)
-        query_str = format_query_for_mongodb(collection, pipeline)
+        # Usar 'labs' como nombre fijo de la colección
+        collection = "labs"
+        query_str = generator.generate_query(collection, natural_text)
         suggestions = llm_engine.suggest_query_improvement(natural_text, query_str)
         return {
             "query": query_str,

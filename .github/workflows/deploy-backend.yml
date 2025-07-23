@@ -34,4 +34,4 @@ jobs:
       with:
         app-name: apppythonnek
         slot-name: 'production'
-        package: ./backend 
+        package: . 

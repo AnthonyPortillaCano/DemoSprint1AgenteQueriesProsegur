@@ -7,12 +7,12 @@ st.markdown("""
 Este frontend te permite generar queries MongoDB desde lenguaje natural usando tu API.
 """)
 
-# Cambia esta URL si tu API está desplegada en Azure o en otro servidor
+# Nombre de la colección fijo
+COLLECTION_NAME = "labs"
 #API_URL = "http://localhost:8000/assist/"
 API_URL = "https://apppythonnek-graufac6ducma6ee.eastus-01.azurewebsites.net/assist/"
 
-# Entradas del usuario
-collection = st.text_input("Nombre de la colección", value="lab")
+# Entrada del usuario solo para la instrucción
 natural_text = st.text_area("Instrucción en lenguaje natural", value="crear campo user")
 
 if st.button("Generar Query"):
@@ -20,7 +20,7 @@ if st.button("Generar Query"):
         try:
             response = requests.post(
                 API_URL,
-                json={"collection": collection, "natural_text": natural_text}
+                json={"natural_text": natural_text}
             )
             data = response.json()
             if "query" in data:
