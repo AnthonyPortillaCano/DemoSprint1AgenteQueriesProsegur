@@ -1063,6 +1063,9 @@ class SmartMongoQueryGenerator:
         stages = []
         text_lower = text.lower()
 
+        # Definir lines para uso en la función
+        lines = [l.strip() for l in text.split('\n') if l.strip()]
+
         # Extraer campos de proyección desde la instrucción
         project_fields = []
         match = re.search(r'(?:proyectar|project) ([\w,\. ]+)', text_lower)

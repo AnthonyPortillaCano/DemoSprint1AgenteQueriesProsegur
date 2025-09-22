@@ -80,8 +80,19 @@ def format_query_for_mongodb(collection: str, pipeline: list) -> str:
 def assist(request: QueryRequest):
     natural_text = request.natural_text
     try:
-        # Usar 'labs' como nombre fijo de la colección
-        collection = "labs"
+        # Detectar el nombre de la colección en la instrucción
+        import re
+        # Buscar la primera colección mencionada en la instrucción
+        # Si la instrucción inicia con 'une la colección ...', usar la primera colección después de 'une la colección'
+        match_start = re.match(r'une la colección ([a-zA-Z0-9_]+)', natural_text.strip(), re.IGNORECASE)
+        if match_start:
+            collection = match_start.group(1)
+        else:
+            collections = re.findall(r'colecci[oó]n ([a-zA-Z0-9_]+)', natural_text)
+            if collections:
+                collection = collections[0]
+            else:
+                collection = "labs"  # valor por defecto
         # Generar el pipeline como objeto Python
         pipeline = generator.parse_natural_language(natural_text)
         is_valid, error_msg = validate_pipeline_structure(pipeline)

@@ -1,5 +1,6 @@
 import streamlit as st
 import requests
+import re
 
 st.title("Generador de Queries MongoDB con LLM")
 
@@ -23,12 +24,21 @@ if st.button("Generar Query"):
                 json={"natural_text": natural_text}
             )
             data = response.json()
-            if "query" in data:
+            query = data.get("query", "")
+            suggestions = data.get("suggestions", "")
+            show_llm_as_query = False
+            # Mostrar la query generada aunque la colección no sea 'labs'
+            if query.strip() == "" or re.search(r'aggregate\(\[\s*\]\)', query):
+                show_llm_as_query = True
+            if show_llm_as_query and suggestions:
+                st.subheader("Query generada (por LLM):")
+                st.code(suggestions, language="python")
+            else:
                 st.subheader("Query generada:")
-                st.code(data["query"], language="python")
-            if "suggestions" in data:
+                st.code(query, language="python")
+            if suggestions and not show_llm_as_query:
                 st.subheader("Sugerencias del LLM:")
-                st.write(data["suggestions"])
+                st.write(suggestions)
             if "error" in data:
                 st.error(data["error"])
         except Exception as e:
