@@ -8,8 +8,8 @@ print("API_KEY:", os.getenv("AZURE_OPENAI_API_KEY"))
 print("ENDPOINT:", os.getenv("AZURE_OPENAI_ENDPOINT"))
 print("DEPLOYMENT:", os.getenv("AZURE_OPENAI_DEPLOYMENT"))
 
-from AgenteGeneradorQueryMongo import SmartMongoQueryGenerator
-from llm_suggestion_engine import LLMSuggestionEngine
+from src.AgenteGeneradorQueryMongo import SmartMongoQueryGenerator
+from src.llm_suggestion_engine import LLMSuggestionEngine
 import json
 from pydantic import BaseModel
 import re

@@ -10,8 +10,8 @@ Este app te permite generar queries MongoDB desde lenguaje natural.
 
 # Nombre de la colección fijo
 COLLECTION_NAME = "labs"
-#API_URL = "http://localhost:8000/assist/"
-API_URL = "https://apppythonnek-graufac6ducma6ee.eastus-01.azurewebsites.net/assist/"
+API_URL = "http://localhost:8000/assist/"
+#API_URL = "https://apppythonnek-graufac6ducma6ee.eastus-01.azurewebsites.net/assist/"
 
 # Entrada del usuario solo para la instrucción
 natural_text = st.text_area("Instrucción en lenguaje natural", value="crear campo user")

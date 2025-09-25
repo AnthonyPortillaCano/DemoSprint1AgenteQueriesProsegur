@@ -31,7 +31,7 @@
 import re
 import json
 from typing import Dict, List, Optional, Any, Union
-from dataset_manager import DatasetManager, create_default_dataset
+from src.dataset_manager import DatasetManager, create_default_dataset
 
 def to_mongo_shell_syntax(obj, indent=2, level=1):
     """
@@ -287,6 +287,38 @@ class SmartMongoQueryGenerator:
         pipeline = []
         self.pipeline = []  # Inicializa solo una vez aquí
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
+
+        # PASO 0: Detectar instrucciones de join y agregar $lookup solo si se solicita explícitamente
+        join_detected = False
+        for line in lines:
+            join_match = re.search(r'une la colección ([a-zA-Z0-9_]+) con la colección ([a-zA-Z0-9_]+) usando el campo ([a-zA-Z0-9_]+)', line, re.IGNORECASE)
+            if join_match:
+                local_collection = join_match.group(1)
+                from_collection = join_match.group(2)
+                local_field = join_match.group(3)
+                pipeline.append({
+                    "$lookup": {
+                        "from": from_collection,
+                        "localField": local_field,
+                        "foreignField": local_field,
+                        "as": f"{from_collection}_info"
+                    }
+                })
+                pipeline.append({"$unwind": f"${from_collection}_info"})
+                # Proyección dinámica de campos si la instrucción contiene 'proyecta los campos ...'
+                project_match = re.search(r'proyecta los campos ([\w\.,_ ]+)', natural_text, re.IGNORECASE)
+                if project_match:
+                    campos = [c.strip() for c in project_match.group(1).split(',')]
+                    project_stage = {"$project": {"_id": 0}}
+                    if "departamentos_info" in campos and "departamento_nombre" in campos:
+                        project_stage["$project"][f"{from_collection}_info.departamento_nombre"] = f"${from_collection}_info.departamento_nombre"
+                        campos = [c for c in campos if c not in ["departamentos_info", "departamento_nombre"]]
+                    for campo in campos:
+                        project_stage["$project"][campo] = f"${campo}"
+                    pipeline.append(project_stage)
+                join_detected = True
+
+        # Si no hay join, continuar con el pipeline normal
         
         # 🔄 PASO 1: Procesar $unwind primero (SmBoP - Orden Secuencial)
         for line in lines:
@@ -893,22 +925,85 @@ class SmartMongoQueryGenerator:
         if self.dataset_manager:
             # Validar campos mencionados en la query
             self._validate_query_fields(natural_text, collection)
-        
+
+        # Detectar join explícito antes de generar el pipeline (más flexible)
+        join_info = None
+        join_patterns = [
+            # une la colección empleados con la colección departamentos usando el campo departamento_id
+            r'une (?:la colección )?([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+) con (?:la colección )?([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+) (?:usando|por|mediante|utilizando) (?:el campo |la clave |la columna |)?([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+)',
+            # join entre empleados y departamentos por departamento_id
+            r'join (?:entre )?([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+) y ([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+) (?:usando|por|mediante|utilizando) (?:el campo |la clave |la columna |)?([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+)',
+            # haz join de empleados y departamentos usando departamento_id
+            r'haz join (?:de|entre)? ([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+) y ([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+) (?:usando|por|mediante|utilizando) (?:el campo |la clave |la columna |)?([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+)',
+            # empleados y departamentos por departamento_id
+            r'([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+) y ([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+) (?:usando|por|mediante|utilizando) (?:el campo |la clave |la columna |)?([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+)'
+        ]
+        # Permitir errores menores de tipeo: si no hay match, buscar el join más aproximado
+        if not join_info:
+            import difflib
+            palabras = re.findall(r'\b\w+\b', natural_text.lower())
+            posibles = [p for p in palabras if len(p) > 3]
+            # Si hay al menos 3 palabras, intentar buscar patrones join
+            if 'join' in posibles or 'une' in posibles:
+                # Buscar palabras que parezcan nombres de colección/campo
+                candidates = [p for p in posibles if p not in ['join','une','con','usando','por','mediante','utilizando','campo','clave','columna','la','el','de','entre','y']]
+                if len(candidates) >= 3:
+                    local_collection, from_collection, local_field = candidates[:3]
+                    join_info = {
+                        "local_collection": local_collection,
+                        "from_collection": from_collection,
+                        "local_field": local_field
+                    }
+        for pat in join_patterns:
+            join_match = re.search(pat, natural_text, re.IGNORECASE)
+            if join_match:
+                local_collection = join_match.group(1).strip()
+                from_collection = join_match.group(2).strip()
+                local_field = join_match.group(3).strip()
+                join_info = {
+                    "local_collection": local_collection,
+                    "from_collection": from_collection,
+                    "local_field": local_field
+                }
+                break
+
         # Generar pipeline
         pipeline = self.parse_natural_language(natural_text)
+
+        # Si la instrucción es de join explícito y el pipeline NO contiene $lookup, agregarlo al inicio
+        if join_info:
+            has_lookup = any("$lookup" in stage for stage in pipeline)
+            if not has_lookup:
+                lookup_stage = {
+                    "$lookup": {
+                        "from": join_info["from_collection"],
+                        "localField": join_info["local_field"],
+                        "foreignField": join_info["local_field"],
+                        "as": f"{join_info['from_collection']}_info"
+                    }
+                }
+                unwind_stage = {"$unwind": f"${join_info['from_collection']}_info"}
+                # Insertar al inicio del pipeline
+                pipeline = [lookup_stage, unwind_stage] + pipeline
+
+        # Si el pipeline sigue vacío, intentar fallback
         if not pipeline:
             normalized_text = self._normalize_text(natural_text)
             self._process_query_components(normalized_text)
             self._validate_pipeline()
             pipeline = self.pipeline
-        
+
+        # Si aún así el pipeline está vacío, devolver una consulta mínima para evitar query vacía
+        if not pipeline:
+            pipeline = [{"$match": {}}]
+
         # Generar query final en formato Mongo Shell
         generated_query = f'db.getCollection("{collection}").aggregate({to_mongo_shell_syntax(pipeline, indent=2, level=1)})'
-        
+
         # 🧠 Aprender del patrón generado (SmBoP)
         if self.dataset_manager:
             self.dataset_manager.learn_from_query(collection, natural_text, generated_query)
-        
+
         return generated_query
 
     def _validate_query_fields(self, natural_text: str, collection: str):
@@ -1010,7 +1105,7 @@ class SmartMongoQueryGenerator:
     def _build_complex_group_stage(self, text: str) -> Dict:
         # Extraer campos de agrupación desde la instrucción
         group_fields = []
-        match = re.search(r'(?:agrupar por|group by) ([\w\., y()%]+)', text)
+        join_match = re.search(r'une la colección ([a-zA-Z0-9_]+) con la colección ([a-zA-Z0-9_]+) usando el campo ([a-zA-Z0-9_]+)', line, re.IGNORECASE)
         if match:
             group_fields = [self._normalize_field(f.strip()) for f in match.group(1).split(",") if f.strip()]
         else:
