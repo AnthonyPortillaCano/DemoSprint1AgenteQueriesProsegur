@@ -48,10 +48,6 @@ pip install -r requirements.txt
 
 ## Ejecución del pipeline
 
-
-
-## Ejecución del pipeline
-
 Para iniciar el API (FastAPI):
 ```powershell
 uvicorn src.main:app --reload
