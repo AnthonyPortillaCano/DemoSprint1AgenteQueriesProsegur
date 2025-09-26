@@ -53,13 +53,16 @@ class DatasetManager:
     - "SmBoP": Aprendizaje adaptativo de patrones
     """
     
-    def __init__(self, dataset_path: str = "datasets/"):
+    def __init__(self, dataset_path: str = None):
         """
         Inicializa el gestor de dataset
         
         Args:
             dataset_path: Ruta donde se almacenan los datasets
         """
+        # Siempre usar la ruta relativa a la raíz del proyecto
+        if dataset_path is None:
+            dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../datasets/'))
         self.dataset_path = dataset_path
         self.schemas: Dict[str, CollectionSchema] = {}
         self.query_history: List[Dict] = []
@@ -382,7 +385,8 @@ def create_default_dataset() -> DatasetManager:
     Crea un dataset predefinido para el proyecto actual
     basado en la estructura de Devices, ServicePoints, ShipOutCycles, Transactions
     """
-    manager = DatasetManager()
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../datasets/'))
+    manager = DatasetManager(dataset_path=dataset_path)
     
     # Crear esquema para la colección principal
     schema = manager.create_schema(
