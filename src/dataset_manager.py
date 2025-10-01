@@ -381,6 +381,47 @@ class DatasetManager:
 
 # 🎯 DATASET PREDEFINIDO PARA EL PROYECTO ACTUAL
 def create_default_dataset() -> DatasetManager:
+    # Inicializar lista de campos
+    fields = []
+    # Campos extra para ejemplo de join
+    fields += [
+        FieldDefinition(
+            name="nombre",
+            type="string",
+            path="nombre",
+            description="Nombre del empleado",
+            examples=["Juan", "María"],
+            synonyms=["nombre", "name", "primer nombre", "nombres", "first name"],
+            is_required=False
+        ),
+        FieldDefinition(
+            name="apellido",
+            type="string",
+            path="apellido",
+            description="Apellido del empleado",
+            examples=["Pérez", "García"],
+            synonyms=["apellido", "apellidos", "last name", "surname", "segundo nombre"],
+            is_required=False
+        ),
+        FieldDefinition(
+            name="departamentos_info",
+            type="object",
+            path="departamentos_info",
+            description="Información del departamento",
+            examples=["{nombre: 'TI', ubicacion: 'Lima'}"],
+            synonyms=["departamentos_info", "info departamento", "información de departamento", "departamento info", "departamento detalles"],
+            is_required=False
+        ),
+        FieldDefinition(
+            name="departamento_nombre",
+            type="string",
+            path="departamento_nombre",
+            description="Nombre del departamento",
+            examples=["TI", "RRHH"],
+            synonyms=["departamento_nombre", "nombre departamento", "nombre del departamento", "department name", "departamento"],
+            is_required=False
+        )
+    ]
     """
     Crea un dataset predefinido para el proyecto actual
     basado en la estructura de Devices, ServicePoints, ShipOutCycles, Transactions

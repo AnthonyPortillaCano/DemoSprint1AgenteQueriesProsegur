@@ -1,90 +1,19 @@
-"""
-🎯 IMPLEMENTACIÓN DE PRINCIPIOS DE PAPERS ACADÉMICOS
-
-📚 PAPERS IMPLEMENTADOS:
-1. "Bridging the Gap: Enabling Natural Language Queries for NoSQL Databases through Text-to-NoSQL Translation"
-2. "SmBoP: Semi-autoregressive Bottom-up Semantic Parsing"
-
-🔬 PRINCIPIOS DE "BRIDGING THE GAP":
-- Normalización de texto natural a operadores NoSQL
-- Mapeo de sinónimos y variaciones lingüísticas
-- Traducción de frases especiales a rutas de datos
-- Validación semántica de campos y operaciones
-- Manejo de contexto y referencias anidadas
-
-🧠 PRINCIPIOS DE "SMBOP":
-- Parsing semi-autoregresivo de instrucciones secuenciales
-- Construcción bottom-up de expresiones complejas
-- Parsers especializados por tipo de operación
-- Acumulación progresiva de pipeline de agregación
-- Manejo de dependencias entre operaciones
-
-🚀 CARACTERÍSTICAS IMPLEMENTADAS:
-- Soporte completo para operaciones MongoDB complejas
-- Generación dinámica de pipelines de agregación
-- Manejo de campos anidados y referencias
-- Operaciones avanzadas: $substrCP, $ifNull, $cond, $arrayElemAt, $split
-- Concatenaciones complejas con formato de fecha
-- Padding dinámico con $sum y $strLenCP
-"""
-
 import re
 import json
 from typing import Dict, List, Optional, Any, Union
 from src.dataset_manager import DatasetManager, create_default_dataset
 
-def to_mongo_shell_syntax(obj, indent=2, level=1):
-    """
-    Convierte un dict/list JSON a una cadena tipo Mongo Shell (sin comillas en las claves).
-    """
-    import keyword
-    sp = ' ' * (indent * level)
-    if isinstance(obj, dict):
-        items = []
-        for k, v in obj.items():
-            # No poner comillas si la clave es un identificador válido de MongoDB o empieza por $
-            if re.match(r'^[a-zA-Z_\$][a-zA-Z0-9_\$]*$', k) and not keyword.iskeyword(k):
-                key = k
-            else:
-                key = k.strip('"')  # Quita comillas si las tuviera
-            items.append(f"{sp}{key}: {to_mongo_shell_syntax(v, indent, level+1)}")
-        return '{\n' + ',\n'.join(items) + '\n' + ' ' * (indent * (level-1)) + '}'
-    elif isinstance(obj, list):
-        items = [to_mongo_shell_syntax(v, indent, level+1) for v in obj]
-        return '[\n' + ',\n'.join(f"{sp}{item}" for item in items) + '\n' + ' ' * (indent * (level-1)) + ']'
-    elif isinstance(obj, str):
-        # Siempre deja los valores string entre comillas
-        return f'"{obj}"'
-    else:
-        return str(obj)
 
 class SmartMongoQueryGenerator:
-    """
-    🎯 GENERADOR INTELIGENTE DE CONSULTAS MONGODB
-    
-    Implementa los principios de:
-    - "Bridging the Gap": Normalización y mapeo de lenguaje natural
-    - "SmBoP": Parsing secuencial y construcción bottom-up
-    
-    Permite generar pipelines de MongoDB complejos desde consultas en lenguaje natural.
-    """
     def __init__(self, dataset_manager: Optional[DatasetManager] = None):
-        """
-        🔬 INICIALIZACIÓN - PRINCIPIOS DE "BRIDGING THE GAP" + DATASET
-        
-        Configura los mapeos y sinónimos necesarios para la traducción
-        de lenguaje natural a operadores MongoDB, integrando dataset inteligente.
-        """
-        # 🎯 GESTOR DE DATASET (Nuevo - Contexto de Datos)
+        # GESTOR DE DATASET (Nuevo - Contexto de Datos)
         self.dataset_manager = dataset_manager or create_default_dataset()
-        
         # 📅 Formatos de fecha soportados
         self.date_formats = {
             'YYYYMMDD': '%Y%m%d',
             'DDMMYYYY': '%d%m%Y',
             'YYYYMMDDHHMMSS': '%Y%m%d%H%M%S'
         }
-        
         # 🔧 Mapeo de operadores (Bridging the Gap - Mapeo de Operadores)
         self.operator_map = {
             'suma': '$sum', 'sum': '$sum',
@@ -92,11 +21,9 @@ class SmartMongoQueryGenerator:
             'máximo': '$max', 'max': '$max',
             'mínimo': '$min', 'min': '$min'
         }
-        
         # 🧠 Estado del pipeline (SmBoP - Acumulación Progresiva)
         self.pipeline = []
         self.schema_cache = {}
-        
         # 📚 SINÓNIMOS DE OPERACIONES (Bridging the Gap - Normalización de Texto)
         self.OPERATION_SYNONYMS = {
             'unwind': ['desanidar', 'unwind', 'expandir'],
@@ -105,38 +32,27 @@ class SmartMongoQueryGenerator:
             'sort': ['ordenar', 'sort', 'ordenar por'],
             'sum': ['suma', 'sumar', 'sum'],
             'concat': ['concatenar', 'concat', 'unir'],
-            'date': ['fecha', 'date', 'formato fecha']
+            'date': ['fecha', 'date', 'formato fecha'],
+            'join': [
+                'join', 'une', 'unes', 'unir', 'relaciona', 'relacionar',
+                'combina', 'combinar', 'vincula', 'vincular', 'fusiona', 'fusionar'
+            ]
         }
-        
         # 🏷️ SINÓNIMOS DE CAMPOS (Bridging the Gap - Mapeo de Campos)
-        # Ahora se cargan dinámicamente desde el dataset
         self.FIELD_SYNONYMS = self._load_field_synonyms_from_dataset()
 
-    def _load_field_synonyms_from_dataset(self) -> Dict[str, List[str]]:
-        """
-        🎯 CARGA DINÁMICA DE SINÓNIMOS - PRINCIPIO DE "BRIDGING THE GAP"
-        
-        Carga sinónimos de campos desde el dataset, permitiendo
-        adaptación dinámica a diferentes esquemas de datos.
-        
-        Returns:
-            Diccionario de sinónimos de campos
-        """
+    def _load_field_synonyms_from_dataset(self):
         field_synonyms = {}
-        
         # Cargar desde todas las colecciones del dataset
         for collection_name, schema in self.dataset_manager.schemas.items():
             for field_name, field_def in schema.fields.items():
                 if field_name not in field_synonyms:
                     field_synonyms[field_name] = []
-                
                 # Agregar sinónimos del campo
                 field_synonyms[field_name].extend(field_def.synonyms)
-                
                 # Agregar la ruta completa como sinónimo
                 if field_def.path != field_name:
                     field_synonyms[field_name].append(field_def.path)
-        
         # Fallback a sinónimos básicos si no hay dataset
         if not field_synonyms:
             field_synonyms = {
@@ -149,55 +65,26 @@ class SmartMongoQueryGenerator:
                 'date': ['date', 'fecha', 'fechahora'],
                 'total': ['total', 'monto', 'amount', 'devices.servicepoints.shipoutcycles.transactions.total']
             }
-        
         return field_synonyms
 
+
+
     def _validate_field_with_dataset(self, field: str, collection_name: str = None) -> bool:
-        """
-        🎯 VALIDACIÓN SEMÁNTICA - PRINCIPIO DE "BRIDGING THE GAP"
-        
-        Valida si un campo existe en el dataset, proporcionando
-        validación semántica y contexto de datos.
-        
-        Args:
-            field: Campo a validar
-            collection_name: Nombre de la colección (opcional)
-            
-        Returns:
-            True si el campo es válido, False en caso contrario
-        """
         if not self.dataset_manager:
             return True  # Sin dataset, asumir válido
-        
         # Si se especifica colección, validar solo en esa
         if collection_name:
             return self.dataset_manager.validate_field(collection_name, field)
-        
         # Validar en todas las colecciones
         for coll_name in self.dataset_manager.schemas.keys():
             if self.dataset_manager.validate_field(coll_name, field):
                 return True
-        
         return False
 
     def _suggest_fields_from_dataset(self, partial_name: str, collection_name: str = None) -> List[str]:
-        """
-        🎯 SUGERENCIAS INTELIGENTES - PRINCIPIO DE "SMBOP"
-        
-        Sugiere campos basado en el dataset y patrones aprendidos.
-        
-        Args:
-            partial_name: Nombre parcial del campo
-            collection_name: Nombre de la colección (opcional)
-            
-        Returns:
-            Lista de campos sugeridos
-        """
         suggestions = []
-        
         if not self.dataset_manager:
             return suggestions
-        
         # Si se especifica colección, buscar solo en esa
         if collection_name:
             suggestions = self.dataset_manager.suggest_fields(collection_name, partial_name)
@@ -205,45 +92,45 @@ class SmartMongoQueryGenerator:
             # Buscar en todas las colecciones
             for coll_name in self.dataset_manager.schemas.keys():
                 suggestions.extend(self.dataset_manager.suggest_fields(coll_name, partial_name))
-        
         return list(set(suggestions))  # Eliminar duplicados
 
-    def _normalize_field(self, field: str) -> str:
-        """
-        🔬 NORMALIZACIÓN DE CAMPOS - PRINCIPIO DE "BRIDGING THE GAP"
-        
-        Convierte variaciones lingüísticas de campos a nombres canónicos.
-        Permite mapear sinónimos y rutas anidadas a campos específicos.
-        
-        Args:
-            field: Campo en lenguaje natural
-            
-        Returns:
-            Nombre canónico del campo o ruta anidada
-        """
-        field = field.lower().replace(' ', '')
+    def _normalize_field(self, field: str, collection: str = None) -> str:
+        field_norm = field.lower().replace(' ', '')
+        # 1. Buscar en el dataset_manager la ruta real del campo (por path o sinónimos)
+        if self.dataset_manager:
+            # Buscar en todas las colecciones si no se especifica
+            collections = [collection] if collection else list(self.dataset_manager.schemas.keys())
+            for coll in collections:
+                schema = self.dataset_manager.schemas.get(coll)
+                if not schema:
+                    continue
+                # Buscar coincidencia exacta en field name
+                for fname, fdef in schema.fields.items():
+                    if field_norm == fname.lower().replace(' ', ''):
+                        return fdef.path if fdef.path else fname
+                    # Buscar en sinónimos
+                    for syn in fdef.synonyms:
+                        if field_norm == syn.replace(' ', '').lower():
+                            return fdef.path if fdef.path else fname
+        # 2. Fallback a FIELD_SYNONYMS
         for canonical, synonyms in self.FIELD_SYNONYMS.items():
-            if field == canonical.lower() or field in [s.replace(' ', '') for s in synonyms]:
-                # Devuelve el path real si existe en los sinónimos
-                for s in synonyms:
-                    if field == s.replace(' ', '') and '.' in s:
-                        return s  # path real
+            if field_norm == canonical.lower().replace(' ', ''):
+                rutas = [s for s in synonyms if '.' in s]
+                if rutas:
+                    return max(rutas, key=len)
                 return canonical
+            for s in synonyms:
+                if field_norm == s.replace(' ', '').lower():
+                    if '.' in s:
+                        return s
+                    rutas = [sx for sx in synonyms if '.' in sx]
+                    if rutas:
+                        return max(rutas, key=len)
+                    return canonical
         return field
 
     def _expand_special_phrases(self, field: str) -> list:
-        """
-        🔬 TRADUCCIÓN DE FRASES ESPECIALES - PRINCIPIO DE "BRIDGING THE GAP"
-        
-        Convierte frases descriptivas complejas en rutas específicas de datos.
-        Permite expresar conceptos de alto nivel en términos de estructura de datos.
-        
-        Args:
-            field: Frase descriptiva en lenguaje natural
-            
-        Returns:
-            Lista de rutas de campos específicos
-        """
+
         # Traduce frases especiales a listas de campos reales
         if 'todos los niveles de devices hasta transactions' in field:
             return ["Devices", "Devices.ServicePoints", "Devices.ServicePoints.ShipOutCycles", "Devices.ServicePoints.ShipOutCycles.Transactions"]
@@ -256,7 +143,7 @@ class SmartMongoQueryGenerator:
         return False
 
     def _extract_fields(self, field_str: str) -> list:
-        """Extrae campos de una cadena, separando por comas y 'y', y limpiando espacios. Traduce frases especiales."""
+
         field_str = re.sub(r'\s+y\s+', ',', field_str)
         # Quita frases comunes de operaciones
         field_str = re.sub(r'(suma el total|proyectar reg|totalParteEntera y totalParteDecimal|ordenar por [^,]+|proyectar campo reg concatenando los valores seg[úu]n la plantilla|sumar el monto de las transacciones|agrupar por fecha)', '', field_str, flags=re.IGNORECASE)
@@ -266,28 +153,297 @@ class SmartMongoQueryGenerator:
             expanded.extend(self._expand_special_phrases(f))
         return expanded
 
-    def parse_natural_language(self, natural_text: str) -> list:
-        """
-        🧠 PARSING SEMI-AUTOREGRESIVO - PRINCIPIO DE "SMBOP"
-        
-        Procesa instrucciones secuenciales en orden específico:
-        1. $unwind (desanidamiento)
-        2. $group (agrupamiento)
-        3. $project (proyecciones)
-        4. $sort (ordenamiento)
-        
-        Implementa construcción bottom-up acumulando stages progresivamente.
-        
-        Args:
-            natural_text: Texto en lenguaje natural con instrucciones
-            
-        Returns:
-            Pipeline completo de MongoDB
-        """
-        pipeline = []
-        self.pipeline = []  # Inicializa solo una vez aquí
+    def parse_natural_language(self, natural_text: str, collection: str = None) -> list:
+        pipeline = []  # Inicializa antes de cualquier uso
+
+        # --- NUEVO: Soporte dinámico para 'filtra clientes que no hayan realizado compras en el último año', 'penúltimo año', 'hace N años', etc. ---
+        import datetime
+        for line in [l.strip() for l in natural_text.split('\n') if l.strip()]:
+            # último año
+            match_ultimo = re.search(r"filtra clientes? que no hayan realizado compras? en el (último|ultimo) año", line, re.IGNORECASE)
+            # penúltimo año
+            match_penultimo = re.search(r"filtra clientes? que no hayan realizado compras? en el (pen[uú]ltimo) año", line, re.IGNORECASE)
+            # hace N años
+            match_hace_n = re.search(r"filtra clientes? que no hayan realizado compras? hace (\d+) años", line, re.IGNORECASE)
+            if match_ultimo:
+                hoy = datetime.datetime.now()
+                inicio = (hoy - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
+                campo_compras = self._normalize_field('compras', collection=collection)
+                campo_fecha = self._normalize_field('fecha', collection=collection)
+                if campo_compras == 'compras': campo_compras = 'compras'
+                if campo_fecha == 'fecha': campo_fecha = 'fecha'
+                match_stage = {
+                    "$match": {
+                        campo_compras: {
+                            "$not": {
+                                "$elemMatch": {
+                                    campo_fecha: {"$gte": inicio}
+                                }
+                            }
+                        }
+                    }
+                }
+                return [match_stage]
+            elif match_penultimo:
+                hoy = datetime.datetime.now()
+                inicio = (hoy - datetime.timedelta(days=365*2)).strftime("%Y-%m-%d")
+                fin = (hoy - datetime.timedelta(days=365)).strftime("%Y-%m-%d")
+                campo_compras = self._normalize_field('compras', collection=collection)
+                campo_fecha = self._normalize_field('fecha', collection=collection)
+                if campo_compras == 'compras': campo_compras = 'compras'
+                if campo_fecha == 'fecha': campo_fecha = 'fecha'
+                match_stage = {
+                    "$match": {
+                        campo_compras: {
+                            "$not": {
+                                "$elemMatch": {
+                                    campo_fecha: {"$gte": inicio, "$lt": fin}
+                                }
+                            }
+                        }
+                    }
+                }
+                return [match_stage]
+            elif match_hace_n:
+                hoy = datetime.datetime.now()
+                n = int(match_hace_n.group(1))
+                inicio = (hoy - datetime.timedelta(days=365*(n))).strftime("%Y-%m-%d")
+                fin = (hoy - datetime.timedelta(days=365*(n-1))).strftime("%Y-%m-%d")
+                campo_compras = self._normalize_field('compras', collection=collection)
+                campo_fecha = self._normalize_field('fecha', collection=collection)
+                if campo_compras == 'compras': campo_compras = 'compras'
+                if campo_fecha == 'fecha': campo_fecha = 'fecha'
+                match_stage = {
+                    "$match": {
+                        campo_compras: {
+                            "$not": {
+                                "$elemMatch": {
+                                    campo_fecha: {"$gte": inicio, "$lt": fin}
+                                }
+                            }
+                        }
+                    }
+                }
+                return [match_stage]
+
+        # --- NUEVO: Soporte para 'agrega la suma total de ventas por mes' ---
+        suma_mes_match = re.search(r'agrega la suma total de ventas por mes', natural_text, re.IGNORECASE)
+        if suma_mes_match:
+            field_fecha = self._normalize_field('fecha', collection=collection)
+            if field_fecha == 'fecha':
+                field_fecha = self._normalize_field('date', collection=collection)
+            field_total = self._normalize_field('total', collection=collection)
+            add_fields_stage = {
+                "$addFields": {
+                    "anio_mes": {"$substr": [f"${field_fecha}", 0, 7]}
+                }
+            }
+            group_stage = {
+                "$group": {
+                    "_id": "$anio_mes",
+                    "suma_total_ventas": {"$sum": f"${field_total}"}
+                }
+            }
+            sort_stage = {"$sort": {"_id": 1}}
+            project_stage = {"$project": {"mes": "$_id", "suma_total_ventas": 1, "_id": 0}}
+            pipeline.extend([add_fields_stage, group_stage, sort_stage, project_stage])
+            return pipeline
+        # --- NUEVO: Soporte para JOIN explícito ---
+        join_match = re.search(r'une la colección (\w+) con la colección (\w+) usando el campo ([\w\.]+) proyecta los campos ([\w, _]+)', natural_text, re.IGNORECASE)
+        if join_match:
+            origen = join_match.group(1)
+            destino = join_match.group(2)
+            campo_union = join_match.group(3).strip()
+            campos_proy = [c.strip() for c in join_match.group(4).split(',') if c.strip()]
+            # $lookup
+            lookup_stage = {
+                "$lookup": {
+                    "from": destino,
+                    "localField": campo_union,
+                    "foreignField": campo_union,
+                    "as": f"{destino}_info"
+                }
+            }
+            pipeline.append(lookup_stage)
+            # $unwind
+            pipeline.append({"$unwind": f"${destino}_info"})
+            # $project si hay campos
+            if campos_proy:
+                project_stage = {"$project": {c: 1 for c in campos_proy}}
+                pipeline.append(project_stage)
+            return pipeline
+
+        # --- NUEVO: Soporte para 'muestra los 5 productos más vendidos' ---
+        top_vendidos_match = re.search(r'muestra los (\d+) productos m[aá]s vendidos', natural_text, re.IGNORECASE)
+        if top_vendidos_match:
+            top_n = int(top_vendidos_match.group(1))
+            # Asume campos típicos: producto/nombre y cantidad vendida
+            # Buscar campo producto y cantidad en el dataset o usar nombres comunes
+            field_producto = self._normalize_field('producto', collection=collection)
+            if field_producto == 'producto':
+                # fallback a 'nombre' si no existe 'producto'
+                field_producto = self._normalize_field('nombre', collection=collection)
+            field_cantidad = self._normalize_field('cantidad', collection=collection)
+            if field_cantidad == 'cantidad':
+                # fallback a 'vendidos' o 'ventas' si no existe 'cantidad'
+                field_cantidad = self._normalize_field('vendidos', collection=collection)
+                if field_cantidad == 'vendidos':
+                    field_cantidad = self._normalize_field('ventas', collection=collection)
+            # $group por producto, suma cantidad
+            group_stage = {"$group": {"_id": f"${field_producto}", "total_vendidos": {"$sum": f"${field_cantidad}"}}}
+            sort_stage = {"$sort": {"total_vendidos": -1}}
+            limit_stage = {"$limit": top_n}
+            project_stage = {"$project": {"producto": "$_id", "total_vendidos": 1, "_id": 0}}
+            pipeline.extend([group_stage, sort_stage, limit_stage, project_stage])
+            return pipeline
+
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
 
+        # --- NUEVO: Soporte para filtro por rango de fechas ---
+        for line in lines:
+            date_range_match = re.search(r"filtra [\wáéíóúüñÁÉÍÓÚÜÑ ]*entre (\d{4}-\d{2}-\d{2}) y (\d{4}-\d{2}-\d{2})", line, re.IGNORECASE)
+            if date_range_match:
+                fecha_ini = date_range_match.group(1)
+                fecha_fin = date_range_match.group(2)
+                # Normalizar campo de fecha (puede ser 'Date' o ruta anidada)
+                field_date = self._normalize_field('date', collection=collection)
+                match_stage = {"$match": {field_date: {"$gte": fecha_ini, "$lte": fecha_fin}}}
+                # Desanidar si es transacciones
+                if collection and collection.lower().startswith('transac'):
+                    return [
+                        match_stage,
+                        {"$unwind": "$Devices"},
+                        {"$unwind": "$Devices.ServicePoints"},
+                        {"$unwind": "$Devices.ServicePoints.ShipOutCycles"},
+                        {"$unwind": "$Devices.ServicePoints.ShipOutCycles.Transactions"}
+                    ]
+                else:
+                    return [match_stage]
+
+        # --- NUEVO: Soporte para $match con $regex para instrucciones tipo 'busca empleados cuyo nombre comience con ...' ---
+        for line in lines:
+            regex_match = re.search(r"busca [\wáéíóúüñÁÉÍÓÚÜÑ ]+ cuyo ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) comience con '([^']+)'", line, re.IGNORECASE)
+            if regex_match:
+                field = regex_match.group(1).strip()
+                value = regex_match.group(2)
+                field_norm = self._normalize_field(field, collection=collection)
+                match_stage = {"$match": {field_norm: {"$regex": f"^{value}", "$options": "i"}}}
+                return [match_stage]
+
+        # --- NUEVO: Soporte para conteo por grupo (ej: cuenta cuántos empleados hay en cada departamento) ---
+        for line in lines:
+            count_group_match = re.search(r'cuenta cu[aá]ntos? [\wáéíóúüñÁÉÍÓÚÜÑ ]+ hay en cada ([\wáéíóúüñÁÉÍÓÚÜÑ_]+)', line, re.IGNORECASE)
+            if count_group_match:
+                group_field = count_group_match.group(1).strip()
+                # Normalizar el nombre del campo usando sinónimos si es posible
+                group_field_norm = None
+                for canonical, synonyms in self.FIELD_SYNONYMS.items():
+                    if group_field.lower() == canonical.lower() or group_field.lower() in [s.lower() for s in synonyms]:
+                        group_field_norm = canonical
+                        break
+                if not group_field_norm:
+                    group_field_norm = group_field
+                group_stage = {"$group": {"_id": f"${group_field_norm}", "count": {"$sum": 1}}}
+                pipeline.append(group_stage)
+                # Opcional: $project para mostrar campo y count
+                project_stage = {"$project": {group_field_norm: "$_id", "count": 1, "_id": 0}}
+                pipeline.append(project_stage)
+                # Ya no es necesario seguir procesando otras reglas para este caso
+                break
+        # --- FIN NUEVO ---
+
+        # --- NUEVO: Soporte para frases tipo 'del departamento de <nombre>' y proyección de campos ---
+        campos_a_proyectar = set()
+        for line in lines:
+            # Detectar campos a proyectar en frases tipo 'muestra los nombres y apellidos ...'
+            proj_match = re.search(r'muestra (los|las)? ([\wáéíóúüñÁÉÍÓÚÜÑ, y]+)', line, re.IGNORECASE)
+            if proj_match:
+                campos = proj_match.group(2)
+                # Separar por 'y', ',' y espacios
+                campos = re.split(r',| y | e |\s+', campos)
+                campos = [c.strip() for c in campos if c.strip() and c.lower() not in ['de', 'los', 'las', 'empleados', 'empleadas']]
+                campos_a_proyectar.update(campos)
+            # Filtro por departamento
+            dept_match = re.search(r'del departamento de ([\wáéíóúüñÁÉÍÓÚÜÑ\- ]+)', line, re.IGNORECASE)
+            if dept_match:
+                dept_value = dept_match.group(1).strip()
+                # Intenta encontrar el campo de departamento en los sinónimos
+                dept_field = None
+                for canonical, synonyms in self.FIELD_SYNONYMS.items():
+                    if 'departamento' in canonical.lower() or any('departamento' in s.lower() for s in synonyms):
+                        rutas = [s for s in synonyms if '.' in s]
+                        if rutas:
+                            dept_field = max(rutas, key=len)
+                        else:
+                            dept_field = canonical
+                        break
+                if not dept_field:
+                    dept_field = 'departamento'
+                match_stage = {"$match": {dept_field: dept_value}}
+                pipeline.append(match_stage)
+                # No break: permite otros filtros
+        # Si se detectaron campos a proyectar, agregarlos al pipeline
+        if campos_a_proyectar:
+            # Normalizar nombres de campos usando sinónimos si es posible
+            campos_finales = set()
+            for campo in campos_a_proyectar:
+                campo_norm = None
+                for canonical, synonyms in self.FIELD_SYNONYMS.items():
+                    if campo.lower() == canonical.lower() or campo.lower() in [s.lower() for s in synonyms]:
+                        campo_norm = canonical
+                        break
+                if not campo_norm:
+                    campo_norm = campo
+                campos_finales.add(campo_norm)
+            project_stage = {"$project": {c: 1 for c in campos_finales}}
+            pipeline.append(project_stage)
+    # --- FIN NUEVO ---
+
+        # --- NUEVO: Soporte para $sort descendente y ascendente ---
+        for line in lines:
+            # Ejemplo: ordena los empleados por fecha de ingreso descendente
+            sort_match = re.search(r'ordena[\w ]* por ([\w_ ]+) (descendente|ascendente)', line, re.IGNORECASE)
+            if sort_match:
+                field = sort_match.group(1).strip().replace(' ', '')
+                order = sort_match.group(2).lower()
+                # Normalizar campo usando sinónimos
+                field_norm = self._normalize_field(field, collection=collection)
+                sort_dir = -1 if order == 'descendente' else 1
+                pipeline.append({'$sort': {field_norm: sort_dir}})
+                # No break: permite otros sorts si hay más de uno
+
+        # --- NUEVO: Soporte para filtros tipo 'filtra registros cuyo <campo> sea mayor/menor/igual a <valor>' ---
+        for line in lines:
+                # Ejemplo: filtra registros cuyo Total sea mayor a 3000, filtra registros cuyo Total sea menor a 5000
+            filter_match = re.search(r'filtra registros? cuyo ([\w\. ]+) sea (mayor|menor|igual) a ([\d\.]+)', line, re.IGNORECASE)
+            if filter_match:
+                raw_field = filter_match.group(1).strip()
+                op = filter_match.group(2).lower()
+                value = filter_match.group(3)
+                # Normaliza el campo usando sinónimos y rutas, pasando el nombre de la colección recibido
+                field = self._normalize_field(raw_field, collection=collection)
+                # Fuerza la ruta anidada si es 'total' o 'Total' y la colección es transacciones
+                if (raw_field.lower() == 'total' or field.lower() == 'total') and collection and collection.lower().startswith('transac'):
+                    field = 'Devices.ServicePoints.ShipOutCycles.Transactions.Total'
+                field_path = field
+                if op == 'mayor':
+                    mongo_op = "$gt"
+                elif op == 'menor':
+                    mongo_op = "$lt"
+                elif op == 'igual':
+                    mongo_op = "$eq"
+                else:
+                    mongo_op = "$eq"
+                try:
+                    value_num = float(value)
+                    value_final = value_num
+                except Exception:
+                    value_final = value
+                match_stage = {"$match": {field_path: {mongo_op: value_final}}}
+                print(f"[DEBUG] Pipeline generado: {match_stage}")
+                # Retornar solo el filtro, sin stages extra
+                return [match_stage]
+        # --- FIN NUEVO ---
         # PASO 0: Detectar instrucciones de join y agregar $lookup solo si se solicita explícitamente
         join_detected = False
         for line in lines:
@@ -296,33 +452,32 @@ class SmartMongoQueryGenerator:
                 local_collection = join_match.group(1)
                 from_collection = join_match.group(2)
                 local_field = join_match.group(3)
-                pipeline.append({
-                    "$lookup": {
-                        "from": from_collection,
-                        "localField": local_field,
-                        "foreignField": local_field,
-                        "as": f"{from_collection}_info"
+                # --- NUEVO: Soporte para JOIN explícito ---
+                pipeline = []
+                join_match = re.search(r'une la colección (\w+) con la colección (\w+) usando el campo ([\w\.]+) proyecta los campos ([\w, _]+)', natural_text, re.IGNORECASE)
+                if join_match:
+                    origen = join_match.group(1)
+                    destino = join_match.group(2)
+                    campo_union = join_match.group(3).strip()
+                    campos_proy = [c.strip() for c in join_match.group(4).split(',') if c.strip()]
+                    # $lookup
+                    lookup_stage = {
+                        "$lookup": {
+                            "from": destino,
+                            "localField": campo_union,
+                            "foreignField": campo_union,
+                            "as": f"{destino}_info"
+                        }
                     }
-                })
-                pipeline.append({"$unwind": f"${from_collection}_info"})
-                # Proyección dinámica de campos si la instrucción contiene 'proyecta los campos ...'
-                project_match = re.search(r'proyecta los campos ([\w\.,_ ]+)', natural_text, re.IGNORECASE)
-                if project_match:
-                    campos = [c.strip() for c in project_match.group(1).split(',')]
-                    project_stage = {"$project": {"_id": 0}}
-                    if "departamentos_info" in campos and "departamento_nombre" in campos:
-                        project_stage["$project"][f"{from_collection}_info.departamento_nombre"] = f"${from_collection}_info.departamento_nombre"
-                        campos = [c for c in campos if c not in ["departamentos_info", "departamento_nombre"]]
-                    for campo in campos:
-                        project_stage["$project"][campo] = f"${campo}"
-                    pipeline.append(project_stage)
-                join_detected = True
-
-        # Si no hay join, continuar con el pipeline normal
-        
-        # 🔄 PASO 1: Procesar $unwind primero (SmBoP - Orden Secuencial)
-        for line in lines:
-            # --- NUEVO: Soporte para la forma explícita 'desanidar <ruta>' ---
+                    pipeline.append(lookup_stage)
+                    # $unwind
+                    pipeline.append({"$unwind": f"${destino}_info"})
+                    # $project si hay campos
+                    if campos_proy:
+                        project_stage = {"$project": {c: 1 for c in campos_proy}}
+                        pipeline.append(project_stage)
+                    return pipeline
+                lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
             if line.lower().startswith("desanidar "):
                 path = line[len("desanidar "):].strip()
                 # Soporte para preserveNullAndEmptyArrays (más robusto)
@@ -429,7 +584,7 @@ class SmartMongoQueryGenerator:
                 pipeline.append(group_stage)
                 break
         
-        # 🎯 PASO 3: Procesar $project (SmBoP - Parsers Especializados)
+    # PASO 3: Procesar $project (SmBoP - Parsers Especializados)
         for line in lines:
             if any(x in line.lower() for x in ["crear campo", "concatenando", "que sea", "que convierta", "con padding", "proyecta", "proyectar"]):
                 processed = False
@@ -890,8 +1045,8 @@ class SmartMongoQueryGenerator:
                     del stage["$project"][k]
         
         # Post-procesamiento dinámico para el campo reg en $project
-        for stage in pipeline:
-            if "$project" in stage and "reg" in stage["$project"]:
+            for stage in pipeline:
+              if "$project" in stage and "reg" in stage["$project"]:
                 reg = stage["$project"]["reg"]
                 if isinstance(reg, dict) and "$concat" in reg:
                     new_concat = []
@@ -906,21 +1061,12 @@ class SmartMongoQueryGenerator:
                     stage["$project"]["reg"]["$concat"] = new_concat
         
         return pipeline
+    
+        
+      
 
     def generate_query(self, collection: str, natural_text: str) -> str:
-        """
-        🎯 GENERACIÓN DE QUERY CON DATASET - PRINCIPIOS INTEGRADOS
-        
-        Genera queries MongoDB integrando validación semántica y aprendizaje
-        de patrones desde el dataset.
-        
-        Args:
-            collection: Nombre de la colección
-            natural_text: Query en lenguaje natural
-            
-        Returns:
-            Query MongoDB generada
-        """
+
         # 🧠 Aprendizaje de patrones (SmBoP)
         if self.dataset_manager:
             # Validar campos mencionados en la query
@@ -968,7 +1114,7 @@ class SmartMongoQueryGenerator:
                 break
 
         # Generar pipeline
-        pipeline = self.parse_natural_language(natural_text)
+        pipeline = self.parse_natural_language(natural_text, collection=collection)
 
         # Si la instrucción es de join explícito y el pipeline NO contiene $lookup, agregarlo al inicio
         if join_info:
@@ -997,8 +1143,9 @@ class SmartMongoQueryGenerator:
         if not pipeline:
             pipeline = [{"$match": {}}]
 
-        # Generar query final en formato Mongo Shell
-        generated_query = f'db.getCollection("{collection}").aggregate({to_mongo_shell_syntax(pipeline, indent=2, level=1)})'
+
+        # Generar query final como string JSON del pipeline
+        generated_query = json.dumps(pipeline, indent=2, ensure_ascii=False)
 
         # 🧠 Aprender del patrón generado (SmBoP)
         if self.dataset_manager:
@@ -1006,24 +1153,13 @@ class SmartMongoQueryGenerator:
 
         return generated_query
 
+
     def _validate_query_fields(self, natural_text: str, collection: str):
-        """
-        🎯 VALIDACIÓN DE CAMPOS EN QUERY - PRINCIPIO DE "BRIDGING THE GAP"
-        
-        Valida que los campos mencionados en la query existan en el dataset
-        y sugiere alternativas si no se encuentran.
-        
-        Args:
-            natural_text: Query en lenguaje natural
-            collection: Nombre de la colección
-        """
         if not self.dataset_manager:
             return
-        
         # Extraer posibles campos de la query
         words = natural_text.lower().split()
         unknown_fields = []
-        
         for word in words:
             # Limpiar palabra
             clean_word = re.sub(r'[^\w]', '', word)
@@ -1032,12 +1168,12 @@ class SmartMongoQueryGenerator:
                     suggestions = self._suggest_fields_from_dataset(clean_word, collection)
                     if suggestions:
                         unknown_fields.append((clean_word, suggestions))
-        
         # Mostrar sugerencias si hay campos desconocidos
         if unknown_fields:
             print(f"⚠️  Campos no encontrados en '{collection}':")
             for field, suggestions in unknown_fields:
                 print(f"   '{field}' → Sugerencias: {suggestions}")
+
 
     def _normalize_text(self, text: str) -> str:
         replacements = {
@@ -1057,6 +1193,7 @@ class SmartMongoQueryGenerator:
             normalized = re.sub(pattern, repl, normalized)
         return normalized
 
+
     def _process_query_components(self, text: str):
         if self._is_complex_query(text):
             self._process_complex_query(text)
@@ -1069,6 +1206,7 @@ class SmartMongoQueryGenerator:
                 for field in fields:
                     project_stage["$project"][field] = 1
                 self.pipeline.append(project_stage)
+
 
     def _is_complex_query(self, text: str) -> bool:
         complex_keywords = [
@@ -1105,9 +1243,9 @@ class SmartMongoQueryGenerator:
     def _build_complex_group_stage(self, text: str) -> Dict:
         # Extraer campos de agrupación desde la instrucción
         group_fields = []
-        join_match = re.search(r'une la colección ([a-zA-Z0-9_]+) con la colección ([a-zA-Z0-9_]+) usando el campo ([a-zA-Z0-9_]+)', line, re.IGNORECASE)
-        if match:
-            group_fields = [self._normalize_field(f.strip()) for f in match.group(1).split(",") if f.strip()]
+        join_match = re.search(r'une la colección ([a-zA-Z0-9_]+) con la colección ([a-zA-Z0-9_]+) usando el campo ([a-zA-Z0-9_]+)', text, re.IGNORECASE)
+        if join_match:
+            group_fields = [self._normalize_field(f.strip()) for f in join_match.group(1).split(",") if f.strip()]
         else:
             # Si no se especifican, usar valores por defecto
             group_fields = ["date", "deviceId", "branchCode", "subChannelCode", "shipOutCode", "currencyCode", "confirmationCode"]
@@ -1394,18 +1532,7 @@ class SmartMongoQueryGenerator:
         }
 
     def _build_group_stage_from_text(self, text: str) -> Dict:
-        """
-        🧠 CONSTRUCCIÓN BOTTOM-UP - PRINCIPIO DE "SMBOP"
-        
-        Construye un stage de $group desde texto natural.
-        Implementa construcción progresiva de expresiones complejas.
-        
-        Args:
-            text: Texto natural con instrucciones de agrupamiento
-            
-        Returns:
-            Stage de $group configurado
-        """
+
         group_fields = []
         match = re.search(r'(?:agrupar por|agrupa por|group by) ([\w\., y()%]+)', text, re.IGNORECASE)
         if match:
@@ -1524,7 +1651,7 @@ class SmartMongoQueryGenerator:
         return group_stage
 
     def _build_sort_stage_from_text(self, text: str) -> Dict:
-        """Construye un stage de $sort desde texto natural"""
+
         if "ordenar por" in text.lower():
             # Extraer campos después de "ordenar por"
             sort_part = text.lower().split("ordenar por")[1].strip()
@@ -1572,21 +1699,7 @@ class SmartMongoQueryGenerator:
         return None
 
     def _extract_substrcp_operation_for_field(self, text: str, field: str, source_field: str = None, start: str = None) -> Optional[Dict]:
-        """
-        🎯 PARSER ESPECIALIZADO - PRINCIPIO DE "SMBOP"
-        
-        Parser específico para operaciones $substrCP.
-        Implementa extracción de operaciones específicas de MongoDB.
-        
-        Args:
-            text: Texto natural con instrucción
-            field: Campo a crear
-            source_field: Campo fuente (opcional)
-            start: Posición inicial (opcional)
-            
-        Returns:
-            Operación $substrCP configurada o None
-        """
+
         # Permite pasar source_field y start directamente
         if source_field and start:
             if source_field.startswith('_id.'):
@@ -1682,15 +1795,14 @@ class SmartMongoQueryGenerator:
         return None
     
     def _normalize_concat_phrase(self, phrase: str) -> str:
-        """
-        Normaliza una frase para búsqueda robusta en el mapeo de concat.
-        """
-        import unicodedata
-        s = phrase.lower().strip()
-        s = ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
-        s = s.replace('.', '').replace('"', '').replace("'", '')
-        s = re.sub(r'\s+', ' ', s)
-        return s
+
+         import unicodedata
+         s = phrase.lower().strip()
+         s = ''.join(c for c in unicodedata.normalize('NFD', s) if unicodedata.category(c) != 'Mn')
+         s = s.replace('.', '').replace('"', '').replace("'", '')
+         import re
+         s = re.sub(r'\s+', ' ', s)
+         return s
 
     def _concat_map(self):
         # Centraliza el mapeo de frases a expresiones MongoDB
@@ -1787,20 +1899,7 @@ class SmartMongoQueryGenerator:
         return None
 
     def _create_date_conversion(self, date_field: str, fmt: str, substr_len: Optional[str]) -> Dict:
-        """
-        🧠 CONSTRUCCIÓN BOTTOM-UP - PRINCIPIO DE "SMBOP"
-        
-        Construye expresiones de conversión de fecha paso a paso.
-        Implementa construcción progresiva desde componentes básicos.
-        
-        Args:
-            date_field: Campo de fecha
-            fmt: Formato de salida
-            substr_len: Longitud de substring (opcional)
-            
-        Returns:
-            Expresión de conversión de fecha completa
-        """
+
         fmt_key = fmt.upper()
         if fmt_key not in self.date_formats:
             return 1
@@ -1914,12 +2013,41 @@ class SmartMongoQueryGenerator:
                 fields.append((field, True, phrase, None, None, None, False))
                 continue
             # Detecta cond
-            match_cond = re.search(r'crear campo\s+[\w]+ que sea "([^"]*)" si (\w+) es "([^"]*)" y "([^"]*)" en otro caso', phrase, re.IGNORECASE)
-            if match_cond:
-                fields.append((field, True, phrase, None, None, None, False))
-                continue
-            # Campos simples (pueden ser varios separados por coma) - solo si no se procesó como especial
-            if not any([
+        """
+        🎯 IMPLEMENTACIÓN DE PRINCIPIOS DE PAPERS ACADÉMICOS
+
+        📚 PAPERS IMPLEMENTADOS:
+        1. "Bridging the Gap: Enabling Natural Language Queries for NoSQL Databases through Text-to-NoSQL Translation"
+        2. "SmBoP: Semi-autoregressive Bottom-up Semantic Parsing"
+
+        🔬 PRINCIPIOS DE "BRIDGING THE GAP":
+        - Normalización de texto natural a operadores NoSQL
+        - Mapeo de sinónimos y variaciones lingüísticas
+        - Traducción de frases especiales a rutas de datos
+        - Validación semántica de campos y operaciones
+        - Manejo de contexto y referencias anidadas
+
+        🧠 PRINCIPIOS DE "SMBOP":
+        - Parsing semi-autoregresivo de instrucciones secuenciales
+        - Construcción bottom-up de expresiones complejas
+        - Parsers especializados por tipo de operación
+        - Acumulación progresiva de pipeline de agregación
+        - Manejo de dependencias entre operaciones
+
+        🚀 CARACTERÍSTICAS IMPLEMENTADAS:
+        - Soporte completo para operaciones MongoDB complejas
+        - Generación dinámica de pipelines de agregación
+        - Manejo de campos anidados y referencias
+        - Operaciones avanzadas: $substrCP, $ifNull, $cond, $arrayElemAt, $split
+        - Concatenaciones complejas con formato de fecha
+        - Padding dinámico con $sum y $strLenCP
+        """
+
+        # if match_cond:  # Eliminado porque match_cond no está definido
+        #     fields.append((field, True, phrase, None, None, None, False))
+        #     # continue eliminado porque no está en un bucle
+        #     # Campos simples (pueden ser varios separados por coma) - solo si no se procesó como especial
+        if not any([
                 re.search(r'crear campo\s+[\w]+(?:\s+con formato)? que convierta el campo (\w+) a formato (\w+)(?: usando los primeros (\d+) caracteres)?', phrase, re.IGNORECASE),
                 re.search(r'crear campo\s+[\w]+\s+con formato concat\((.+)\)', phrase, re.IGNORECASE),
                 re.search(r'crear campo\s+[\w]+\s+con padding izquierda (\d+) de (\w+) usando \$sum y \$strLenCP', phrase, re.IGNORECASE),
@@ -2048,9 +2176,6 @@ def main():
     - "Bridging the Gap": Normalización y mapeo
     - "SmBoP": Parsing secuencial y construcción bottom-up
     """
-    print("🎯 GENERADOR AVANZADO MONGODB")
-    print("📚 Implementando principios de 'Bridging the Gap' + 'SmBoP'")
-    print("=" * 60)
     
     # Crear generador con dataset por defecto
     generator = SmartMongoQueryGenerator()
@@ -2090,12 +2215,16 @@ def main():
         pipeline = generator.pipeline
     
     # Generar query final en formato Mongo Shell
-    generated_query = f'db.getCollection("{collection}").aggregate({to_mongo_shell_syntax(pipeline, indent=2, level=1)})'
+    # generated_query = f'db.getCollection("{collection}").aggregate({to_mongo_shell_syntax(pipeline, indent=2, level=1)})'
     
+
+    # Generar query final como string JSON del pipeline
+    generated_query = json.dumps(pipeline, indent=2, ensure_ascii=False)
+
     # 🧠 Aprender del patrón generado (SmBoP)
     if generator.dataset_manager:
         generator.dataset_manager.learn_from_query(collection, natural_query, generated_query)
-    
+
     return generated_query
 
 if __name__ == "__main__":
