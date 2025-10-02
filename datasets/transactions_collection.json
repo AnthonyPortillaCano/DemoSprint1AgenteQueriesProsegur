@@ -244,6 +244,148 @@
           ]
         }
       ]
+    },
+    {
+      "Date": "2024-01-16T14:45:00Z",
+      "Devices": [
+        {
+          "Id": "DEV002",
+          "BranchCode": "PE241",
+          "ServicePoints": [
+            {
+              "ShipOutCycles": [
+                {
+                  "SubChannelCode": "CH002",
+                  "Code": "SO002",
+                  "ConfirmationCode": "CONF002",
+                  "Transactions": [
+                    {
+                      "Total": 250.75,
+                      "CurrencyCode": "USD"
+                    },
+                    {
+                      "Total": 80.0,
+                      "CurrencyCode": "PEN"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Date": "2024-01-17T09:20:00Z",
+      "Devices": [
+        {
+          "Id": "DEV003",
+          "BranchCode": "PE242",
+          "ServicePoints": [
+            {
+              "ShipOutCycles": [
+                {
+                  "SubChannelCode": "CH001",
+                  "Code": "SO003",
+                  "ConfirmationCode": "CONF003",
+                  "Transactions": [
+                    {
+                      "Total": 500.0,
+                      "CurrencyCode": "EUR"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Date": "2024-01-18T18:10:00Z",
+      "Devices": [
+        {
+          "Id": "DEV004",
+          "BranchCode": "PE243",
+          "ServicePoints": [
+            {
+              "ShipOutCycles": [
+                {
+                  "SubChannelCode": "CH003",
+                  "Code": "SO004",
+                  "ConfirmationCode": "CONF004",
+                  "Transactions": [
+                    {
+                      "Total": 75.25,
+                      "CurrencyCode": "PEN"
+                    },
+                    {
+                      "Total": 120.0,
+                      "CurrencyCode": "USD"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Date": "2024-01-19T11:00:00Z",
+      "Devices": [
+        {
+          "Id": "DEV005",
+          "BranchCode": "PE244",
+          "ServicePoints": [
+            {
+              "ShipOutCycles": [
+                {
+                  "SubChannelCode": "CH002",
+                  "Code": "SO005",
+                  "ConfirmationCode": "CONF005",
+                  "Transactions": [
+                    {
+                      "Total": 300.0,
+                      "CurrencyCode": "PEN"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Date": "2024-01-20T08:30:00Z",
+      "Devices": [
+        {
+          "Id": "DEV006",
+          "BranchCode": "PE245",
+          "ServicePoints": [
+            {
+              "ShipOutCycles": [
+                {
+                  "SubChannelCode": "CH003",
+                  "Code": "SO006",
+                  "ConfirmationCode": "CONF006",
+                  "Transactions": [
+                    {
+                      "Total": 50.0,
+                      "CurrencyCode": "USD"
+                    },
+                    {
+                      "Total": 200.0,
+                      "CurrencyCode": "EUR"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
     }
   ],
   "query_patterns": [
@@ -254,6 +396,6 @@
     "suma de total",
     "filtro por moneda PEN"
   ],
-  "created_at": "2025-10-01T13:31:26.368955",
-  "updated_at": "2025-10-01T13:31:26.368955"
+  "created_at": "2025-10-02T15:29:45.111255",
+  "updated_at": "2025-10-02T15:29:45.111255"
 }

@@ -55,15 +55,11 @@ class SmartMongoQueryGenerator:
                     field_synonyms[field_name].append(field_def.path)
         # Fallback a sinónimos básicos si no hay dataset
         if not field_synonyms:
+            # Diccionario generado automáticamente desde el EDA del notebook
             field_synonyms = {
-                'deviceId': ['deviceid', 'id de dispositivo', 'dispositivo', 'devices.id'],
-                'branchCode': ['branchcode', 'código de sucursal', 'sucursal', 'devices.branchcode'],
-                'subChannelCode': ['subchannelcode', 'subcanal', 'devices.servicepoints.shipoutcycles.subchannelcode'],
-                'shipOutCode': ['shipoutcode', 'código de envío', 'envio', 'devices.servicepoints.shipoutcycles.code'],
-                'currencyCode': ['currencycode', 'moneda', 'devices.servicepoints.shipoutcycles.transactions.currencycode'],
-                'confirmationCode': ['confirmationcode', 'código de confirmación', 'confirmacion', 'devices.servicepoints.shipoutcycles.confirmationcode'],
-                'date': ['date', 'fecha', 'fechahora'],
-                'total': ['total', 'monto', 'amount', 'devices.servicepoints.shipoutcycles.transactions.total']
+                # Ejemplo: reemplaza esto por el diccionario generado en el notebook
+                # 'total': ['total', 'monto', 'amount', 'devices.servicepoints.shipoutcycles.transactions.total'],
+                # ... pega aquí el diccionario generado ...
             }
         return field_synonyms
 
