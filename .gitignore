@@ -17,6 +17,7 @@ venv/
 
 # Archivos temporales
 *.log
+!logs/pipeline.log
 !logs/.gitkeep
 *.sqlite3
 .DS_Store
