@@ -802,3 +802,765 @@
 2025-10-02 19:18:32,730 INFO Cobertura y diversidad de instrucciones analizadas
 2025-10-02 19:18:32,730 INFO Sinónimos normalizados y consulta traducida
 2025-10-02 19:18:32,730 INFO Evaluación semántica del agente realizada
+2025-10-02 20:11:04,783 INFO Instrucción: une la colección empleados con la colección departamentos usando el campo departamento_id proyecta los campos nombre, apellido, departamentos_info, departamento_nombre | Colección: empleados | Resultado: [
+  {
+    "$lookup": {
+      "from": "departamentos",
+      "localField": "departamento_id",
+      "foreignField": "departamento_id",
+      "as": "departamentos_info"
+    }
+  },
+  {
+    "$unwind": "$departamentos_info"
+  },
+  {
+    "$project": {
+      "nombre": 1,
+      "apellido": 1,
+      "departamentos_info": 1,
+      "departamento_nombre": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,784 INFO Instrucción: filtra registros cuyo Total sea mayor a 3000 | Colección: transacciones | Resultado: [
+  {
+    "$match": {
+      "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+        "$gt": 3000.0
+      }
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,784 INFO Instrucción: muestra los nombres y apellidos de los empleados del departamento de ventas | Colección: empleados | Resultado: [
+  {
+    "$match": {
+      "departamento": "ventas"
+    }
+  },
+  {
+    "$project": {
+      "nombres": 1,
+      "apellidos": 1,
+      "departamento": 1,
+      "ventas": 1,
+      "del": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,785 INFO Instrucción: cuenta cuántos empleados hay en cada departamento | Colección: empleados | Resultado: [
+  {
+    "$group": {
+      "_id": "$departamento",
+      "count": {
+        "$sum": 1
+      }
+    }
+  },
+  {
+    "$project": {
+      "departamento": "$_id",
+      "count": 1,
+      "_id": 0
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,785 INFO Instrucción: ordena los empleados por fecha de ingreso descendente | Colección: empleados | Resultado: [
+  {
+    "$sort": {
+      "fechadeingreso": -1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,785 INFO Instrucción: busca empleados cuyo nombre comience con 'A' | Colección: empleados | Resultado: [
+  {
+    "$match": {
+      "nombre": {
+        "$regex": "^A",
+        "$options": "i"
+      }
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,785 INFO Instrucción: filtra transacciones realizadas entre 2023-01-01 y 2023-01-31 | Colección: transacciones | Resultado: [
+  {
+    "$match": {
+      "Date": {
+        "$gte": "2023-01-01",
+        "$lte": "2023-01-31"
+      }
+    }
+  },
+  {
+    "$unwind": "$Devices"
+  },
+  {
+    "$unwind": "$Devices.ServicePoints"
+  },
+  {
+    "$unwind": "$Devices.ServicePoints.ShipOutCycles"
+  },
+  {
+    "$unwind": "$Devices.ServicePoints.ShipOutCycles.Transactions"
+  }
+] | Correcto: True
+2025-10-02 20:11:04,785 INFO Instrucción: muestra los 5 productos más vendidos | Colección: productos | Resultado: [
+  {
+    "$group": {
+      "_id": "$nombre",
+      "total_vendidos": {
+        "$sum": "$ventas"
+      }
+    }
+  },
+  {
+    "$sort": {
+      "total_vendidos": -1
+    }
+  },
+  {
+    "$limit": 5
+  },
+  {
+    "$project": {
+      "producto": "$_id",
+      "total_vendidos": 1,
+      "_id": 0
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,785 INFO Instrucción: agrega la suma total de ventas por mes | Colección: ventas | Resultado: [
+  {
+    "$addFields": {
+      "anio_mes": {
+        "$substr": [
+          "$Date",
+          0,
+          7
+        ]
+      }
+    }
+  },
+  {
+    "$group": {
+      "_id": "$anio_mes",
+      "suma_total_ventas": {
+        "$sum": "$total"
+      }
+    }
+  },
+  {
+    "$sort": {
+      "_id": 1
+    }
+  },
+  {
+    "$project": {
+      "mes": "$_id",
+      "suma_total_ventas": 1,
+      "_id": 0
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,785 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-02 20:11:04,785 INFO Instrucción: une la colección ventas con clientes usando cliente_id y proyecta nombre_cliente y total_venta | Colección: ventas | Resultado: [
+  {
+    "$lookup": {
+      "from": "clientes",
+      "localField": "cliente_id",
+      "foreignField": "cliente_id",
+      "as": "clientes_info"
+    }
+  },
+  {
+    "$unwind": "$clientes_info"
+  },
+  {
+    "$project": {
+      "nombre_cliente": 1,
+      "total_venta": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,785 INFO Instrucción: filtra clientes que no hayan realizado compras en el penultimo año | Colección: clientes | Resultado: [
+  {
+    "$match": {
+      "compras": {
+        "$not": {
+          "$elemMatch": {
+            "Date": {
+              "$gte": "2023-10-03",
+              "$lt": "2024-10-02"
+            }
+          }
+        }
+      }
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,785 INFO Instrucción: une la colección empleados con la colección departamentos usando el campo departamento_id | Colección: empleados | Resultado: [
+  {
+    "$lookup": {
+      "from": "departamentos",
+      "localField": "departamento_id",
+      "foreignField": "departamento_id",
+      "as": "departamentos_info"
+    }
+  },
+  {
+    "$unwind": "$departamentos_info"
+  }
+] | Correcto: True
+2025-10-02 20:11:04,786 INFO Instrucción: crear campo dateMascara que convierta el campo Date a formato %Y%m%d usando los primeros 19 caracteres | Colección: header | Resultado: [
+  {
+    "$project": {
+      "_id": 0,
+      "dateMascara": {
+        "$dateToString": {
+          "date": {
+            "$dateFromString": {
+              "dateString": {
+                "$substr": [
+                  "$Date",
+                  0,
+                  19
+                ]
+              }
+            }
+          },
+          "format": "%Y%m%d"
+        }
+      }
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,786 INFO Instrucción: crear campo reg que concatene: '1', '002', el campo Date convertido a formato %Y%m%d%H%M%S usando los primeros 19 caracteres, '00', '01', un espacio, un salto de línea, otro salto de línea | Colección: header | Resultado: [
+  {
+    "$project": {
+      "_id": 0,
+      "reg": {
+        "$concat": [
+          "'1'",
+          "'002'",
+          {
+            "$dateToString": {
+              "date": {
+                "$dateFromString": {
+                  "dateString": {
+                    "$substr": [
+                      "$Date",
+                      0,
+                      19
+                    ]
+                  }
+                }
+              },
+              "format": "%Y%m%d%H%M%S"
+            }
+          },
+          "'00'",
+          "'01'",
+          " ",
+          "\n",
+          "\n"
+        ]
+      }
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,786 INFO Instrucción: desanidar Devices | Colección: detalle | Resultado: [
+  {
+    "$unwind": "$Devices"
+  }
+] | Correcto: True
+2025-10-02 20:11:04,786 INFO Instrucción: desanidar Devices.ServicePoints | Colección: detalle | Resultado: [
+  {
+    "$unwind": "$Devices.ServicePoints"
+  }
+] | Correcto: True
+2025-10-02 20:11:04,786 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles | Colección: detalle | Resultado: [
+  {
+    "$unwind": "$Devices.ServicePoints.ShipOutCycles"
+  }
+] | Correcto: True
+2025-10-02 20:11:04,786 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles.Transactions | Colección: detalle | Resultado: [
+  {
+    "$unwind": "$Devices.ServicePoints.ShipOutCycles.Transactions"
+  }
+] | Correcto: True
+2025-10-02 20:11:04,787 INFO Instrucción: agrupar por date, deviceId, branchCode, subChannelCode, shipOutCode, currencyCode, confirmationCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total | Colección: detalle | Resultado: [
+  {
+    "$group": {
+      "_id": {
+        "Date": "$Date",
+        "Id": "$Devices.Id",
+        "branchCode": "$Devices.BranchCode",
+        "subChannelCode": "$Devices.ServicePoints.ShipOutCycles.SubChannelCode",
+        "shipOutCode": "$Devices.ServicePoints.ShipOutCycles.Code",
+        "currencyCode": "$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode"
+      },
+      "total": {
+        "$sum": "$total"
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,787 INFO Instrucción: proyectar los caracteres de la posición 2 en adelante del deviceId | Colección: detalle | Resultado: [
+  {
+    "$project": {
+      "deviceId": {
+        "$substrCP": [
+          "$_id.deviceId",
+          2,
+          {
+            "$strLenCP": "$_id.deviceId"
+          }
+        ]
+      }
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,788 INFO Instrucción: crear campo confirmationCode que sea _id.confirmationCode o ' ' si es nulo | Colección: detalle | Resultado: [
+  {
+    "$project": {
+      "confirmationcode que sea _id": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,789 INFO Instrucción: crear campo totalParteEntera que sea el primer elemento del split del total por punto | Colección: detalle | Resultado: [
+  {
+    "$project": {
+      "confirmationcode que sea _id": 1
+    }
+  },
+  {
+    "$project": {
+      "totalparteentera que sea el primer elemento del split del total por punto": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,789 INFO Instrucción: crear campo totalParteDecimal que sea el segundo elemento del split del total por punto o '00' si es nulo | Colección: detalle | Resultado: [
+  {
+    "$project": {
+      "confirmationcode que sea _id": 1
+    }
+  },
+  {
+    "$project": {
+      "totalparteentera que sea el primer elemento del split del total por punto": 1
+    }
+  },
+  {
+    "$project": {
+      "totalpartedecimal que sea el segundo elemento del split del total por punto o": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,789 INFO Instrucción: crear campo reg que sea la concatenación de '5', la condición de moneda, la fecha, '00', el deviceId con padding, el shipOutCode con padding, la condición de sucursal, el monto con padding y el código de confirmación con padding | Colección: detalle | Resultado: [
+  {
+    "$project": {
+      "confirmationcode que sea _id": 1
+    }
+  },
+  {
+    "$project": {
+      "totalparteentera que sea el primer elemento del split del total por punto": 1
+    }
+  },
+  {
+    "$project": {
+      "totalpartedecimal que sea el segundo elemento del split del total por punto o": 1
+    }
+  },
+  {
+    "$project": {
+      "reg que sea la concatenación de": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,790 INFO Instrucción: ordenar por deviceId y shipOutCode y subChannelCode y currencyCode | Colección: detalle | Resultado: [
+  {
+    "$sort": {
+      "deviceId": 1,
+      "shipOutCode": 1,
+      "subChannelCode": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,790 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles con preserveNullAndEmptyArrays | Colección: detalle2 | Resultado: [
+  {
+    "$unwind": {
+      "path": "$Devices.ServicePoints.ShipOutCycles",
+      "preserveNullAndEmptyArrays": true
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,790 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles.Transactions con preserveNullAndEmptyArrays | Colección: detalle2 | Resultado: [
+  {
+    "$unwind": {
+      "path": "$Devices.ServicePoints.ShipOutCycles.Transactions",
+      "preserveNullAndEmptyArrays": true
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,790 INFO Instrucción: agrupar por deviceId, branchCode, subChannelCode, shipOutCode, currencyCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total en soles y en dólares según el código de moneda | Colección: detalle2 | Resultado: [
+  {
+    "$group": {
+      "_id": {
+        "Id": "$Devices.Id",
+        "branchCode": "$Devices.BranchCode",
+        "subChannelCode": "$Devices.ServicePoints.ShipOutCycles.SubChannelCode",
+        "shipOutCode": "$Devices.ServicePoints.ShipOutCycles.Code",
+        "currencyCode": "$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode"
+      },
+      "totalSoles": {
+        "$sum": {
+          "$cond": [
+            {
+              "$eq": [
+                "$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode",
+                "PEN"
+              ]
+            },
+            "$Devices.ServicePoints.ShipOutCycles.Transactions.Total",
+            0
+          ]
+        }
+      },
+      "totalDolares": {
+        "$sum": {
+          "$cond": [
+            {
+              "$eq": [
+                "$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode",
+                "USD"
+              ]
+            },
+            "$Devices.ServicePoints.ShipOutCycles.Transactions.Total",
+            0
+          ]
+        }
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "totalParteEnteraSoles": {
+        "$arrayElemAt": [
+          {
+            "$split": [
+              {
+                "$toString": {
+                  "$toDecimal": "$totalSoles"
+                }
+              },
+              "."
+            ]
+          },
+          0
+        ]
+      },
+      "totalParteDecimalSoles": {
+        "$ifNull": [
+          {
+            "$concat": [
+              {
+                "$arrayElemAt": [
+                  {
+                    "$split": [
+                      {
+                        "$toString": {
+                          "$toDecimal": "$totalSoles"
+                        }
+                      },
+                      "."
+                    ]
+                  },
+                  1
+                ]
+              },
+              "0"
+            ]
+          },
+          "00"
+        ]
+      },
+      "totalParteEnteraDolares": {
+        "$arrayElemAt": [
+          {
+            "$split": [
+              {
+                "$toString": {
+                  "$toDecimal": "$totalDolares"
+                }
+              },
+              "."
+            ]
+          },
+          0
+        ]
+      },
+      "totalParteDecimalDolares": {
+        "$ifNull": [
+          {
+            "$concat": [
+              {
+                "$arrayElemAt": [
+                  {
+                    "$split": [
+                      {
+                        "$toString": {
+                          "$toDecimal": "$totalDolares"
+                        }
+                      },
+                      "."
+                    ]
+                  },
+                  1
+                ]
+              },
+              "0"
+            ]
+          },
+          "00"
+        ]
+      }
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,791 INFO Instrucción: luego agrupa todo y suma totalSoles y totalDolares, y cuenta total de registros en soles y en dólares según el código de moneda | Colección: detalle2 | Resultado: [
+  {
+    "$group": {
+      "_id": 0,
+      "totalRegSoles": {
+        "$sum": {
+          "$cond": [
+            {
+              "$eq": [
+                "$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode",
+                "PEN"
+              ]
+            },
+            1,
+            0
+          ]
+        }
+      }
+    }
+  },
+  {
+    "$project": {
+      "_id": 0,
+      "totalRegSoles": "$totalRegSoles",
+      "reg": {
+        "$concat": [
+          "9",
+          {
+            "$substr": [
+              {
+                "$concat": [
+                  "000000000000000",
+                  {
+                    "$toString": {
+                      "$add": [
+                        "$totalRegSoles",
+                        "$totalRegDolares",
+                        2
+                      ]
+                    }
+                  }
+                ]
+              },
+              -15
+            ]
+          },
+          {
+            "$substr": [
+              {
+                "$concat": [
+                  "000000000000000",
+                  {
+                    "$toString": "$totalRegSoles"
+                  }
+                ]
+              },
+              -15
+            ]
+          },
+          {
+            "$substr": [
+              {
+                "$concat": [
+                  "000000000000000",
+                  {
+                    "$toString": "$totalRegDolares"
+                  }
+                ]
+              },
+              -15
+            ]
+          },
+          {
+            "$substr": [
+              {
+                "$concat": [
+                  "000000000000000",
+                  {
+                    "$toString": "$totalParteEnteraSoles"
+                  }
+                ]
+              },
+              -15
+            ]
+          },
+          {
+            "$substr": [
+              {
+                "$concat": [
+                  "000000000000000",
+                  {
+                    "$toString": "$totalParteDecimalSoles"
+                  }
+                ]
+              },
+              -15
+            ]
+          },
+          {
+            "$substr": [
+              {
+                "$concat": [
+                  "000000000000000",
+                  {
+                    "$toString": "$totalParteEnteraDolares"
+                  }
+                ]
+              },
+              -15
+            ]
+          },
+          {
+            "$substr": [
+              {
+                "$concat": [
+                  "000000000000000",
+                  {
+                    "$toString": "$totalParteDecimalDolares"
+                  }
+                ]
+              },
+              -15
+            ]
+          }
+        ]
+      }
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,791 INFO Instrucción: crear campo totalParteEnteraSoles que sea el primer elemento del split de totalSoles por punto | Colección: detalle2 | Resultado: [
+  {
+    "$project": {
+      "confirmationcode que sea _id": 1
+    }
+  },
+  {
+    "$project": {
+      "totalparteentera que sea el primer elemento del split del total por punto": 1
+    }
+  },
+  {
+    "$project": {
+      "totalpartedecimal que sea el segundo elemento del split del total por punto o": 1
+    }
+  },
+  {
+    "$project": {
+      "reg que sea la concatenación de": 1
+    }
+  },
+  {
+    "$project": {
+      "totalparteenterasoles que sea el primer elemento del split de totalsoles por punto": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,791 INFO Instrucción: crear campo totalParteDecimalSoles que sea el segundo elemento del split de totalSoles por punto o '00' si es nulo | Colección: detalle2 | Resultado: [
+  {
+    "$project": {
+      "confirmationcode que sea _id": 1
+    }
+  },
+  {
+    "$project": {
+      "totalparteentera que sea el primer elemento del split del total por punto": 1
+    }
+  },
+  {
+    "$project": {
+      "totalpartedecimal que sea el segundo elemento del split del total por punto o": 1
+    }
+  },
+  {
+    "$project": {
+      "reg que sea la concatenación de": 1
+    }
+  },
+  {
+    "$project": {
+      "totalparteenterasoles que sea el primer elemento del split de totalsoles por punto": 1
+    }
+  },
+  {
+    "$project": {
+      "totalpartedecimalsoles que sea el segundo elemento del split de totalsoles por punto o": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:04,791 INFO Instrucción: crear campo totalParteEnteraDolares que sea el primer elemento del split de totalDolares por punto | Colección: detalle2 | Resultado: [
+  {
+    "$project": {
+      "confirmationcode que sea _id": 1
+    }
+  },
+  {
+    "$project": {
+      "totalparteentera que sea el primer elemento del split del total por punto": 1
+    }
+  },
+  {
+    "$project": {
+      "totalpartedecimal que sea el segundo elemento del split del total por punto o": 1
+    }
+  },
+  {
+    "$project": {
+      "reg que sea la concatenación de": 1
+    }
+  },
+  {
+    "$project": {
+      "totalparteenterasoles que sea el primer elemento del split de totalsoles por punto": 1
+    }
+  },
+  {
+    "$project": {
+      "totalpartedecimalsoles que sea el segundo elemento del split de totalsoles por punto o": 1
+    }
+  },
+  {
+    "$project": {
+      "totalparteenteradolares que sea el primer elemento del split de totaldolares por punto": 1
+    }
+  }
+] | Correcto: True
+2025-10-02 20:11:18,167 INFO Inicio del análisis exploratorio y generación de queries
+2025-10-02 20:11:18,167 INFO Carga y análisis de estructura del dataset completado
+2025-10-02 20:11:18,167 INFO Cobertura y diversidad de instrucciones analizadas
+2025-10-02 20:11:18,167 INFO Sinónimos normalizados y consulta traducida
+2025-10-02 20:11:18,167 INFO Evaluación semántica del agente realizada
