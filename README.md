@@ -59,7 +59,7 @@ python --version
 Ejemplo de salida esperada:
 ```
 Python 3.11.7
----
+```
 
 ## 🚀 Cómo ejecutar el pipeline
 1. **Validar datos y EDA**
