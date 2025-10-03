@@ -72,14 +72,16 @@ Python 3.11.7
 
 3. **Ejecutar scripts principales**
    - Ejecutar `src/main.py` para pruebas integradas.
-   - Para iniciar el API (FastAPI):
-  ```powershell
-     uvicorn src.main:app --reload
-   - Para iniciar la web (Streamlit):
-    ```powershell
-    streamlit run src/app.py
----
+    - Para iniciar el API (FastAPI) y la web (Streamlit), usa los siguientes comandos:
 
+      ```powershell
+      # Ejecutar API (FastAPI)
+      uvicorn src.main:app --reload
+
+      # Ejecutar la web (Streamlit)
+      streamlit run src/app.py
+      ```
+---
 ## Variables de entorno
 
 Si usas claves API u otras variables sensibles, crea un archivo `.env` en la raíz del proyecto con el siguiente formato:
@@ -90,7 +92,6 @@ AZURE_OPENAI_ENDPOINT=tu_endpoint
 AZURE_OPENAI_DEPLOYMENT=tu_deployment
 ```
 
-Consulta el README o los comentarios del código para más detalles sobre variables requeridas.
 
 También puedes abrir el notebook principal en la carpeta `notebooks/` y seguir los ejemplos para generar queries MongoDB desde lenguaje natural.
 
