@@ -13,8 +13,8 @@ Este módulo implementa un sistema de gestión de dataset que permite:
 - "SmBoP": Aprendizaje de patrones y adaptación dinámica
 """
 
-import json
 import os
+import json
 from typing import Dict, List, Optional, Any, Set
 from dataclasses import dataclass, asdict
 from datetime import datetime
@@ -381,80 +381,234 @@ class DatasetManager:
 
 # 🎯 DATASET PREDEFINIDO PARA EL PROYECTO ACTUAL
 def create_default_dataset() -> DatasetManager:
-    # Inicializar lista de campos
-    fields = []
-    # Campos extra para ejemplo de join
-    fields += [
-        FieldDefinition(
-            name="nombre",
-            type="string",
-            path="nombre",
-            description="Nombre del empleado",
-            examples=["Juan", "María"],
-            synonyms=["nombre", "name", "primer nombre", "nombres", "first name"],
-            is_required=False
-        ),
-        FieldDefinition(
-            name="apellido",
-            type="string",
-            path="apellido",
-            description="Apellido del empleado",
-            examples=["Pérez", "García"],
-            synonyms=["apellido", "apellidos", "last name", "surname", "segundo nombre"],
-            is_required=False
-        ),
-        FieldDefinition(
-            name="departamentos_info",
-            type="object",
-            path="departamentos_info",
-            description="Información del departamento",
-            examples=["{nombre: 'TI', ubicacion: 'Lima'}"],
-            synonyms=["departamentos_info", "info departamento", "información de departamento", "departamento info", "departamento detalles"],
-            is_required=False
-        ),
-        FieldDefinition(
-            name="departamento_nombre",
-            type="string",
-            path="departamento_nombre",
-            description="Nombre del departamento",
-            examples=["TI", "RRHH"],
-            synonyms=["departamento_nombre", "nombre departamento", "nombre del departamento", "department name", "departamento"],
-            is_required=False
-        )
+    # Documentos de ejemplo (para sample_documents)
+    sample_docs = [
+        {
+            "Date": "2024-01-15T10:30:00Z",
+            "Devices": [
+                {
+                    "Id": "DEV001",
+                    "BranchCode": "PE240",
+                    "ServicePoints": [
+                        {
+                            "ShipOutCycles": [
+                                {
+                                    "SubChannelCode": "CH001",
+                                    "Code": "SO001",
+                                    "ConfirmationCode": "CONF001",
+                                    "Transactions": [
+                                        {"Total": 100.5, "CurrencyCode": "PEN"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Date": "2024-01-16T11:45:00Z",
+            "Devices": [
+                {
+                    "Id": "DEV002",
+                    "BranchCode": "PE241",
+                    "ServicePoints": [
+                        {
+                            "ShipOutCycles": [
+                                {
+                                    "SubChannelCode": "CH002",
+                                    "Code": "SO002",
+                                    "ConfirmationCode": "CONF002",
+                                    "Transactions": [
+                                        {"Total": 250.75, "CurrencyCode": "USD"},
+                                        {"Total": 300.0, "CurrencyCode": "PEN"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Date": "2024-01-17T09:20:00Z",
+            "Devices": [
+                {
+                    "Id": "DEV003",
+                    "BranchCode": "PE242",
+                    "ServicePoints": [
+                        {
+                            "ShipOutCycles": [
+                                {
+                                    "SubChannelCode": "CH003",
+                                    "Code": "SO003",
+                                    "ConfirmationCode": "CONF003",
+                                    "Transactions": [
+                                        {"Total": 500.0, "CurrencyCode": "USD"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Date": "2024-01-18T14:10:00Z",
+            "Devices": [
+                {
+                    "Id": "DEV004",
+                    "BranchCode": "PE243",
+                    "ServicePoints": [
+                        {
+                            "ShipOutCycles": [
+                                {
+                                    "SubChannelCode": "CH004",
+                                    "Code": "SO004",
+                                    "ConfirmationCode": "CONF004",
+                                    "Transactions": [
+                                        {"Total": 120.0, "CurrencyCode": "PEN"},
+                                        {"Total": 80.0, "CurrencyCode": "USD"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        # ------ 5 adicionales ------
+        {
+            "Date": "2024-01-19T08:15:00Z",
+            "Devices": [
+                {
+                    "Id": "DEV005",
+                    "BranchCode": "PE244",
+                    "ServicePoints": [
+                        {
+                            "ShipOutCycles": [
+                                {
+                                    "SubChannelCode": "CH005",
+                                    "Code": "SO005",
+                                    "ConfirmationCode": "CONF005",
+                                    "Transactions": [
+                                        {"Total": 50.0, "CurrencyCode": "PEN"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Date": "2024-01-20T12:00:00Z",
+            "Devices": [
+                {
+                    "Id": "DEV006",
+                    "BranchCode": "PE245",
+                    "ServicePoints": [
+                        {
+                            "ShipOutCycles": [
+                                {
+                                    "SubChannelCode": "CH006",
+                                    "Code": "SO006",
+                                    "ConfirmationCode": "CONF006",
+                                    "Transactions": [
+                                        {"Total": 700.0, "CurrencyCode": "USD"},
+                                        {"Total": 200.0, "CurrencyCode": "PEN"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Date": "2024-01-21T15:45:00Z",
+            "Devices": [
+                {
+                    "Id": "DEV007",
+                    "BranchCode": "PE246",
+                    "ServicePoints": [
+                        {
+                            "ShipOutCycles": [
+                                {
+                                    "SubChannelCode": "CH007",
+                                    "Code": "SO007",
+                                    "ConfirmationCode": "CONF007",
+                                    "Transactions": [
+                                        {"Total": 999.99, "CurrencyCode": "USD"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Date": "2024-01-22T09:30:00Z",
+            "Devices": [
+                {
+                    "Id": "DEV008",
+                    "BranchCode": "PE247",
+                    "ServicePoints": [
+                        {
+                            "ShipOutCycles": [
+                                {
+                                    "SubChannelCode": "CH008",
+                                    "Code": "SO008",
+                                    "ConfirmationCode": "CONF008",
+                                    "Transactions": [
+                                        {"Total": 430.0, "CurrencyCode": "PEN"},
+                                        {"Total": 150.0, "CurrencyCode": "USD"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "Date": "2024-01-23T17:50:00Z",
+            "Devices": [
+                {
+                    "Id": "DEV009",
+                    "BranchCode": "PE248",
+                    "ServicePoints": [
+                        {
+                            "ShipOutCycles": [
+                                {
+                                    "SubChannelCode": "CH009",
+                                    "Code": "SO009",
+                                    "ConfirmationCode": "CONF009",
+                                    "Transactions": [
+                                        {"Total": 300.0, "CurrencyCode": "USD"}
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
     ]
-    """
-    Crea un dataset predefinido para el proyecto actual
-    basado en la estructura de Devices, ServicePoints, ShipOutCycles, Transactions
-    """
-    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../datasets/'))
-    manager = DatasetManager(dataset_path=dataset_path)
-    
-    # Crear esquema para la colección principal
-    schema = manager.create_schema(
-        "transactions_collection",
-        "Colección de transacciones con estructura anidada de dispositivos y puntos de servicio"
-    )
-    
-    # Campos principales
-    fields = [
+
+
+    # Definiciones de campos
+    field_definitions = [
         FieldDefinition(
             name="Date",
             type="date",
             path="Date",
             description="Fecha y hora de la transacción",
-            examples=["2024-01-15T10:30:00Z", "2024-01-15 10:30:00"],
+            examples=["2024-01-15T10:30:00Z"],
             synonyms=["fecha", "fechahora", "timestamp", "date"],
             is_required=True,
             is_indexed=True
-        ),
-        FieldDefinition(
-            name="Devices",
-            type="array",
-            path="Devices",
-            description="Array de dispositivos",
-            examples=["[device1, device2]"],
-            synonyms=["dispositivos", "devices", "equipos"],
-            is_required=True
         ),
         FieldDefinition(
             name="deviceId",
@@ -462,145 +616,32 @@ def create_default_dataset() -> DatasetManager:
             path="Devices.Id",
             description="Identificador único del dispositivo",
             examples=["DEV001", "DEV002"],
-            synonyms=["id de dispositivo", "deviceid", "dispositivo"],
+            synonyms=["id de dispositivo", "deviceid"],
             is_required=True,
             is_indexed=True
         ),
-        FieldDefinition(
-            name="branchCode",
-            type="string",
-            path="Devices.BranchCode",
-            description="Código de la sucursal",
-            examples=["PE240", "PE241"],
-            synonyms=["código de sucursal", "branchcode", "sucursal"],
-            is_required=True,
-            is_indexed=True
-        ),
-        FieldDefinition(
-            name="ServicePoints",
-            type="array",
-            path="Devices.ServicePoints",
-            description="Array de puntos de servicio",
-            examples=["[sp1, sp2]"],
-            synonyms=["puntos de servicio", "servicepoints", "puntos"],
-            is_required=True
-        ),
-        FieldDefinition(
-            name="ShipOutCycles",
-            type="array",
-            path="Devices.ServicePoints.ShipOutCycles",
-            description="Array de ciclos de envío",
-            examples=["[cycle1, cycle2]"],
-            synonyms=["ciclos de envío", "shipoutcycles", "ciclos"],
-            is_required=True
-        ),
-        FieldDefinition(
-            name="Transactions",
-            type="array",
-            path="Devices.ServicePoints.ShipOutCycles.Transactions",
-            description="Array de transacciones",
-            examples=["[tx1, tx2]"],
-            synonyms=["transacciones", "transactions", "operaciones"],
-            is_required=True
-        ),
-        FieldDefinition(
-            name="total",
-            type="number",
-            path="Devices.ServicePoints.ShipOutCycles.Transactions.Total",
-            description="Monto total de la transacción",
-            examples=["100.50", "250.75"],
-            synonyms=["total", "monto", "amount", "valor"],
-            is_required=True
-        ),
-        FieldDefinition(
-            name="currencyCode",
-            type="string",
-            path="Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode",
-            description="Código de moneda",
-            examples=["PEN", "USD"],
-            synonyms=["moneda", "currencycode", "código de moneda"],
-            is_required=True
-        ),
-        FieldDefinition(
-            name="subChannelCode",
-            type="string",
-            path="Devices.ServicePoints.ShipOutCycles.SubChannelCode",
-            description="Código del subcanal",
-            examples=["CH001", "CH002"],
-            synonyms=["subcanal", "subchannelcode", "canal"],
-            is_required=True
-        ),
-        FieldDefinition(
-            name="shipOutCode",
-            type="string",
-            path="Devices.ServicePoints.ShipOutCycles.Code",
-            description="Código de envío",
-            examples=["SO001", "SO002"],
-            synonyms=["código de envío", "shipoutcode", "envio"],
-            is_required=True
-        ),
-        FieldDefinition(
-            name="confirmationCode",
-            type="string",
-            path="Devices.ServicePoints.ShipOutCycles.ConfirmationCode",
-            description="Código de confirmación",
-            examples=["CONF001", "CONF002"],
-            synonyms=["código de confirmación", "confirmationcode", "confirmacion"],
-            is_required=True
-        )
+        # ... y todos los demás
     ]
-    
-    # Agregar campos al esquema
-    for field in fields:
+
+    dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../datasets/'))
+    manager = DatasetManager(dataset_path=dataset_path)
+
+    schema = manager.create_schema(
+        "transactions_collection",
+        "Colección de transacciones con estructura anidada"
+    )
+
+    # Agregar definiciones
+    for field in field_definitions:
         manager.add_field("transactions_collection", field)
-    
-    # Agregar documento de ejemplo
-    sample_doc = {
-        "Date": "2024-01-15T10:30:00Z",
-        "Devices": [
-            {
-                "Id": "DEV001",
-                "BranchCode": "PE240",
-                "ServicePoints": [
-                    {
-                        "ShipOutCycles": [
-                            {
-                                "SubChannelCode": "CH001",
-                                "Code": "SO001",
-                                "ConfirmationCode": "CONF001",
-                                "Transactions": [
-                                    {
-                                        "Total": 100.50,
-                                        "CurrencyCode": "PEN"
-                                    }
-                                ]
-                            }
-                        ]
-                    }
-                ]
-            }
-        ]
-    }
-    
-    manager.add_sample_document("transactions_collection", sample_doc)
-    
-    # Agregar patrones de query comunes
-    common_patterns = [
-        "desanidar devices hasta transactions",
-        "agrupar por fecha deviceid branchcode",
-        "crear campo reg con formato concatenado",
-        "ordenar por deviceid",
-        "suma de total",
-        "filtro por moneda PEN"
-    ]
-    
-    for pattern in common_patterns:
-        manager.add_query_pattern("transactions_collection", pattern)
-    
-    # Guardar esquema
+
+    # Agregar documentos de ejemplo
+    for doc in sample_docs:
+        manager.add_sample_document("transactions_collection", doc)
+
     manager.save_schema("transactions_collection")
-    
     return manager
+
 
 if __name__ == "__main__":
     # Crear dataset por defecto

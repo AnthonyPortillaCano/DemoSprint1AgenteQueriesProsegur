@@ -1,6 +1,6 @@
 {
   "name": "transactions_collection",
-  "description": "Colección de transacciones con estructura anidada de dispositivos y puntos de servicio",
+  "description": "Colección de transacciones con estructura anidada",
   "fields": {
     "Date": {
       "name": "Date",
@@ -8,8 +8,7 @@
       "path": "Date",
       "description": "Fecha y hora de la transacción",
       "examples": [
-        "2024-01-15T10:30:00Z",
-        "2024-01-15 10:30:00"
+        "2024-01-15T10:30:00Z"
       ],
       "synonyms": [
         "fecha",
@@ -19,23 +18,6 @@
       ],
       "is_required": true,
       "is_indexed": true,
-      "validation_rules": null
-    },
-    "Devices": {
-      "name": "Devices",
-      "type": "array",
-      "path": "Devices",
-      "description": "Array de dispositivos",
-      "examples": [
-        "[device1, device2]"
-      ],
-      "synonyms": [
-        "dispositivos",
-        "devices",
-        "equipos"
-      ],
-      "is_required": true,
-      "is_indexed": false,
       "validation_rules": null
     },
     "deviceId": {
@@ -49,171 +31,10 @@
       ],
       "synonyms": [
         "id de dispositivo",
-        "deviceid",
-        "dispositivo"
+        "deviceid"
       ],
       "is_required": true,
       "is_indexed": true,
-      "validation_rules": null
-    },
-    "branchCode": {
-      "name": "branchCode",
-      "type": "string",
-      "path": "Devices.BranchCode",
-      "description": "Código de la sucursal",
-      "examples": [
-        "PE240",
-        "PE241"
-      ],
-      "synonyms": [
-        "código de sucursal",
-        "branchcode",
-        "sucursal"
-      ],
-      "is_required": true,
-      "is_indexed": true,
-      "validation_rules": null
-    },
-    "ServicePoints": {
-      "name": "ServicePoints",
-      "type": "array",
-      "path": "Devices.ServicePoints",
-      "description": "Array de puntos de servicio",
-      "examples": [
-        "[sp1, sp2]"
-      ],
-      "synonyms": [
-        "puntos de servicio",
-        "servicepoints",
-        "puntos"
-      ],
-      "is_required": true,
-      "is_indexed": false,
-      "validation_rules": null
-    },
-    "ShipOutCycles": {
-      "name": "ShipOutCycles",
-      "type": "array",
-      "path": "Devices.ServicePoints.ShipOutCycles",
-      "description": "Array de ciclos de envío",
-      "examples": [
-        "[cycle1, cycle2]"
-      ],
-      "synonyms": [
-        "ciclos de envío",
-        "shipoutcycles",
-        "ciclos"
-      ],
-      "is_required": true,
-      "is_indexed": false,
-      "validation_rules": null
-    },
-    "Transactions": {
-      "name": "Transactions",
-      "type": "array",
-      "path": "Devices.ServicePoints.ShipOutCycles.Transactions",
-      "description": "Array de transacciones",
-      "examples": [
-        "[tx1, tx2]"
-      ],
-      "synonyms": [
-        "transacciones",
-        "transactions",
-        "operaciones"
-      ],
-      "is_required": true,
-      "is_indexed": false,
-      "validation_rules": null
-    },
-    "total": {
-      "name": "total",
-      "type": "number",
-      "path": "Devices.ServicePoints.ShipOutCycles.Transactions.Total",
-      "description": "Monto total de la transacción",
-      "examples": [
-        "100.50",
-        "250.75"
-      ],
-      "synonyms": [
-        "total",
-        "monto",
-        "amount",
-        "valor"
-      ],
-      "is_required": true,
-      "is_indexed": false,
-      "validation_rules": null
-    },
-    "currencyCode": {
-      "name": "currencyCode",
-      "type": "string",
-      "path": "Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode",
-      "description": "Código de moneda",
-      "examples": [
-        "PEN",
-        "USD"
-      ],
-      "synonyms": [
-        "moneda",
-        "currencycode",
-        "código de moneda"
-      ],
-      "is_required": true,
-      "is_indexed": false,
-      "validation_rules": null
-    },
-    "subChannelCode": {
-      "name": "subChannelCode",
-      "type": "string",
-      "path": "Devices.ServicePoints.ShipOutCycles.SubChannelCode",
-      "description": "Código del subcanal",
-      "examples": [
-        "CH001",
-        "CH002"
-      ],
-      "synonyms": [
-        "subcanal",
-        "subchannelcode",
-        "canal"
-      ],
-      "is_required": true,
-      "is_indexed": false,
-      "validation_rules": null
-    },
-    "shipOutCode": {
-      "name": "shipOutCode",
-      "type": "string",
-      "path": "Devices.ServicePoints.ShipOutCycles.Code",
-      "description": "Código de envío",
-      "examples": [
-        "SO001",
-        "SO002"
-      ],
-      "synonyms": [
-        "código de envío",
-        "shipoutcode",
-        "envio"
-      ],
-      "is_required": true,
-      "is_indexed": false,
-      "validation_rules": null
-    },
-    "confirmationCode": {
-      "name": "confirmationCode",
-      "type": "string",
-      "path": "Devices.ServicePoints.ShipOutCycles.ConfirmationCode",
-      "description": "Código de confirmación",
-      "examples": [
-        "CONF001",
-        "CONF002"
-      ],
-      "synonyms": [
-        "código de confirmación",
-        "confirmationcode",
-        "confirmacion"
-      ],
-      "is_required": true,
-      "is_indexed": false,
       "validation_rules": null
     }
   },
@@ -246,7 +67,7 @@
       ]
     },
     {
-      "Date": "2024-01-16T14:45:00Z",
+      "Date": "2024-01-16T11:45:00Z",
       "Devices": [
         {
           "Id": "DEV002",
@@ -264,7 +85,7 @@
                       "CurrencyCode": "USD"
                     },
                     {
-                      "Total": 80.0,
+                      "Total": 300.0,
                       "CurrencyCode": "PEN"
                     }
                   ]
@@ -285,13 +106,13 @@
             {
               "ShipOutCycles": [
                 {
-                  "SubChannelCode": "CH001",
+                  "SubChannelCode": "CH003",
                   "Code": "SO003",
                   "ConfirmationCode": "CONF003",
                   "Transactions": [
                     {
                       "Total": 500.0,
-                      "CurrencyCode": "EUR"
+                      "CurrencyCode": "USD"
                     }
                   ]
                 }
@@ -302,7 +123,7 @@
       ]
     },
     {
-      "Date": "2024-01-18T18:10:00Z",
+      "Date": "2024-01-18T14:10:00Z",
       "Devices": [
         {
           "Id": "DEV004",
@@ -311,16 +132,16 @@
             {
               "ShipOutCycles": [
                 {
-                  "SubChannelCode": "CH003",
+                  "SubChannelCode": "CH004",
                   "Code": "SO004",
                   "ConfirmationCode": "CONF004",
                   "Transactions": [
                     {
-                      "Total": 75.25,
+                      "Total": 120.0,
                       "CurrencyCode": "PEN"
                     },
                     {
-                      "Total": 120.0,
+                      "Total": 80.0,
                       "CurrencyCode": "USD"
                     }
                   ]
@@ -332,7 +153,7 @@
       ]
     },
     {
-      "Date": "2024-01-19T11:00:00Z",
+      "Date": "2024-01-19T08:15:00Z",
       "Devices": [
         {
           "Id": "DEV005",
@@ -341,12 +162,12 @@
             {
               "ShipOutCycles": [
                 {
-                  "SubChannelCode": "CH002",
+                  "SubChannelCode": "CH005",
                   "Code": "SO005",
                   "ConfirmationCode": "CONF005",
                   "Transactions": [
                     {
-                      "Total": 300.0,
+                      "Total": 50.0,
                       "CurrencyCode": "PEN"
                     }
                   ]
@@ -358,7 +179,7 @@
       ]
     },
     {
-      "Date": "2024-01-20T08:30:00Z",
+      "Date": "2024-01-20T12:00:00Z",
       "Devices": [
         {
           "Id": "DEV006",
@@ -367,17 +188,99 @@
             {
               "ShipOutCycles": [
                 {
-                  "SubChannelCode": "CH003",
+                  "SubChannelCode": "CH006",
                   "Code": "SO006",
                   "ConfirmationCode": "CONF006",
                   "Transactions": [
                     {
-                      "Total": 50.0,
+                      "Total": 700.0,
                       "CurrencyCode": "USD"
                     },
                     {
                       "Total": 200.0,
-                      "CurrencyCode": "EUR"
+                      "CurrencyCode": "PEN"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Date": "2024-01-21T15:45:00Z",
+      "Devices": [
+        {
+          "Id": "DEV007",
+          "BranchCode": "PE246",
+          "ServicePoints": [
+            {
+              "ShipOutCycles": [
+                {
+                  "SubChannelCode": "CH007",
+                  "Code": "SO007",
+                  "ConfirmationCode": "CONF007",
+                  "Transactions": [
+                    {
+                      "Total": 999.99,
+                      "CurrencyCode": "USD"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Date": "2024-01-22T09:30:00Z",
+      "Devices": [
+        {
+          "Id": "DEV008",
+          "BranchCode": "PE247",
+          "ServicePoints": [
+            {
+              "ShipOutCycles": [
+                {
+                  "SubChannelCode": "CH008",
+                  "Code": "SO008",
+                  "ConfirmationCode": "CONF008",
+                  "Transactions": [
+                    {
+                      "Total": 430.0,
+                      "CurrencyCode": "PEN"
+                    },
+                    {
+                      "Total": 150.0,
+                      "CurrencyCode": "USD"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "Date": "2024-01-23T17:50:00Z",
+      "Devices": [
+        {
+          "Id": "DEV009",
+          "BranchCode": "PE248",
+          "ServicePoints": [
+            {
+              "ShipOutCycles": [
+                {
+                  "SubChannelCode": "CH009",
+                  "Code": "SO009",
+                  "ConfirmationCode": "CONF009",
+                  "Transactions": [
+                    {
+                      "Total": 300.0,
+                      "CurrencyCode": "USD"
                     }
                   ]
                 }
@@ -388,14 +291,7 @@
       ]
     }
   ],
-  "query_patterns": [
-    "desanidar devices hasta transactions",
-    "agrupar por fecha deviceid branchcode",
-    "crear campo reg con formato concatenado",
-    "ordenar por deviceid",
-    "suma de total",
-    "filtro por moneda PEN"
-  ],
-  "created_at": "2025-10-02T15:29:45.111255",
-  "updated_at": "2025-10-02T15:29:45.111255"
+  "query_patterns": [],
+  "created_at": "2025-10-02T19:00:38.507613",
+  "updated_at": "2025-10-02T19:00:38.507613"
 }

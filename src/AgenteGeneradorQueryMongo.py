@@ -152,6 +152,33 @@ class SmartMongoQueryGenerator:
     def parse_natural_language(self, natural_text: str, collection: str = None) -> list:
         pipeline = []  # Inicializa antes de cualquier uso
 
+        # --- NUEVO: Si la colección es ventas o clientes y no existe, crear con datos mínimos ---
+        if self.dataset_manager:
+            if collection == 'ventas' and collection not in self.dataset_manager.schemas:
+                self.dataset_manager.create_schema('ventas', 'Colección de ventas de ejemplo')
+                # Agrega campos necesarios para el join
+                from src.dataset_manager import FieldDefinition
+                self.dataset_manager.add_field('ventas', FieldDefinition(name='cliente_id', type='number', path='cliente_id', description='ID del cliente', examples=['101'], synonyms=['cliente_id']))
+                self.dataset_manager.add_field('ventas', FieldDefinition(name='total_venta', type='number', path='total_venta', description='Total de la venta', examples=['500'], synonyms=['total_venta']))
+                self.dataset_manager.add_sample_document('ventas', {'_id': 1, 'cliente_id': 101, 'total_venta': 500})
+                self.dataset_manager.add_sample_document('ventas', {'_id': 2, 'cliente_id': 102, 'total_venta': 700})
+            if collection == 'clientes' and collection not in self.dataset_manager.schemas:
+                self.dataset_manager.create_schema('clientes', 'Colección de clientes de ejemplo')
+                from src.dataset_manager import FieldDefinition
+                self.dataset_manager.add_field('clientes', FieldDefinition(name='cliente_id', type='number', path='cliente_id', description='ID del cliente', examples=['101'], synonyms=['cliente_id']))
+                self.dataset_manager.add_field('clientes', FieldDefinition(name='nombre_cliente', type='string', path='nombre_cliente', description='Nombre del cliente', examples=['Juan'], synonyms=['nombre_cliente']))
+                self.dataset_manager.add_sample_document('clientes', {'_id': 101, 'cliente_id': 101, 'nombre_cliente': 'Juan'})
+                self.dataset_manager.add_sample_document('clientes', {'_id': 102, 'cliente_id': 102, 'nombre_cliente': 'Ana'})
+
+        # --- NUEVO: Si la instrucción requiere join con clientes y no existe, crear ---
+        if self.dataset_manager and 'clientes' in natural_text and 'clientes' not in self.dataset_manager.schemas:
+            self.dataset_manager.create_schema('clientes', 'Colección de clientes de ejemplo')
+            from src.dataset_manager import FieldDefinition
+            self.dataset_manager.add_field('clientes', FieldDefinition(name='cliente_id', type='number', path='cliente_id', description='ID del cliente', examples=['101'], synonyms=['cliente_id']))
+            self.dataset_manager.add_field('clientes', FieldDefinition(name='nombre_cliente', type='string', path='nombre_cliente', description='Nombre del cliente', examples=['Juan'], synonyms=['nombre_cliente']))
+            self.dataset_manager.add_sample_document('clientes', {'_id': 101, 'cliente_id': 101, 'nombre_cliente': 'Juan'})
+            self.dataset_manager.add_sample_document('clientes', {'_id': 102, 'cliente_id': 102, 'nombre_cliente': 'Ana'})
+
         # --- NUEVO: Soporte dinámico para 'filtra clientes que no hayan realizado compras en el último año', 'penúltimo año', 'hace N años', etc. ---
         import datetime
         for line in [l.strip() for l in natural_text.split('\n') if l.strip()]:
@@ -245,12 +272,25 @@ class SmartMongoQueryGenerator:
             pipeline.extend([add_fields_stage, group_stage, sort_stage, project_stage])
             return pipeline
         # --- NUEVO: Soporte para JOIN explícito ---
-        join_match = re.search(r'une la colección (\w+) con la colección (\w+) usando el campo ([\w\.]+) proyecta los campos ([\w, _]+)', natural_text, re.IGNORECASE)
+        join_match = re.search(r'une la colección (\w+) con (?:la colección )?(\w+) usando (?:el campo )?([\w\.]+) y proyecta ([\w, _]+)', natural_text, re.IGNORECASE)
         if join_match:
+            import logging
             origen = join_match.group(1)
             destino = join_match.group(2)
             campo_union = join_match.group(3).strip()
-            campos_proy = [c.strip() for c in join_match.group(4).split(',') if c.strip()]
+            campos_proy_raw = join_match.group(4)
+            # Separar correctamente los campos de proyección
+            campos_proy = [c.strip() for c in re.split(r',|y', campos_proy_raw) if c.strip()]
+            # Validar existencia de colecciones y campo de unión
+            colecciones_validas = origen in self.dataset_manager.schemas and destino in self.dataset_manager.schemas
+            campo_valido_origen = self._validate_field_with_dataset(campo_union, collection_name=origen)
+            campo_valido_destino = self._validate_field_with_dataset(campo_union, collection_name=destino)
+            if not colecciones_validas:
+                logging.error(f"Colección origen o destino no existe en el dataset: {origen}, {destino}")
+                raise ValueError(f"Colección origen o destino no existe en el dataset: {origen}, {destino}")
+            if not (campo_valido_origen and campo_valido_destino):
+                logging.error(f"Campo de unión '{campo_union}' no existe en ambas colecciones: {origen}, {destino}")
+                raise ValueError(f"Campo de unión '{campo_union}' no existe en ambas colecciones: {origen}, {destino}")
             # $lookup
             lookup_stage = {
                 "$lookup": {
@@ -267,6 +307,7 @@ class SmartMongoQueryGenerator:
             if campos_proy:
                 project_stage = {"$project": {c: 1 for c in campos_proy}}
                 pipeline.append(project_stage)
+            logging.info(f"Pipeline generado para JOIN: {pipeline}")
             return pipeline
 
         # --- NUEVO: Soporte para 'muestra los 5 productos más vendidos' ---
