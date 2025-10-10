@@ -4,10 +4,13 @@ from typing import Dict, List, Optional, Any, Union
 from src.dataset_manager import DatasetManager, create_default_dataset
 
 
+from src.llm_suggestion_engine import LLMSuggestionEngine
+
 class SmartMongoQueryGenerator:
-    def __init__(self, dataset_manager: Optional[DatasetManager] = None):
+    def __init__(self, dataset_manager: Optional[DatasetManager] = None, llm_engine: Optional[LLMSuggestionEngine] = None):
         # GESTOR DE DATASET (Nuevo - Contexto de Datos)
         self.dataset_manager = dataset_manager or create_default_dataset()
+        self.llm_engine = llm_engine or LLMSuggestionEngine()
         # 📅 Formatos de fecha soportados
         self.date_formats = {
             'YYYYMMDD': '%Y%m%d',
@@ -151,6 +154,19 @@ class SmartMongoQueryGenerator:
 
     def parse_natural_language(self, natural_text: str, collection: str = None) -> list:
         pipeline = []  # Inicializa antes de cualquier uso
+        # Heurística: detectar instrucción de substr en campo string
+        substr_match = re.search(r"proyectar los caracteres de la posición (\d+) en adelante del ([a-zA-Z0-9_]+)", natural_text)
+        if substr_match:
+            pos = int(substr_match.group(1)) - 1  # MongoDB es base 0
+            campo = substr_match.group(2)
+            pipeline = [
+                {
+                    "$project": {
+                        campo: {"$substrBytes": [f"${campo}", pos, {"$strLenBytes": f"${campo}"}]}
+                    }
+                }
+            ]
+            return pipeline
 
         # --- NUEVO: Si la colección es ventas o clientes y no existe, crear con datos mínimos ---
         if self.dataset_manager:
@@ -623,84 +639,103 @@ class SmartMongoQueryGenerator:
         
     # PASO 3: Procesar $project (SmBoP - Parsers Especializados)
         for line in lines:
-            if any(x in line.lower() for x in ["crear campo", "concatenando", "que sea", "que convierta", "con padding", "proyecta", "proyectar"]):
-                processed = False
-                
-                # 1. Mejorar: detectar campo destino explícito para fecha
-                dateconv_match = re.search(r'crear campo (\w+) que convierta el campo (\w+) a formato ([%\w]+) usando los primeros (\d+) caracteres', line, re.IGNORECASE)
-                if dateconv_match:
-                    campo_destino = dateconv_match.group(1)
-                    campo_origen = dateconv_match.group(2)
-                    fmt = dateconv_match.group(3)
-                    n = int(dateconv_match.group(4))
-                    expr = {
-                        "$dateToString": {
-                            "date": {
-                                "$dateFromString": {
-                                    "dateString": {"$substr": [f"${campo_origen}", 0, n]}
+            # Detectar instrucciones de concatenación dinámicamente
+            concat_patterns = [
+                r'crear campo (\w+) que concatene: (.+)',
+                r'crear campo (\w+) que sea la concatenaci[oó]n de (.+)',
+                r'crear campo (\w+) que sea la concatenaci[oó]n entre (.+)',
+                r'crear campo (\w+) concatenando (.+)',
+                r'crear campo (\w+) que concatene (.+)'
+            ]
+            matched = False
+            for pat in concat_patterns:
+                reg_match = re.search(pat, line, re.IGNORECASE)
+                if reg_match:
+                    campo_reg = reg_match.group(1)
+                    partes_raw = reg_match.group(2)
+                    # Separar por coma, pero también soportar 'y', saltos de línea, etc.
+                    partes = re.split(r',| y |\+|\band\b', partes_raw)
+                    concat_expr = []
+                    for parte in partes:
+                        parte = parte.strip()
+                        # Fecha con formato
+                        fecha_match = re.search(r'el campo (\w+) convertido a formato ([%\w]+) usando los primeros (\d+) caracteres', parte, re.IGNORECASE)
+                        if fecha_match:
+                            campo_fecha = fecha_match.group(1)
+                            fmt_fecha = fecha_match.group(2)
+                            n_fecha = int(fecha_match.group(3))
+                            fecha_expr = {
+                                "$dateToString": {
+                                    "date": {
+                                        "$dateFromString": {
+                                            "dateString": {"$substr": [f"${campo_fecha}", 0, n_fecha]}
+                                        }
+                                    },
+                                    "format": fmt_fecha
                                 }
-                            },
-                            "format": fmt
-                        }
-                    }
-                    # Buscar si ya existe un $project en el pipeline
-                    project = None
-                    for stage in pipeline:
-                        if "$project" in stage:
-                            project = stage["$project"]
-                            break
-                    if project is not None:
-                        project[campo_destino] = expr
-                    else:
-                        pipeline.append({"$project": {"_id": 0, campo_destino: expr}})
-                    processed = True
-                
-                # 2. Concatenación avanzada para reg
-                if not processed:
-                    reg_match = re.search(r'crear campo (\w+) que concatene: (.+)', line, re.IGNORECASE)
-                    if reg_match:
-                        campo_reg = reg_match.group(1)
-                        partes = [p.strip() for p in reg_match.group(2).split(',')]
-                        concat_expr = []
-                        for parte in partes:
-                            # Fecha con formato
-                            fecha_match = re.search(r'el campo (\w+) convertido a formato ([%\w]+) usando los primeros (\d+) caracteres', parte, re.IGNORECASE)
-                            if fecha_match:
-                                campo_fecha = fecha_match.group(1)
-                                fmt_fecha = fecha_match.group(2)
-                                n_fecha = int(fecha_match.group(3))
-                                fecha_expr = {
-                                    "$dateToString": {
-                                        "date": {
-                                            "$dateFromString": {
-                                                "dateString": {"$substr": [f"${campo_fecha}", 0, n_fecha]}
-                                            }
-                                        },
-                                        "format": fmt_fecha
-                                    }
-                                }
-                                concat_expr.append(fecha_expr)
-                            elif parte.lower() == 'un salto de línea':
-                                concat_expr.append("\n")
-                            elif parte.lower() == 'otro salto de línea' or parte.lower() == 'otro salto de línea.':
-                                concat_expr.append("\n")
-                            elif parte.lower() == 'un espacio':
-                                concat_expr.append(" ")
-                            elif parte.startswith('"') and parte.endswith('"'):
-                                concat_expr.append(parte.strip('"'))
+                            }
+                            concat_expr.append(fecha_expr)
+                        elif parte.lower() in ['un salto de línea', 'otro salto de línea', 'otro salto de línea.']:
+                            concat_expr.append("\n")
+                        elif parte.lower() in ['un espacio', 'un espacio.']:
+                            concat_expr.append(" ")
+                        elif parte.startswith('"') and parte.endswith('"'):
+                            concat_expr.append(parte.strip('"'))
+                        elif parte.startswith("'") and parte.endswith("'"):
+                            concat_expr.append(parte.strip("'"))
+                        elif re.match(r'^[0-9]+$', parte):
+                            concat_expr.append(parte)
+                        else:
+                            # Si parece un campo, anteponer $
+                            if not parte.startswith('$') and parte.isidentifier():
+                                concat_expr.append(f"${parte}")
                             else:
                                 concat_expr.append(parte)
-                        # Agregar a $project existente o crear uno nuevo
-                        project = None
-                        for stage in pipeline:
-                            if "$project" in stage:
-                                project = stage["$project"]
-                                break
-                        if project is not None:
-                            project[campo_reg] = {"$concat": concat_expr}
-                        else:
-                            pipeline.append({"$project": {"_id": 0, campo_reg: {"$concat": concat_expr}}})
-                        processed = True
+                    # Usar $addFields si ya hay un $project, si no, $project
+                    add_to = None
+                    for stage in pipeline:
+                        if "$addFields" in stage:
+                            add_to = stage["$addFields"]
+                            break
+                        if "$project" in stage:
+                            add_to = stage["$project"]
+                            break
+                    if add_to is not None:
+                        add_to[campo_reg] = {"$concat": concat_expr}
+                    else:
+                        pipeline.append({"$addFields": {campo_reg: {"$concat": concat_expr}}})
+                    matched = True
+                    break
+            if matched:
+                continue
+            # 1. Mejorar: detectar campo destino explícito para fecha (mantener lógica existente)
+            dateconv_match = re.search(r'crear campo (\w+) que convierta el campo (\w+) a formato ([%\w]+) usando los primeros (\d+) caracteres', line, re.IGNORECASE)
+            if dateconv_match:
+                campo_destino = dateconv_match.group(1)
+                campo_origen = dateconv_match.group(2)
+                fmt = dateconv_match.group(3)
+                n = int(dateconv_match.group(4))
+                expr = {
+                    "$dateToString": {
+                        "date": {
+                            "$dateFromString": {
+                                "dateString": {"$substr": [f"${campo_origen}", 0, n]}
+                            }
+                        },
+                        "format": fmt
+                    }
+                }
+                # Buscar si ya existe un $project en el pipeline
+                project = None
+                for stage in pipeline:
+                    if "$project" in stage:
+                        project = stage["$project"]
+                        break
+                if project is not None:
+                    project[campo_destino] = expr
+                else:
+                    pipeline.append({"$project": {"_id": 0, campo_destino: expr}})
+                continue
                 # Detectar frases de substrCP avanzadas (varias variantes)
                 if not processed:
                     substrcp_patterns = [
@@ -1104,6 +1139,7 @@ class SmartMongoQueryGenerator:
 
     def generate_query(self, collection: str, natural_text: str) -> str:
 
+
         # 🧠 Aprendizaje de patrones (SmBoP)
         if self.dataset_manager:
             # Validar campos mencionados en la query
@@ -1176,10 +1212,35 @@ class SmartMongoQueryGenerator:
             self._validate_pipeline()
             pipeline = self.pipeline
 
-        # Si aún así el pipeline está vacío, devolver una consulta mínima para evitar query vacía
+        # Si aún así el pipeline está vacío, fallback a Azure OpenAI LLM
         if not pipeline:
-            pipeline = [{"$match": {}}]
+            if self.llm_engine:
+                suggestion = self.llm_engine.suggest_query_improvement(natural_text)
+                return json.dumps({"error": "No se pudo generar la query automáticamente.", "llm_suggestion": suggestion}, ensure_ascii=False)
+            else:
+                pipeline = [{"$match": {}}]
 
+        # --- LIMPIEZA DE CAMPOS Y FILTRO DE OPERADORES VÁLIDOS ---
+        OPERADORES_VALIDOS = [
+            "$match", "$group", "$project", "$sort", "$unwind", "$lookup", "$addFields",
+            "$limit", "$skip", "$count", "$set", "$unset", "$replaceRoot", "$replaceWith", "$out", "$merge"
+        ]
+
+        def limpiar_campos(obj):
+            if isinstance(obj, dict):
+                return {k.replace(' ', '_'): limpiar_campos(v) for k, v in obj.items()}
+            elif isinstance(obj, list):
+                return [limpiar_campos(item) for item in obj]
+            else:
+                return obj
+
+        def es_operador_valido(etapa):
+            if isinstance(etapa, dict) and len(etapa) == 1:
+                return list(etapa.keys())[0] in OPERADORES_VALIDOS
+            return False
+
+        pipeline = limpiar_campos(pipeline)
+        pipeline = [etapa for etapa in pipeline if es_operador_valido(etapa)]
 
         # Generar query final como string JSON del pipeline
         generated_query = json.dumps(pipeline, indent=2, ensure_ascii=False)
