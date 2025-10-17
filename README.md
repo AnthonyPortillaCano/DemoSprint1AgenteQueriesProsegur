@@ -1,5 +1,3 @@
-
-
 # Agente Inteligente para la Generación Automática de Queries MongoDB a partir de Lenguaje Natural
 
 Proyecto de investigación (Maestría en IA – UNI) para entrenar y probar un agente inteligente capaz de transformar instrucciones en lenguaje natural en queries MongoDB, incluyendo soporte para joins dinámicos y análisis de datos.
@@ -31,7 +29,7 @@ datasets/
  └── transactions_collection.json   # datos de ejemplo para queries y EDA
 logs/
 notebooks/
- ├── EDA_Semana3.ipynb              # Análisis exploratorio y validación de datos
+ ├── EDA_Semana5.ipynb              # Análisis exploratorio y validación de datos
  └── AgenteInteligente_QueriesMongoDB.ipynb   # Pruebas del agente generador de queries
 src/
  ├── AgenteGeneradorQueryMongo.py   # agente inteligente para generación de queries
@@ -63,7 +61,7 @@ Python 3.11.7
 
 ## 🚀 Cómo ejecutar el pipeline
 1. **Validar datos y EDA**
-   - Abrir y ejecutar el notebook `notebooks/EDA_Semana3.ipynb` para explorar los datos y verificar ejemplos.
+  - Abrir y ejecutar el notebook `notebooks/EDA_Semana5.ipynb` para explorar los datos y verificar ejemplos.
 
 2. **Probar agente generador de queries**
    - Abrir y ejecutar el notebook `notebooks/AgenteInteligente_QueriesMongoDB.ipynb`.
@@ -97,7 +95,7 @@ También puedes abrir el notebook principal en la carpeta `notebooks/` y seguir 
 
 
 ## 📈 Resultados esperados (Semana 3)
-- **EDA inicial** en `notebooks/EDA_Semana3.ipynb`.
+- **EDA inicial** en `notebooks/EDA_Semana5.ipynb`.
 - **Agente genera queries MongoDB** a partir de instrucciones en lenguaje natural.
 - **Validación de joins y proyecciones** en queries generadas.
 - **Logs de resultados** → `logs/`.
@@ -108,3 +106,37 @@ También puedes abrir el notebook principal en la carpeta `notebooks/` y seguir 
 ## 📌 Roadmap
 - [x] Semana 2 → Estructura de datos + EDA + Logging
 - [x] Semana 3 → Agente generador de queries + Validación avanzada
+
+---
+
+# Avances Sprint 2: Agente NL→MongoDB y EDA
+
+## Mejoras implementadas
+- Soporte para instrucciones complejas: desanidar, substring, concatenaciones, joins y agregaciones avanzadas.
+- Feature engineering: generación automática de campos derivados (fechas formateadas, partes enteras/decimales, campo complejo `reg`).
+- Validación y normalización de campos y operadores, usando sinónimos y rutas anidadas.
+- Fallback inteligente: integración de modelos LLM (Azure OpenAI 4.1 y OpenRouter) para sugerencias y resolución de casos no cubiertos por reglas.
+- Pruebas automáticas y validación de casos límite en notebooks.
+- Visualizaciones EDA: heatmaps, análisis de cobertura y resumen ejecutivo de hallazgos.
+- Documentación de recomendaciones y conclusiones accionables para robustecer el agente.
+
+## Ejemplo de queries generadas
+- Filtrado avanzado:
+  ```json
+  { "$match": { "Devices.ServicePoints.ShipOutCycles.Transactions.Total": { "$gt": 3000.0 } } }
+  ```
+- Join automático:
+  ```json
+  { "$lookup": { "from": "departamentos", "localField": "departamento_id", "foreignField": "departamento_id", "as": "departamentos_info" } }
+  { "$unwind": "$departamentos_info" }
+  ```
+- Agregación temporal:
+  ```json
+  { "$addFields": { "anio_mes": { "$substr": ["$Date", 0, 7] } } }
+  { "$group": { "_id": "$anio_mes", "suma_total_ventas": { "$sum": "$total" } } }
+  ```
+
+## Próximos pasos
+- Ampliar el dataset con más ejemplos de instrucciones minoritarias.
+- Fortalecer la lógica de fallback y monitoreo de drift.
+- Documentar y analizar casos de error para mejorar la cobertura.
