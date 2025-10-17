@@ -158,6 +158,36 @@ class SmartMongoQueryGenerator:
         pipeline = []  # Inicializa antes de cualquier uso
         # --- Proyectar los primeros N caracteres de un campo ---
         for line in lines:
+            # Caso especial: crear campo montoRedondeado que sea el total redondeado a dos decimales
+            match_redondeo = re.search(r'crear campo (montoRedondeado|monto_redondeado) que sea el total redondeado a dos decimales', line, re.IGNORECASE)
+            if match_redondeo:
+                project_stage = {
+                    "$project": {
+                        "montoRedondeado": {"$round": ["$Total", 2]},
+                        "_id": 0
+                    }
+                }
+                print(f"[DEBUG] Pipeline generado: {project_stage}")
+                return [project_stage]
+            # Caso especial: filtra registros donde el campo Total sea nulo o menor a 0
+            match_nulo_menor = re.search(r'filtra registros donde el campo ([\w\.]+) sea nulo o menor a 0', line, re.IGNORECASE)
+            if match_nulo_menor:
+                raw_field = match_nulo_menor.group(1).strip()
+                field = self._normalize_field(raw_field, collection=collection)
+                # Fuerza la ruta anidada si es 'total' o 'Total' y la colección es transacciones
+                if (raw_field.lower() == 'total' or field.lower() == 'total') and collection and collection.lower().startswith('transac'):
+                    field = 'Devices.ServicePoints.ShipOutCycles.Transactions.Total'
+                field_path = field
+                match_stage = {
+                    "$match": {
+                        "$or": [
+                            {field_path: {"$eq": None}},
+                            {field_path: {"$lt": 0}}
+                        ]
+                    }
+                }
+                print(f"[DEBUG] Pipeline generado: {match_stage}")
+                return [match_stage]
             match_substr = re.search(r"proyecta los primeros (\d+) caracteres del campo ([\w_]+)", line, re.IGNORECASE)
             if match_substr:
                 n = int(match_substr.group(1))
