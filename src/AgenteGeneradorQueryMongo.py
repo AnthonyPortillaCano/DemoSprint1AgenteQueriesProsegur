@@ -153,6 +153,18 @@ class SmartMongoQueryGenerator:
         return expanded
 
     def parse_natural_language(self, natural_text: str, collection: str = None) -> list:
+        # Definir 'lines' al inicio para evitar UnboundLocalError
+        lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
+        pipeline = []  # Inicializa antes de cualquier uso
+        # --- Proyectar los primeros N caracteres de un campo ---
+        for line in lines:
+            match_substr = re.search(r"proyecta los primeros (\d+) caracteres del campo ([\w_]+)", line, re.IGNORECASE)
+            if match_substr:
+                n = int(match_substr.group(1))
+                campo = match_substr.group(2)
+                project_stage = {"$project": {f"{campo}_substr": {"$substr": [f"${campo}", 0, n]}, "_id": 0}}
+                pipeline.append(project_stage)
+                return pipeline
         pipeline = []  # Inicializa antes de cualquier uso
         # Heurística: detectar instrucción de substr en campo string
         substr_match = re.search(r"proyectar los caracteres de la posición (\d+) en adelante del ([a-zA-Z0-9_]+)", natural_text)
@@ -351,6 +363,38 @@ class SmartMongoQueryGenerator:
             return pipeline
 
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
+
+        # --- Feature engineering: crear campo fechaFormateada que convierta el campo Date a formato ISO ---
+        for line in lines:
+            match_fecha = re.search(r"crear campo (fechaformateada|fecha_formateada) que convierta el campo (date|fecha) a formato (iso|%Y-%m-%dT%H:%M:%S|%Y-%m-%d)", line, re.IGNORECASE)
+            if match_fecha:
+                campo_destino = match_fecha.group(1)
+                campo_origen = match_fecha.group(2)
+                formato = match_fecha.group(3)
+                if formato.lower() == "iso":
+                    formato = "%Y-%m-%dT%H:%M:%S"
+                expr = {
+                    "$dateToString": {
+                        "date": {
+                            "$dateFromString": {
+                                "dateString": f"${campo_origen}"
+                            }
+                        },
+                        "format": formato
+                    }
+                }
+                project_stage = {"$project": {campo_destino: expr, "_id": 0}}
+                pipeline.append(project_stage)
+                return pipeline
+
+        # --- Filtro por caracteres especiales en nombre de producto ---
+        for line in lines:
+            match_regex = re.search(r"filtra registros cuyo nombre de producto contenga caracteres especiales", line, re.IGNORECASE)
+            if match_regex:
+                regex = r"[^a-zA-Z0-9\s]"
+                match_stage = {"$match": {"nombre_producto": {"$regex": regex}}}
+                pipeline.append(match_stage)
+                return pipeline
 
         # --- NUEVO: Soporte para filtro por rango de fechas ---
         for line in lines:
