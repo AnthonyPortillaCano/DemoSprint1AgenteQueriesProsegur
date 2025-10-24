@@ -7,6 +7,24 @@ from src.dataset_manager import DatasetManager, create_default_dataset
 from src.llm_suggestion_engine import LLMSuggestionEngine
 
 class SmartMongoQueryGenerator:
+    def _normalize_collection(self, collection: str) -> str:
+        """Normaliza el nombre de la colección usando sinónimos y heurísticas."""
+        if not collection:
+            return collection
+        collection_norm = collection.lower().replace(' ', '').replace('_', '')
+        # Diccionario de sinónimos de colecciones
+        collection_synonyms = {
+            'transacciones': 'transactions_collection',
+            'transactions': 'transactions_collection',
+            'transaction': 'transactions_collection',
+            'movimientos': 'transactions_collection',
+            # Agrega más sinónimos si es necesario
+        }
+        for syn, canonical in collection_synonyms.items():
+            if collection_norm == syn:
+                return canonical
+        # Si no hay coincidencia, retorna el original
+        return collection
     def __init__(self, dataset_manager: Optional[DatasetManager] = None, llm_engine: Optional[LLMSuggestionEngine] = None):
         # GESTOR DE DATASET (Nuevo - Contexto de Datos)
         self.dataset_manager = dataset_manager or create_default_dataset()
@@ -156,6 +174,9 @@ class SmartMongoQueryGenerator:
         # Definir 'lines' al inicio para evitar UnboundLocalError
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
         pipeline = []  # Inicializa antes de cualquier uso
+        # Normalizar nombre de colección si es necesario
+        if collection:
+            collection = self._normalize_collection(collection)
         # --- Proyectar los primeros N caracteres de un campo ---
         for line in lines:
             # Caso especial: crear campo montoRedondeado que sea el total redondeado a dos decimales
@@ -539,38 +560,51 @@ class SmartMongoQueryGenerator:
                 pipeline.append({'$sort': {field_norm: sort_dir}})
                 # No break: permite otros sorts si hay más de uno
 
-        # --- NUEVO: Soporte para filtros tipo 'filtra registros cuyo <campo> sea mayor/menor/igual a <valor>' ---
+        # --- MEJORADO: Soporte para filtros tipo 'filtra registros cuyo <campo> sea mayor/menor/igual/mayor o igual/menor o igual a <valor>' ---
         for line in lines:
-                # Ejemplo: filtra registros cuyo Total sea mayor a 3000, filtra registros cuyo Total sea menor a 5000
-            filter_match = re.search(r'filtra registros? cuyo ([\w\. ]+) sea (mayor|menor|igual) a ([\d\.]+)', line, re.IGNORECASE)
+            # Usar LLM para decidir operador y valor óptimos
+            filter_match = re.search(r'filtra (registros|transacciones)?\s*cu?yo ([\w\. ]+) sea (mayor o igual|menor o igual|mayor|menor|igual) a ([\d\.]+)', line, re.IGNORECASE)
             if filter_match:
-                raw_field = filter_match.group(1).strip()
-                op = filter_match.group(2).lower()
-                value = filter_match.group(3)
-                # Normaliza el campo usando sinónimos y rutas, pasando el nombre de la colección recibido
+                tipo = filter_match.group(1)
+                raw_field = filter_match.group(2).strip()
+                op = filter_match.group(3).lower()
+                value = filter_match.group(4)
                 field = self._normalize_field(raw_field, collection=collection)
-                # Fuerza la ruta anidada si es 'total' o 'Total' y la colección es transacciones
-                if (raw_field.lower() == 'total' or field.lower() == 'total') and collection and collection.lower().startswith('transac'):
+                if not self._validate_field_with_dataset(field, collection):
+                    print(f"[WARN] El campo '{field}' no existe en el esquema de la colección '{collection}'.")
+                    continue
+                if (raw_field.lower() == 'total' or field.lower() == 'total') and (collection and collection.lower().startswith('transac') or (tipo and 'transaccion' in tipo.lower())):
                     field = 'Devices.ServicePoints.ShipOutCycles.Transactions.Total'
                 field_path = field
-                if op == 'mayor':
-                    mongo_op = "$gt"
-                elif op == 'menor':
-                    mongo_op = "$lt"
-                elif op == 'igual':
-                    mongo_op = "$eq"
-                else:
-                    mongo_op = "$eq"
+                # LLM: pedir sugerencia de operador y valor
+                llm_prompt = f"Dada la instrucción: '{line}', ¿qué operador MongoDB ($gt, $gte, $lt, $lte, $eq) y valor usarías para el campo '{field_path}'? Responde en formato JSON: {{'operator': '...', 'value': ...}}"
                 try:
-                    value_num = float(value)
-                    value_final = value_num
+                    llm_response = self.llm_engine.suggest_operator_and_value(llm_prompt)
+                    mongo_op = llm_response.get('operator', '$eq')
+                    value_final = llm_response.get('value', value)
                 except Exception:
-                    value_final = value
+                    # Fallback a lógica tradicional
+                    if op == 'mayor':
+                        mongo_op = "$gt"
+                    elif op == 'mayor o igual':
+                        mongo_op = "$gte"
+                    elif op == 'menor':
+                        mongo_op = "$lt"
+                    elif op == 'menor o igual':
+                        mongo_op = "$lte"
+                    elif op == 'igual':
+                        mongo_op = "$eq"
+                    else:
+                        mongo_op = "$eq"
+                    try:
+                        value_num = float(value)
+                        value_final = round(value_num, 2)
+                    except Exception:
+                        value_final = value
                 match_stage = {"$match": {field_path: {mongo_op: value_final}}}
                 print(f"[DEBUG] Pipeline generado: {match_stage}")
-                # Retornar solo el filtro, sin stages extra
                 return [match_stage]
-        # --- FIN NUEVO ---
+        # --- FIN MEJORADO ---
         # PASO 0: Detectar instrucciones de join y agregar $lookup solo si se solicita explícitamente
         join_detected = False
         for line in lines:

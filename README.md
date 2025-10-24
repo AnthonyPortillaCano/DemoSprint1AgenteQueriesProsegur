@@ -140,3 +140,16 @@ También puedes abrir el notebook principal en la carpeta `notebooks/` y seguir 
 - Ampliar el dataset con más ejemplos de instrucciones minoritarias.
 - Fortalecer la lógica de fallback y monitoreo de drift.
 - Documentar y analizar casos de error para mejorar la cobertura.
+
+---
+
+## 🧪 Experimentos y Validación (Sprint 2)
+
+- Se añadió el notebook `EDA_Semana6.ipynb` con ejecución automática de experimentos y visualización comparativa de variantes del agente NL→MongoDB.
+- Los experimentos evalúan el desempeño (accuracy y latencia) del baseline y variantes, mostrando resultados en tablas y gráficos.
+- Todos los agentes y variantes alcanzan accuracy perfecto en los ejemplos evaluados, con latencia mínima.
+- El flujo experimental permite comparar fácilmente mejoras y justificar la adopción de variantes.
+
+**Ejemplo de visualización:**
+- Gráfico de barras y líneas para comparar accuracy y latencia entre baseline, variantes y agente real.
+- Tabla resumen con métricas principales.

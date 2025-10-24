@@ -75,11 +75,16 @@ class DatasetManager:
         self._load_existing_datasets()
     
     def _load_existing_datasets(self):
-        """Carga datasets existentes desde archivos JSON"""
+        """Carga datasets existentes desde archivos JSON que sean esquemas válidos (con clave 'fields')."""
         for filename in os.listdir(self.dataset_path):
             if filename.endswith('.json'):
                 collection_name = filename.replace('.json', '')
-                self.load_schema(collection_name)
+                try:
+                    schema = self.load_schema(collection_name, skip_invalid=True)
+                    if schema is None:
+                        continue
+                except Exception:
+                    continue
     
     def create_schema(self, collection_name: str, description: str = "") -> CollectionSchema:
         """
@@ -151,28 +156,24 @@ class DatasetManager:
     def validate_field(self, collection_name: str, field_path: str) -> bool:
         """
         Valida si un campo existe en el esquema
-        
         Args:
             collection_name: Nombre de la colección
             field_path: Ruta del campo
-            
         Returns:
             True si el campo existe, False en caso contrario
         """
         if collection_name not in self.schemas:
             return False
-        
         schema = self.schemas[collection_name]
-        
         # Buscar campo exacto
         if field_path in schema.fields:
             return True
-        
-        # Buscar por sinónimos
+        # Buscar por sinónimos y por path
         for field_name, field_def in schema.fields.items():
             if field_path in field_def.synonyms:
                 return True
-        
+            if hasattr(field_def, 'path') and field_path == field_def.path:
+                return True
         return False
     
     def get_field_info(self, collection_name: str, field_path: str) -> Optional[FieldDefinition]:
@@ -301,29 +302,30 @@ class DatasetManager:
         with open(filepath, 'w', encoding='utf-8') as f:
             json.dump(schema_dict, f, indent=2, ensure_ascii=False)
     
-    def load_schema(self, collection_name: str) -> Optional[CollectionSchema]:
+    def load_schema(self, collection_name: str, skip_invalid: bool = False) -> Optional[CollectionSchema]:
         """
         Carga un esquema desde archivo JSON
         
         Args:
             collection_name: Nombre de la colección
-            
         Returns:
-            Esquema cargado o None si no existe
+            Esquema cargado o None si no existe o si no es válido (cuando skip_invalid=True)
         """
         filepath = os.path.join(self.dataset_path, f"{collection_name}.json")
-        
         if not os.path.exists(filepath):
             return None
-        
         with open(filepath, 'r', encoding='utf-8') as f:
             schema_dict = json.load(f)
-        
+        # Validar que sea un esquema (debe tener 'fields')
+        if 'fields' not in schema_dict:
+            if skip_invalid:
+                return None
+            else:
+                raise KeyError(f"El archivo {filepath} no contiene la clave 'fields' y no es un esquema válido.")
         # Convertir campos
         fields = {}
         for field_name, field_data in schema_dict['fields'].items():
             fields[field_name] = FieldDefinition(**field_data)
-        
         # Crear esquema
         schema = CollectionSchema(
             name=schema_dict['name'],
@@ -335,7 +337,6 @@ class DatasetManager:
             created_at=datetime.fromisoformat(schema_dict['created_at']),
             updated_at=datetime.fromisoformat(schema_dict['updated_at'])
         )
-        
         self.schemas[collection_name] = schema
         return schema
     
@@ -616,11 +617,100 @@ def create_default_dataset() -> DatasetManager:
             path="Devices.Id",
             description="Identificador único del dispositivo",
             examples=["DEV001", "DEV002"],
-            synonyms=["id de dispositivo", "deviceid"],
+            synonyms=["id de dispositivo", "deviceid", "id", "devices.id"],
             is_required=True,
             is_indexed=True
         ),
-        # ... y todos los demás
+        FieldDefinition(
+            name="BranchCode",
+            type="string",
+            path="Devices.BranchCode",
+            description="Código de sucursal del dispositivo",
+            examples=["PE240", "PE241"],
+            synonyms=["branchcode", "código de sucursal", "devices.branchcode"],
+            is_required=False,
+            is_indexed=False
+        ),
+        FieldDefinition(
+            name="ServicePoints",
+            type="array",
+            path="Devices.ServicePoints",
+            description="Puntos de servicio del dispositivo",
+            examples=["[{...}]"] ,
+            synonyms=["servicepoints", "puntos de servicio", "devices.servicepoints"],
+            is_required=False,
+            is_indexed=False
+        ),
+        FieldDefinition(
+            name="ShipOutCycles",
+            type="array",
+            path="Devices.ServicePoints.ShipOutCycles",
+            description="Ciclos de envío del punto de servicio",
+            examples=["[{...}]"] ,
+            synonyms=["shipoutcycles", "ciclos de envío", "devices.servicepoints.shipoutcycles"],
+            is_required=False,
+            is_indexed=False
+        ),
+        FieldDefinition(
+            name="Transactions",
+            type="array",
+            path="Devices.ServicePoints.ShipOutCycles.Transactions",
+            description="Transacciones del ciclo de envío",
+            examples=["[{...}]"] ,
+            synonyms=["transactions", "transacciones", "devices.servicepoints.shipoutcycles.transactions"],
+            is_required=False,
+            is_indexed=False
+        ),
+        FieldDefinition(
+            name="Total",
+            type="number",
+            path="Devices.ServicePoints.ShipOutCycles.Transactions.Total",
+            description="Monto total de la transacción",
+            examples=["100.5", "250.75"],
+            synonyms=["total", "monto", "amount", "devices.servicepoints.shipoutcycles.transactions.total"],
+            is_required=False,
+            is_indexed=False
+        ),
+        FieldDefinition(
+            name="CurrencyCode",
+            type="string",
+            path="Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode",
+            description="Código de moneda de la transacción",
+            examples=["PEN", "USD"],
+            synonyms=["currencycode", "moneda", "devices.servicepoints.shipoutcycles.transactions.currencycode"],
+            is_required=False,
+            is_indexed=False
+        ),
+        FieldDefinition(
+            name="SubChannelCode",
+            type="string",
+            path="Devices.ServicePoints.ShipOutCycles.SubChannelCode",
+            description="Código de subcanal del ciclo de envío",
+            examples=["CH001", "CH002"],
+            synonyms=["subchannelcode", "subcanal", "devices.servicepoints.shipoutcycles.subchannelcode"],
+            is_required=False,
+            is_indexed=False
+        ),
+        FieldDefinition(
+            name="Code",
+            type="string",
+            path="Devices.ServicePoints.ShipOutCycles.Code",
+            description="Código del ciclo de envío",
+            examples=["SO001", "SO002"],
+            synonyms=["code", "código", "devices.servicepoints.shipoutcycles.code"],
+            is_required=False,
+            is_indexed=False
+        ),
+        FieldDefinition(
+            name="ConfirmationCode",
+            type="string",
+            path="Devices.ServicePoints.ShipOutCycles.ConfirmationCode",
+            description="Código de confirmación del ciclo de envío",
+            examples=["CONF001", "CONF002"],
+            synonyms=["confirmationcode", "código de confirmación", "devices.servicepoints.shipoutcycles.confirmationcode"],
+            is_required=False,
+            is_indexed=False
+        ),
     ]
 
     dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../datasets/'))

@@ -31,10 +31,172 @@
       ],
       "synonyms": [
         "id de dispositivo",
-        "deviceid"
+        "deviceid",
+        "id",
+        "devices.id"
       ],
       "is_required": true,
       "is_indexed": true,
+      "validation_rules": null
+    },
+    "BranchCode": {
+      "name": "BranchCode",
+      "type": "string",
+      "path": "Devices.BranchCode",
+      "description": "Código de sucursal del dispositivo",
+      "examples": [
+        "PE240",
+        "PE241"
+      ],
+      "synonyms": [
+        "branchcode",
+        "código de sucursal",
+        "devices.branchcode"
+      ],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "ServicePoints": {
+      "name": "ServicePoints",
+      "type": "array",
+      "path": "Devices.ServicePoints",
+      "description": "Puntos de servicio del dispositivo",
+      "examples": [
+        "[{...}]"
+      ],
+      "synonyms": [
+        "servicepoints",
+        "puntos de servicio",
+        "devices.servicepoints"
+      ],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "ShipOutCycles": {
+      "name": "ShipOutCycles",
+      "type": "array",
+      "path": "Devices.ServicePoints.ShipOutCycles",
+      "description": "Ciclos de envío del punto de servicio",
+      "examples": [
+        "[{...}]"
+      ],
+      "synonyms": [
+        "shipoutcycles",
+        "ciclos de envío",
+        "devices.servicepoints.shipoutcycles"
+      ],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "Transactions": {
+      "name": "Transactions",
+      "type": "array",
+      "path": "Devices.ServicePoints.ShipOutCycles.Transactions",
+      "description": "Transacciones del ciclo de envío",
+      "examples": [
+        "[{...}]"
+      ],
+      "synonyms": [
+        "transactions",
+        "transacciones",
+        "devices.servicepoints.shipoutcycles.transactions"
+      ],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "Total": {
+      "name": "Total",
+      "type": "number",
+      "path": "Devices.ServicePoints.ShipOutCycles.Transactions.Total",
+      "description": "Monto total de la transacción",
+      "examples": [
+        "100.5",
+        "250.75"
+      ],
+      "synonyms": [
+        "total",
+        "monto",
+        "amount",
+        "devices.servicepoints.shipoutcycles.transactions.total"
+      ],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "CurrencyCode": {
+      "name": "CurrencyCode",
+      "type": "string",
+      "path": "Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode",
+      "description": "Código de moneda de la transacción",
+      "examples": [
+        "PEN",
+        "USD"
+      ],
+      "synonyms": [
+        "currencycode",
+        "moneda",
+        "devices.servicepoints.shipoutcycles.transactions.currencycode"
+      ],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "SubChannelCode": {
+      "name": "SubChannelCode",
+      "type": "string",
+      "path": "Devices.ServicePoints.ShipOutCycles.SubChannelCode",
+      "description": "Código de subcanal del ciclo de envío",
+      "examples": [
+        "CH001",
+        "CH002"
+      ],
+      "synonyms": [
+        "subchannelcode",
+        "subcanal",
+        "devices.servicepoints.shipoutcycles.subchannelcode"
+      ],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "Code": {
+      "name": "Code",
+      "type": "string",
+      "path": "Devices.ServicePoints.ShipOutCycles.Code",
+      "description": "Código del ciclo de envío",
+      "examples": [
+        "SO001",
+        "SO002"
+      ],
+      "synonyms": [
+        "code",
+        "código",
+        "devices.servicepoints.shipoutcycles.code"
+      ],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "ConfirmationCode": {
+      "name": "ConfirmationCode",
+      "type": "string",
+      "path": "Devices.ServicePoints.ShipOutCycles.ConfirmationCode",
+      "description": "Código de confirmación del ciclo de envío",
+      "examples": [
+        "CONF001",
+        "CONF002"
+      ],
+      "synonyms": [
+        "confirmationcode",
+        "código de confirmación",
+        "devices.servicepoints.shipoutcycles.confirmationcode"
+      ],
+      "is_required": false,
+      "is_indexed": false,
       "validation_rules": null
     }
   },
@@ -292,6 +454,6 @@
     }
   ],
   "query_patterns": [],
-  "created_at": "2025-10-16T20:25:27.328046",
-  "updated_at": "2025-10-16T20:25:27.328046"
+  "created_at": "2025-10-23T19:12:12.323145",
+  "updated_at": "2025-10-23T19:12:12.323145"
 }
