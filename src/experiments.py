@@ -65,7 +65,7 @@ def build_eval_pairs(data: List[Dict], num_examples: int = 10, seed: int = 123) 
 
     Nota: Genera consultas de filtrado sobre el campo Transactions.Total que
     existe en los documentos de ejemplo. Estos pares son sintéticos y sirven
-    para demostrar el workflow pedido por el profesor.
+    para demostrar el workflow pedido.
     """
     rng = random.Random(seed)
     totals = []
