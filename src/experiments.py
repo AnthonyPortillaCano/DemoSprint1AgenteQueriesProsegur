@@ -1,3 +1,33 @@
+# Ejemplos manuales extraídos del notebook AgenteInteligente_QueriesMongoDB.ipynb
+MANUAL_EXAMPLES = [
+    # (instrucción NL, colección)
+    ("filtra registros cuyo Total sea mayor a 3000", "transacciones"),
+    ("muestra los nombres y apellidos de los empleados del departamento de ventas", "empleados"),
+    ("cuenta cuántos empleados hay en cada departamento", "empleados"),
+    ("ordena los empleados por fecha de ingreso descendente", "empleados"),
+    ("busca empleados cuyo nombre comience con 'A'", "empleados"),
+    ("filtra transacciones realizadas entre 2023-01-01 y 2023-01-31", "transacciones"),
+    ("muestra los 5 productos más vendidos", "productos"),
+    ("agrega la suma total de ventas por mes", "ventas"),
+    ("une la colección ventas con clientes usando cliente_id y proyecta nombre_cliente y total_venta", "ventas"),
+    ("filtra clientes que no hayan realizado compras en el penultimo año", "clientes"),
+    # Casos avanzados
+    ("crear campo dateMascara que convierta el campo Date a formato %Y%m%d usando los primeros 19 caracteres", "header"),
+    ("desanidar Devices; desanidar Devices.ServicePoints; desanidar Devices.ServicePoints.ShipOutCycles; desanidar Devices.ServicePoints.ShipOutCycles.Transactions; agrupar por date, deviceId, branchCode, subChannelCode, shipOutCode, currencyCode, confirmationCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total; proyectar los caracteres de la posición 2 en adelante del deviceId; crear campo confirmationCode que sea _id.confirmationCode o ' ' si es nulo; crear campo totalParteEntera que sea el primer elemento del split del total por punto; crear campo totalParteDecimal que sea el segundo elemento del split del total por punto o '00' si es nulo; crear campo reg que sea la concatenación de '5', la condición de moneda, la fecha, '00', el deviceId con padding, el shipOutCode con padding, la condición de sucursal, el monto con padding y el código de confirmación con padding; ordenar por deviceId y shipOutCode y subChannelCode y currencyCode", "detalle"),
+    ("desanidar Devices; desanidar Devices.ServicePoints; desanidar Devices.ServicePoints.ShipOutCycles con preserveNullAndEmptyArrays; desanidar Devices.ServicePoints.ShipOutCycles.Transactions con preserveNullAndEmptyArrays; agrupar por deviceId, branchCode, subChannelCode, shipOutCode, currencyCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total en soles y en dólares según el código de moneda; luego agrupa todo y suma totalSoles y totalDolares, y cuenta total de registros en soles y en dólares según el código de moneda; crear campo totalParteEnteraSoles que sea el primer elemento del split de totalSoles por punto; crear campo totalParteDecimalSoles que sea el segundo elemento del split de totalSoles por punto o '00' si es nulo; crear campo totalParteEnteraDolares que sea el primer elemento del split de totalDolares por punto; crear campo totalParteDecimalDolares que sea el segundo elemento del split de totalDolares por punto o '00' si es nulo; crear campo reg que concatene: '9', el total de registros con padding, el total de registros en soles con padding, el total de registros en dólares con padding, el monto en soles con padding, el monto en dólares con padding, un salto de línea, otro salto de línea", "detalle2")
+]
+
+def build_manual_eval_pairs():
+    """Construye pares (NL, colección) para evaluación manual del agente real usando los primeros 100 ejemplos del dataset."""
+    dataset = load_dataset()
+    # Suponiendo que cada ejemplo tiene una instrucción NL y el nombre de la colección
+    # Si el dataset no tiene estos campos, ajusta la extracción
+    eval_pairs = []
+    for item in dataset[:100]:
+        nl = item.get('instruccion', '') or item.get('instruction', '') or str(item)
+        coleccion = item.get('coleccion', '') or item.get('collection', '') or 'transactions_collection'
+        eval_pairs.append((nl, coleccion))
+    return eval_pairs
 """
 Experimentos reproducibles para comparar baseline vs 2 variantes
 
@@ -265,7 +295,7 @@ def main():
     splits = create_fixed_splits(data, seed=2025)
     print('Splits creados y guardados en', SPLITS_FILE)
 
-    pairs = build_eval_pairs(data, num_examples=30, seed=2025)
+    pairs = build_eval_pairs(data, num_examples=100, seed=2025)
 
     configs = {
         'baseline': {'operator': '$gt', 'projection': None},

@@ -1,10 +1,10 @@
 import re
 import json
 from typing import Dict, List, Optional, Any, Union
-from src.dataset_manager import DatasetManager, create_default_dataset
+from dataset_manager import DatasetManager, create_default_dataset
 
 
-from src.llm_suggestion_engine import LLMSuggestionEngine
+from llm_suggestion_engine import LLMSuggestionEngine
 
 class SmartMongoQueryGenerator:
     def _normalize_collection(self, collection: str) -> str:
@@ -236,14 +236,14 @@ class SmartMongoQueryGenerator:
             if collection == 'ventas' and collection not in self.dataset_manager.schemas:
                 self.dataset_manager.create_schema('ventas', 'Colección de ventas de ejemplo')
                 # Agrega campos necesarios para el join
-                from src.dataset_manager import FieldDefinition
+                from dataset_manager import FieldDefinition
                 self.dataset_manager.add_field('ventas', FieldDefinition(name='cliente_id', type='number', path='cliente_id', description='ID del cliente', examples=['101'], synonyms=['cliente_id']))
                 self.dataset_manager.add_field('ventas', FieldDefinition(name='total_venta', type='number', path='total_venta', description='Total de la venta', examples=['500'], synonyms=['total_venta']))
                 self.dataset_manager.add_sample_document('ventas', {'_id': 1, 'cliente_id': 101, 'total_venta': 500})
                 self.dataset_manager.add_sample_document('ventas', {'_id': 2, 'cliente_id': 102, 'total_venta': 700})
             if collection == 'clientes' and collection not in self.dataset_manager.schemas:
                 self.dataset_manager.create_schema('clientes', 'Colección de clientes de ejemplo')
-                from src.dataset_manager import FieldDefinition
+                from dataset_manager import FieldDefinition
                 self.dataset_manager.add_field('clientes', FieldDefinition(name='cliente_id', type='number', path='cliente_id', description='ID del cliente', examples=['101'], synonyms=['cliente_id']))
                 self.dataset_manager.add_field('clientes', FieldDefinition(name='nombre_cliente', type='string', path='nombre_cliente', description='Nombre del cliente', examples=['Juan'], synonyms=['nombre_cliente']))
                 self.dataset_manager.add_sample_document('clientes', {'_id': 101, 'cliente_id': 101, 'nombre_cliente': 'Juan'})
@@ -252,7 +252,7 @@ class SmartMongoQueryGenerator:
         # --- NUEVO: Si la instrucción requiere join con clientes y no existe, crear ---
         if self.dataset_manager and 'clientes' in natural_text and 'clientes' not in self.dataset_manager.schemas:
             self.dataset_manager.create_schema('clientes', 'Colección de clientes de ejemplo')
-            from src.dataset_manager import FieldDefinition
+            from dataset_manager import FieldDefinition
             self.dataset_manager.add_field('clientes', FieldDefinition(name='cliente_id', type='number', path='cliente_id', description='ID del cliente', examples=['101'], synonyms=['cliente_id']))
             self.dataset_manager.add_field('clientes', FieldDefinition(name='nombre_cliente', type='string', path='nombre_cliente', description='Nombre del cliente', examples=['Juan'], synonyms=['nombre_cliente']))
             self.dataset_manager.add_sample_document('clientes', {'_id': 101, 'cliente_id': 101, 'nombre_cliente': 'Juan'})
@@ -1321,11 +1321,27 @@ class SmartMongoQueryGenerator:
             pipeline = self.pipeline
 
         # Si aún así el pipeline está vacío, fallback a Azure OpenAI LLM
-        if not pipeline:
-            if self.llm_engine:
-                suggestion = self.llm_engine.suggest_query_improvement(natural_text)
-                return json.dumps({"error": "No se pudo generar la query automáticamente.", "llm_suggestion": suggestion}, ensure_ascii=False)
-            else:
+            if not pipeline:
+                campos_detectados = self._extract_fields_from_text(natural_text) if hasattr(self, '_extract_fields_from_text') else []
+                campos_schema = []
+                if self.dataset_manager and hasattr(self.dataset_manager, 'schemas') and collection in self.dataset_manager.schemas:
+                    schema_obj = self.dataset_manager.schemas[collection]
+                    if hasattr(schema_obj, 'fields'):
+                        campos_schema = schema_obj.fields
+                campos_schema_nombres = [f.name if hasattr(f, 'name') else f for f in campos_schema]
+                ejemplo_query = f'db.getCollection("{collection}").aggregate([{{"$group": {{"_id": "$region", "totalVentas": {{"$sum": "$total_venta"}}}}}}])'
+                error_msg = {
+                    "error": "No se pudo generar la query automáticamente. Revisa los campos mencionados.",
+                    "campos_detectados": campos_detectados,
+                    "campos_esperados": campos_schema_nombres,
+                    "ejemplo_query": ejemplo_query
+                }
+                if self.llm_engine:
+                    suggestion = self.llm_engine.suggest_query_improvement(natural_text)
+                    error_msg["llm_suggestion"] = suggestion
+                return json.dumps(error_msg, ensure_ascii=False)
+            # fallback si no hay LLM ni schema
+            if not pipeline:
                 pipeline = [{"$match": {}}]
 
         # --- LIMPIEZA DE CAMPOS Y FILTRO DE OPERADORES VÁLIDOS ---

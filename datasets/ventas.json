@@ -1,0 +1,26 @@
+{
+    "name": "ventas",
+    "description": "Colección de ventas de ejemplo",
+    "fields": {
+      "cliente_id": {
+        "name": "cliente_id",
+        "type": "number",
+        "path": "cliente_id",
+        "description": "ID del cliente",
+        "examples": ["101"],
+        "synonyms": ["cliente_id"]
+      },
+      "total_venta": {
+        "name": "total_venta",
+        "type": "number",
+        "path": "total_venta",
+        "description": "Total de la venta",
+        "examples": ["500"],
+        "synonyms": ["total_venta"]
+      }
+    },
+    "sample_documents": [
+      {"_id": 1, "cliente_id": 101, "total_venta": 500},
+      {"_id": 2, "cliente_id": 102, "total_venta": 700}
+    ]
+  }

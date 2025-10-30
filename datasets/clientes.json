@@ -1,0 +1,26 @@
+{
+    "name": "clientes",
+    "description": "Colección de clientes de ejemplo",
+    "fields": {
+      "cliente_id": {
+        "name": "cliente_id",
+        "type": "number",
+        "path": "cliente_id",
+        "description": "ID del cliente",
+        "examples": ["101"],
+        "synonyms": ["cliente_id"]
+      },
+      "nombre_cliente": {
+        "name": "nombre_cliente",
+        "type": "string",
+        "path": "nombre_cliente",
+        "description": "Nombre del cliente",
+        "examples": ["Juan"],
+        "synonyms": ["nombre_cliente"]
+      }
+    },
+    "sample_documents": [
+      {"_id": 101, "cliente_id": 101, "nombre_cliente": "Juan"},
+      {"_id": 102, "cliente_id": 102, "nombre_cliente": "Ana"}
+    ]
+  }
