@@ -17,7 +17,7 @@
     },
     "real_agent": {
       "accuracy": 1.0,
-      "mean_latency_ms": 0.11069297790527344,
+      "mean_latency_ms": 0.1353001594543457,
       "examples": 100
     }
   },
@@ -43,7 +43,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -66,7 +66,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -89,7 +89,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -112,7 +112,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -135,7 +135,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -158,7 +158,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -181,7 +181,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -204,7 +204,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -227,7 +227,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -250,7 +250,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -273,7 +273,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -296,7 +296,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -319,7 +319,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -342,7 +342,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -365,7 +365,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -388,7 +388,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -411,7 +411,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -434,7 +434,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -457,7 +457,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -480,7 +480,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -503,7 +503,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -526,7 +526,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -549,7 +549,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -572,7 +572,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -595,7 +595,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -618,7 +618,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -641,7 +641,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -664,7 +664,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -687,7 +687,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -710,7 +710,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -733,7 +733,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -756,7 +756,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -779,7 +779,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -802,7 +802,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -825,7 +825,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -848,7 +848,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -871,7 +871,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -894,7 +894,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -917,7 +917,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -940,7 +940,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -963,7 +963,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -986,7 +986,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1009,7 +1009,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1032,7 +1032,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1055,7 +1055,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1078,7 +1078,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1101,7 +1101,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1124,7 +1124,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1147,7 +1147,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1170,7 +1170,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1193,7 +1193,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1216,7 +1216,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1239,7 +1239,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1262,7 +1262,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1285,7 +1285,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1308,7 +1308,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1331,7 +1331,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1354,7 +1354,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1377,7 +1377,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1400,7 +1400,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1423,7 +1423,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1446,7 +1446,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1469,7 +1469,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1492,7 +1492,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1515,7 +1515,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1538,7 +1538,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1561,7 +1561,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1584,7 +1584,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1607,7 +1607,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1630,7 +1630,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1653,7 +1653,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1676,7 +1676,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1699,7 +1699,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1722,7 +1722,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1745,7 +1745,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1768,7 +1768,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1791,7 +1791,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1814,7 +1814,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1837,7 +1837,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1860,7 +1860,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1883,7 +1883,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1906,7 +1906,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1929,7 +1929,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1952,7 +1952,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1975,7 +1975,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -1998,7 +1998,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2021,7 +2021,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2044,7 +2044,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2067,7 +2067,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2090,7 +2090,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2113,7 +2113,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2136,7 +2136,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2159,7 +2159,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2182,7 +2182,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2205,7 +2205,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2228,7 +2228,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2251,7 +2251,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2274,7 +2274,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2297,7 +2297,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "baseline",
@@ -2320,7 +2320,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2343,7 +2343,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2366,7 +2366,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2389,7 +2389,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2412,7 +2412,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2435,7 +2435,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2458,7 +2458,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2481,7 +2481,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2504,7 +2504,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2527,7 +2527,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2550,7 +2550,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2573,7 +2573,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2596,7 +2596,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2619,7 +2619,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2642,7 +2642,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2665,7 +2665,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2688,7 +2688,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2711,7 +2711,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2734,7 +2734,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2757,7 +2757,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2780,7 +2780,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2803,7 +2803,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2826,7 +2826,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2849,7 +2849,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2872,7 +2872,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2895,7 +2895,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2918,7 +2918,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2941,7 +2941,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2964,7 +2964,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -2987,7 +2987,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3010,7 +3010,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3033,7 +3033,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3056,7 +3056,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3079,7 +3079,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3102,7 +3102,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3125,7 +3125,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3148,7 +3148,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3171,7 +3171,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3194,7 +3194,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3217,7 +3217,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3240,7 +3240,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3263,7 +3263,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3286,7 +3286,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3309,7 +3309,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3332,7 +3332,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3355,7 +3355,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3378,7 +3378,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3401,7 +3401,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3424,7 +3424,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3447,7 +3447,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3470,7 +3470,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3493,7 +3493,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3516,7 +3516,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3539,7 +3539,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3562,7 +3562,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3585,7 +3585,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.185183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3608,7 +3608,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3631,7 +3631,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3654,7 +3654,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3677,7 +3677,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3700,7 +3700,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3723,7 +3723,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3746,7 +3746,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3769,7 +3769,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3792,7 +3792,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3815,7 +3815,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3838,7 +3838,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3861,7 +3861,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3884,7 +3884,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3907,7 +3907,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3930,7 +3930,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3953,7 +3953,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3976,7 +3976,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -3999,7 +3999,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4022,7 +4022,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4045,7 +4045,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4068,7 +4068,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4091,7 +4091,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4114,7 +4114,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4137,7 +4137,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4160,7 +4160,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4183,7 +4183,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4206,7 +4206,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4229,7 +4229,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4252,7 +4252,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4275,7 +4275,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4298,7 +4298,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4321,7 +4321,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4344,7 +4344,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4367,7 +4367,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4390,7 +4390,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4413,7 +4413,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4436,7 +4436,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4459,7 +4459,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4482,7 +4482,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4505,7 +4505,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4528,7 +4528,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4551,7 +4551,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4574,7 +4574,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4597,7 +4597,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant1_operator_gte",
@@ -4620,7 +4620,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4646,7 +4646,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4672,7 +4672,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4698,7 +4698,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4724,7 +4724,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4750,7 +4750,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4776,7 +4776,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4802,7 +4802,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4828,7 +4828,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4854,7 +4854,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4880,7 +4880,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4906,7 +4906,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4932,7 +4932,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4958,7 +4958,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -4984,7 +4984,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5010,7 +5010,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5036,7 +5036,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5062,7 +5062,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5088,7 +5088,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5114,7 +5114,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5140,7 +5140,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5166,7 +5166,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5192,7 +5192,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5218,7 +5218,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5244,7 +5244,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5270,7 +5270,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5296,7 +5296,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5322,7 +5322,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5348,7 +5348,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5374,7 +5374,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5400,7 +5400,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5426,7 +5426,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5452,7 +5452,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5478,7 +5478,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5504,7 +5504,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5530,7 +5530,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5556,7 +5556,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5582,7 +5582,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5608,7 +5608,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5634,7 +5634,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5660,7 +5660,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5686,7 +5686,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5712,7 +5712,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5738,7 +5738,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5764,7 +5764,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5790,7 +5790,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5816,7 +5816,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5842,7 +5842,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5868,7 +5868,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5894,7 +5894,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5920,7 +5920,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5946,7 +5946,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5972,7 +5972,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -5998,7 +5998,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6024,7 +6024,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6050,7 +6050,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6076,7 +6076,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6102,7 +6102,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6128,7 +6128,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6154,7 +6154,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6180,7 +6180,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6206,7 +6206,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6232,7 +6232,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6258,7 +6258,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6284,7 +6284,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6310,7 +6310,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6336,7 +6336,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6362,7 +6362,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6388,7 +6388,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6414,7 +6414,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6440,7 +6440,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6466,7 +6466,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6492,7 +6492,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6518,7 +6518,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6544,7 +6544,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6570,7 +6570,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6596,7 +6596,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6622,7 +6622,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6648,7 +6648,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6674,7 +6674,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6700,7 +6700,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6726,7 +6726,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6752,7 +6752,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6778,7 +6778,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6804,7 +6804,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6830,7 +6830,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6856,7 +6856,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6882,7 +6882,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6908,7 +6908,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6934,7 +6934,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6960,7 +6960,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -6986,7 +6986,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -7012,7 +7012,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -7038,7 +7038,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -7064,59 +7064,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
-    },
-    {
-      "variant": "variant2_with_projection",
-      "nl": "filtra transacciones cuyo Total sea mayor a 120",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 120.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 120.0
-            }
-          }
-        },
-        "projection": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": 1
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
-    },
-    {
-      "variant": "variant2_with_projection",
-      "nl": "filtra transacciones cuyo Total sea mayor a 80",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 80.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 80.0
-            }
-          }
-        },
-        "projection": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": 1
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -7142,7 +7090,7 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
@@ -7168,1465 +7116,10 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "variant2_with_projection",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        },
-        "projection": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": 1
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
-    },
-    {
-      "variant": "variant2_with_projection",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        },
-        "projection": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": 1
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 430",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 430.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 430.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.186183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 700",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 700.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 700.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.9989738464355469,
-      "ts": "2025-10-29T19:03:38.187182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.187182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.187182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 100",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 100.5
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 100.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.187182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 80",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 80.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 80.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.187182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 50",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 50.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 50.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.187182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 999",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 999.99
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 999.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.187182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 500",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 500.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 500.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.187182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.187182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 50",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 50.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 50.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.9996891021728516,
-      "ts": "2025-10-29T19:03:38.188182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 50",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 50.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 50.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.188182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.188182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 100",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 100.5
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 100.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.188182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.188182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.188182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 500",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 500.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 500.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.188182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 50",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 50.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 50.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.188182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.9999275207519531,
-      "ts": "2025-10-29T19:03:38.189182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 50",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 50.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 50.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.189182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 100",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 100.5
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 100.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.189182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 999",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 999.99
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 999.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.189182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 100",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 100.5
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 100.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.189182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.189182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.189182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.189182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.189182"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 500",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 500.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 500.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 1.0080337524414062,
-      "ts": "2025-10-29T19:03:38.190190"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.190190"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 500",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 500.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 500.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.190190"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 100",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 100.5
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 100.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.190190"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 150",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 150.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 150.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.190190"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 500",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 500.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 500.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.190190"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.190190"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.190190"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 430",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 430.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 430.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.9925365447998047,
-      "ts": "2025-10-29T19:03:38.191183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 50",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 50.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 50.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.191183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 700",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 700.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 700.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.191183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 80",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 80.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 80.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.191183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.191183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 100",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 100.5
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 100.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.191183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 999",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 999.99
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 999.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.191183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.191183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.191183"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 500",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 500.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 500.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 1.0628700256347656,
-      "ts": "2025-10-29T19:03:38.192245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 500",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 500.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 500.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.192245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.192245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 500",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 500.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 500.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.192245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 999",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 999.99
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 999.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.192245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 100",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 100.5
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 100.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.192245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.192245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.192245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.192245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.9999275207519531,
-      "ts": "2025-10-29T19:03:38.193245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 80",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 80.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 80.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.193245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 250",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 250.75
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 250.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.193245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 999",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 999.99
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 999.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.193245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 700",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 700.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 700.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.193245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.193245"
-    },
-    {
-      "variant": "real_agent",
       "nl": "filtra transacciones cuyo Total sea mayor a 120",
       "expected": {
         "$match": {
@@ -8642,106 +7135,17 @@
               "$gt": 120.0
             }
           }
+        },
+        "projection": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": 1
         }
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.193245"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 700",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 700.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 700.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.193245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 999",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 999.99
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 999.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.193245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.9999275207519531,
-      "ts": "2025-10-29T19:03:38.194245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 150",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 150.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 150.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.194245"
-    },
-    {
-      "variant": "real_agent",
+      "variant": "variant2_with_projection",
       "nl": "filtra transacciones cuyo Total sea mayor a 80",
       "expected": {
         "$match": {
@@ -8757,198 +7161,17 @@
               "$gt": 80.0
             }
           }
+        },
+        "projection": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": 1
         }
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.194245"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.194245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 700",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 700.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 700.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.194245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.194245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.194245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.194245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 700",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 700.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 700.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.194245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 50",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 50.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 50.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 1.0008811950683594,
-      "ts": "2025-10-29T19:03:38.195246"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 150",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 150.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 150.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.195246"
-    },
-    {
-      "variant": "real_agent",
+      "variant": "variant2_with_projection",
       "nl": "filtra transacciones cuyo Total sea mayor a 250",
       "expected": {
         "$match": {
@@ -8964,19 +7187,22 @@
               "$gt": 250.0
             }
           }
+        },
+        "projection": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": 1
         }
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.195246"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "variant": "variant2_with_projection",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
       "expected": {
         "$match": {
           "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
+            "$gt": 200.0
           }
         }
       },
@@ -8984,290 +7210,17 @@
         "query": {
           "$match": {
             "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
+              "$gt": 200.0
             }
           }
+        },
+        "projection": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": 1
         }
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.195246"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 150",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 150.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 150.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.195246"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 999",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 999.99
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 999.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.195246"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 50",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 50.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 50.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.195246"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 430",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 430.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 430.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.195246"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 999",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 999.99
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 999.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.195246"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 100",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 100.5
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 100.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.9989738464355469,
-      "ts": "2025-10-29T19:03:38.196245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.196245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 80",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 80.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 80.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.196245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 999",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 999.99
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 999.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.196245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 500",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 500.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 500.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.196245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 80",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 80.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 80.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.196245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 500",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 500.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 500.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.196245"
+      "ts": "2025-10-30T19:13:29.245279"
     },
     {
       "variant": "real_agent",
@@ -9284,197 +7237,13 @@
           "$match": {
             "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
               "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.196245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 200",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 200.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 200.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.196245"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 999",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 999.99
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 999.0
             }
           }
         }
       },
       "exact_match": true,
       "latency_ms": 1.0075569152832031,
-      "ts": "2025-10-29T19:03:38.197253"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 120",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 120.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 120.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.197253"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 300",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 300.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 300.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.197253"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 120",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 120.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 120.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.197253"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 80",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 80.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 80.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.197253"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 120",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 120.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 120.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.197253"
-    },
-    {
-      "variant": "real_agent",
-      "nl": "filtra transacciones cuyo Total sea mayor a 80",
-      "expected": {
-        "$match": {
-          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-            "$gt": 80.0
-          }
-        }
-      },
-      "generated": {
-        "query": {
-          "$match": {
-            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
-              "$gt": 80.0
-            }
-          }
-        }
-      },
-      "exact_match": true,
-      "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.197253"
+      "ts": "2025-10-30T19:13:29.246286"
     },
     {
       "variant": "real_agent",
@@ -9497,7 +7266,76 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.197253"
+      "ts": "2025-10-30T19:13:29.246286"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 430",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 430.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 430.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.246286"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 700",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 700.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 700.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.5044937133789062,
+      "ts": "2025-10-30T19:13:29.246791"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.246791"
     },
     {
       "variant": "real_agent",
@@ -9520,7 +7358,2169 @@
       },
       "exact_match": true,
       "latency_ms": 0.0,
-      "ts": "2025-10-29T19:03:38.197253"
+      "ts": "2025-10-30T19:13:29.246791"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 100",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 100.5
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 100.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.246791"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 80",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 80.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 80.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.246791"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 50",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 50.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 50.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.246791"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 999",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 999.99
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 999.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.246791"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 500",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 500.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 500.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.246791"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.246791"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 50",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 50.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 50.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 1.0030269622802734,
+      "ts": "2025-10-30T19:13:29.247794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 50",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 50.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 50.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.247794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.247794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 100",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 100.5
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 100.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.247794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.247794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.247794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 500",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 500.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 500.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.247794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 50",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 50.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 50.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.247794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 1.0023117065429688,
+      "ts": "2025-10-30T19:13:29.248796"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 50",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 50.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 50.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.248796"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 100",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 100.5
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 100.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.248796"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 999",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 999.99
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 999.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.248796"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 100",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 100.5
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 100.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.248796"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 200.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 200.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.248796"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 200.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 200.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.248796"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.9982585906982422,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 500",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 500.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 500.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 500",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 500.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 500.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 100",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 100.5
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 100.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 150",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 150.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 150.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 500",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 500.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 500.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 430",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 430.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 430.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.249794"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 50",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 50.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 50.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 1.5032291412353516,
+      "ts": "2025-10-30T19:13:29.251298"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 700",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 700.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 700.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.251298"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 80",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 80.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 80.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.251298"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 200.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 200.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.251298"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 100",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 100.5
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 100.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.251298"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 999",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 999.99
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 999.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.251298"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.251298"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 200.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 200.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.251298"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 500",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 500.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 500.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 1.0046958923339844,
+      "ts": "2025-10-30T19:13:29.252302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 500",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 500.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 500.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.252302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.252302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 500",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 500.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 500.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.252302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 999",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 999.99
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 999.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.252302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 100",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 100.5
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 100.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.252302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.252302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.252302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.9999275207519531,
+      "ts": "2025-10-30T19:13:29.253302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 200.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 200.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.253302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 80",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 80.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 80.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.253302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.253302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 999",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 999.99
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 999.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.253302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 700",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 700.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 700.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.253302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.253302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 120",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 120.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 120.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.253302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 700",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 700.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 700.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.253302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 999",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 999.99
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 999.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.9992122650146484,
+      "ts": "2025-10-30T19:13:29.254301"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.254301"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 150",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 150.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 150.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.254301"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 80",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 80.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 80.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.254301"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 200.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 200.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.254301"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 700",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 700.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 700.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.254301"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 200.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 200.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.254301"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.254301"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.254301"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 700",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 700.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 700.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 1.0001659393310547,
+      "ts": "2025-10-30T19:13:29.255302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 50",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 50.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 50.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.255302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 150",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 150.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 150.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.255302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.255302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.255302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 150",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 150.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 150.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.255302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 999",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 999.99
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 999.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.255302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 50",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 50.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 50.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.255302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 430",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 430.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 430.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 1.0006427764892578,
+      "ts": "2025-10-30T19:13:29.256302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 999",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 999.99
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 999.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.256302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 100",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 100.5
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 100.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.256302"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.5025863647460938,
+      "ts": "2025-10-30T19:13:29.256805"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 80",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 80.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 80.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.256805"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 999",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 999.99
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 999.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.256805"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 500",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 500.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 500.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.256805"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 80",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 80.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 80.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.256805"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 500",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 500.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 500.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.256805"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 200.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 200.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.256805"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 200.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 200.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.256805"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 999",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 999.99
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 999.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 1.0027885437011719,
+      "ts": "2025-10-30T19:13:29.257808"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 120",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 120.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 120.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.257808"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 300",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 300.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 300.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.257808"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 120",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 120.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 120.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.257808"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 80",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 80.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 80.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.257808"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 120",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 120.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 120.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 1.001119613647461,
+      "ts": "2025-10-30T19:13:29.258809"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 80",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 80.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 80.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.258809"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 250",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 250.75
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 250.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.258809"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "filtra transacciones cuyo Total sea mayor a 200",
+      "expected": {
+        "$match": {
+          "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+            "$gt": 200.0
+          }
+        }
+      },
+      "generated": {
+        "query": {
+          "$match": {
+            "Devices.ServicePoints.ShipOutCycles.Transactions.Total": {
+              "$gt": 200.0
+            }
+          }
+        }
+      },
+      "exact_match": true,
+      "latency_ms": 0.0,
+      "ts": "2025-10-30T19:13:29.258809"
     }
   ]
 }

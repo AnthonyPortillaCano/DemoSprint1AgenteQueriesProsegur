@@ -2859,3 +2859,322 @@
 2025-10-29 18:47:33,638 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
 2025-10-29 18:47:33,688 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
 2025-10-29 18:47:33,693 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 18:07:36,543 INFO Instrucción: une la colección empleados con la colección departamentos usando el campo departamento_id proyecta los campos nombre, apellido, departamentos_info, departamento_nombre | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,544 INFO Instrucción: filtra registros cuyo Total sea mayor a 3000 | Colección: transacciones | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,544 INFO Instrucción: muestra los nombres y apellidos de los empleados del departamento de ventas | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,545 INFO Instrucción: cuenta cuántos empleados hay en cada departamento | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,546 INFO Instrucción: ordena los empleados por fecha de ingreso descendente | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,547 INFO Instrucción: busca empleados cuyo nombre comience con 'A' | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,548 INFO Instrucción: filtra transacciones realizadas entre 2023-01-01 y 2023-01-31 | Colección: transacciones | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,549 INFO Instrucción: muestra los 5 productos más vendidos | Colección: productos | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,549 INFO Instrucción: agrega la suma total de ventas por mes | Colección: ventas | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,550 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 18:07:36,550 INFO Instrucción: une la colección ventas con clientes usando cliente_id y proyecta nombre_cliente y total_venta | Colección: ventas | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,551 INFO Instrucción: filtra clientes que no hayan realizado compras en el penultimo año | Colección: clientes | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,552 INFO Instrucción: une la colección empleados con la colección departamentos usando el campo departamento_id | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,553 INFO Instrucción: crear campo dateMascara que convierta el campo Date a formato %Y%m%d usando los primeros 19 caracteres | Colección: header | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,554 INFO Instrucción: crear campo reg que concatene: '1', '002', el campo Date convertido a formato %Y%m%d%H%M%S usando los primeros 19 caracteres, '00', '01', un espacio, un salto de línea, otro salto de línea | Colección: header | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,554 INFO Instrucción: desanidar Devices | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,555 INFO Instrucción: desanidar Devices.ServicePoints | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,556 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,556 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles.Transactions | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,557 INFO Instrucción: agrupar por date, deviceId, branchCode, subChannelCode, shipOutCode, currencyCode, confirmationCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,558 INFO Instrucción: proyectar los caracteres de la posición 2 en adelante del deviceId | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,559 INFO Instrucción: crear campo confirmationCode que sea _id.confirmationCode o ' ' si es nulo | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,559 INFO Instrucción: crear campo totalParteEntera que sea el primer elemento del split del total por punto | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,560 INFO Instrucción: crear campo totalParteDecimal que sea el segundo elemento del split del total por punto o '00' si es nulo | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,561 INFO Instrucción: crear campo reg que sea la concatenación de '5', la condición de moneda, la fecha, '00', el deviceId con padding, el shipOutCode con padding, la condición de sucursal, el monto con padding y el código de confirmación con padding | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,562 INFO Instrucción: ordenar por deviceId y shipOutCode y subChannelCode y currencyCode | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,563 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles con preserveNullAndEmptyArrays | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,563 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles.Transactions con preserveNullAndEmptyArrays | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,564 INFO Instrucción: agrupar por deviceId, branchCode, subChannelCode, shipOutCode, currencyCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total en soles y en dólares según el código de moneda | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,565 INFO Instrucción: luego agrupa todo y suma totalSoles y totalDolares, y cuenta total de registros en soles y en dólares según el código de moneda | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,566 INFO Instrucción: crear campo totalParteEnteraSoles que sea el primer elemento del split de totalSoles por punto | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,567 INFO Instrucción: crear campo totalParteDecimalSoles que sea el segundo elemento del split de totalSoles por punto o '00' si es nulo | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:36,568 INFO Instrucción: crear campo totalParteEnteraDolares que sea el primer elemento del split de totalDolares por punto | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 18:07:47,198 INFO Inicio del análisis exploratorio y generación de queries
+2025-10-30 18:07:47,198 INFO Carga y análisis de estructura del dataset completado
+2025-10-30 18:07:47,198 INFO Cobertura y diversidad de instrucciones analizadas
+2025-10-30 18:07:47,198 INFO Sinónimos normalizados y consulta traducida
+2025-10-30 18:07:47,199 INFO Evaluación semántica del agente realizada
+2025-10-30 18:08:17,688 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:08:40,667 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:08:42,542 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:08:44,534 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:08:46,472 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:08:48,834 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:08:50,846 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:08:52,879 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:08:52,882 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 18:08:52,914 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 18:08:52,934 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 18:10:27,923 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:29,642 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:31,402 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:33,409 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:35,656 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:37,197 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:39,070 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:41,193 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:42,559 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:50,295 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:52,235 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:54,044 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:55,684 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:10:57,677 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:22:07,877 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:22:10,013 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:22:11,743 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:22:13,410 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:22:15,009 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:20,787 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:22,443 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:24,157 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:25,360 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:26,914 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:50,855 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:53,069 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:54,372 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:55,876 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:57,379 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:24:59,574 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:25:01,063 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:25:02,884 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:25:04,161 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:25:06,245 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:25:07,793 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:25:09,587 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:25,062 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:26,833 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:28,475 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:30,449 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:32,046 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:34,055 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:36,187 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:38,306 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:40,488 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:42,487 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:44,199 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:31:46,312 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:36:55,361 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:36:56,777 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:36:58,229 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:37:00,257 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:37:01,644 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:37:03,551 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:37:05,188 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:37:07,013 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:37:09,217 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:37:11,119 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:37:13,596 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:37:15,357 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:08,004 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:09,574 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:11,151 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:12,716 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:14,140 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:16,159 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:17,933 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:21,725 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:23,249 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:24,918 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:26,345 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:39:28,039 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:29,283 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:30,650 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:32,165 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:34,086 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:35,638 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:37,533 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:39,503 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:41,152 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:42,820 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:44,953 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:46,579 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:46:48,266 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:49:45,269 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:49:46,904 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:49:48,790 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:49:50,434 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:49:52,083 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:49:54,141 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:49:56,004 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:49:58,042 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:49:59,699 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:50:01,357 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:50:03,108 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 18:50:04,801 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:11:16,633 INFO Instrucción: une la colección empleados con la colección departamentos usando el campo departamento_id proyecta los campos nombre, apellido, departamentos_info, departamento_nombre | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,634 INFO Instrucción: filtra registros cuyo Total sea mayor a 3000 | Colección: transacciones | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,634 INFO Instrucción: muestra los nombres y apellidos de los empleados del departamento de ventas | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,636 INFO Instrucción: cuenta cuántos empleados hay en cada departamento | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,636 INFO Instrucción: ordena los empleados por fecha de ingreso descendente | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,637 INFO Instrucción: busca empleados cuyo nombre comience con 'A' | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,638 INFO Instrucción: filtra transacciones realizadas entre 2023-01-01 y 2023-01-31 | Colección: transacciones | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,639 INFO Instrucción: muestra los 5 productos más vendidos | Colección: productos | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,639 INFO Instrucción: agrega la suma total de ventas por mes | Colección: ventas | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,639 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 19:11:16,641 INFO Instrucción: une la colección ventas con clientes usando cliente_id y proyecta nombre_cliente y total_venta | Colección: ventas | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,642 INFO Instrucción: filtra clientes que no hayan realizado compras en el penultimo año | Colección: clientes | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,643 INFO Instrucción: une la colección empleados con la colección departamentos usando el campo departamento_id | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,643 INFO Instrucción: crear campo dateMascara que convierta el campo Date a formato %Y%m%d usando los primeros 19 caracteres | Colección: header | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,645 INFO Instrucción: crear campo reg que concatene: '1', '002', el campo Date convertido a formato %Y%m%d%H%M%S usando los primeros 19 caracteres, '00', '01', un espacio, un salto de línea, otro salto de línea | Colección: header | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,645 INFO Instrucción: desanidar Devices | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,646 INFO Instrucción: desanidar Devices.ServicePoints | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,646 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,647 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles.Transactions | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,648 INFO Instrucción: agrupar por date, deviceId, branchCode, subChannelCode, shipOutCode, currencyCode, confirmationCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,648 INFO Instrucción: proyectar los caracteres de la posición 2 en adelante del deviceId | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,649 INFO Instrucción: crear campo confirmationCode que sea _id.confirmationCode o ' ' si es nulo | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,649 INFO Instrucción: crear campo totalParteEntera que sea el primer elemento del split del total por punto | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,651 INFO Instrucción: crear campo totalParteDecimal que sea el segundo elemento del split del total por punto o '00' si es nulo | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,652 INFO Instrucción: crear campo reg que sea la concatenación de '5', la condición de moneda, la fecha, '00', el deviceId con padding, el shipOutCode con padding, la condición de sucursal, el monto con padding y el código de confirmación con padding | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,653 INFO Instrucción: ordenar por deviceId y shipOutCode y subChannelCode y currencyCode | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,654 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles con preserveNullAndEmptyArrays | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,654 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles.Transactions con preserveNullAndEmptyArrays | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,655 INFO Instrucción: agrupar por deviceId, branchCode, subChannelCode, shipOutCode, currencyCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total en soles y en dólares según el código de moneda | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,656 INFO Instrucción: luego agrupa todo y suma totalSoles y totalDolares, y cuenta total de registros en soles y en dólares según el código de moneda | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,657 INFO Instrucción: crear campo totalParteEnteraSoles que sea el primer elemento del split de totalSoles por punto | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,658 INFO Instrucción: crear campo totalParteDecimalSoles que sea el segundo elemento del split de totalSoles por punto o '00' si es nulo | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:16,659 INFO Instrucción: crear campo totalParteEnteraDolares que sea el primer elemento del split de totalDolares por punto | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:11:24,595 INFO Inicio del análisis exploratorio y generación de queries
+2025-10-30 19:11:24,596 INFO Carga y análisis de estructura del dataset completado
+2025-10-30 19:11:24,596 INFO Cobertura y diversidad de instrucciones analizadas
+2025-10-30 19:11:24,596 INFO Sinónimos normalizados y consulta traducida
+2025-10-30 19:11:24,596 INFO Evaluación semántica del agente realizada
+2025-10-30 19:12:42,478 INFO Instrucción: une la colección empleados con la colección departamentos usando el campo departamento_id proyecta los campos nombre, apellido, departamentos_info, departamento_nombre | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,479 INFO Instrucción: filtra registros cuyo Total sea mayor a 3000 | Colección: transacciones | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,479 INFO Instrucción: muestra los nombres y apellidos de los empleados del departamento de ventas | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,481 INFO Instrucción: cuenta cuántos empleados hay en cada departamento | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,481 INFO Instrucción: ordena los empleados por fecha de ingreso descendente | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,482 INFO Instrucción: busca empleados cuyo nombre comience con 'A' | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,483 INFO Instrucción: filtra transacciones realizadas entre 2023-01-01 y 2023-01-31 | Colección: transacciones | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,484 INFO Instrucción: muestra los 5 productos más vendidos | Colección: productos | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,485 INFO Instrucción: agrega la suma total de ventas por mes | Colección: ventas | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,485 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 19:12:42,486 INFO Instrucción: une la colección ventas con clientes usando cliente_id y proyecta nombre_cliente y total_venta | Colección: ventas | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,486 INFO Instrucción: filtra clientes que no hayan realizado compras en el penultimo año | Colección: clientes | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,487 INFO Instrucción: une la colección empleados con la colección departamentos usando el campo departamento_id | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,488 INFO Instrucción: crear campo dateMascara que convierta el campo Date a formato %Y%m%d usando los primeros 19 caracteres | Colección: header | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,489 INFO Instrucción: crear campo reg que concatene: '1', '002', el campo Date convertido a formato %Y%m%d%H%M%S usando los primeros 19 caracteres, '00', '01', un espacio, un salto de línea, otro salto de línea | Colección: header | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,490 INFO Instrucción: desanidar Devices | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,491 INFO Instrucción: desanidar Devices.ServicePoints | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,491 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,492 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles.Transactions | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,493 INFO Instrucción: agrupar por date, deviceId, branchCode, subChannelCode, shipOutCode, currencyCode, confirmationCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,494 INFO Instrucción: proyectar los caracteres de la posición 2 en adelante del deviceId | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,495 INFO Instrucción: crear campo confirmationCode que sea _id.confirmationCode o ' ' si es nulo | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,496 INFO Instrucción: crear campo totalParteEntera que sea el primer elemento del split del total por punto | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,496 INFO Instrucción: crear campo totalParteDecimal que sea el segundo elemento del split del total por punto o '00' si es nulo | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,497 INFO Instrucción: crear campo reg que sea la concatenación de '5', la condición de moneda, la fecha, '00', el deviceId con padding, el shipOutCode con padding, la condición de sucursal, el monto con padding y el código de confirmación con padding | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,499 INFO Instrucción: ordenar por deviceId y shipOutCode y subChannelCode y currencyCode | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,499 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles con preserveNullAndEmptyArrays | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,500 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles.Transactions con preserveNullAndEmptyArrays | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,501 INFO Instrucción: agrupar por deviceId, branchCode, subChannelCode, shipOutCode, currencyCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total en soles y en dólares según el código de moneda | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,502 INFO Instrucción: luego agrupa todo y suma totalSoles y totalDolares, y cuenta total de registros en soles y en dólares según el código de moneda | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,503 INFO Instrucción: crear campo totalParteEnteraSoles que sea el primer elemento del split de totalSoles por punto | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,504 INFO Instrucción: crear campo totalParteDecimalSoles que sea el segundo elemento del split de totalSoles por punto o '00' si es nulo | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:42,504 INFO Instrucción: crear campo totalParteEnteraDolares que sea el primer elemento del split de totalDolares por punto | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:12:51,446 INFO Inicio del análisis exploratorio y generación de queries
+2025-10-30 19:12:51,446 INFO Carga y análisis de estructura del dataset completado
+2025-10-30 19:12:51,446 INFO Cobertura y diversidad de instrucciones analizadas
+2025-10-30 19:12:51,446 INFO Sinónimos normalizados y consulta traducida
+2025-10-30 19:12:51,446 INFO Evaluación semántica del agente realizada
+2025-10-30 19:13:23,077 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:14:38,098 INFO Instrucción: une la colección empleados con la colección departamentos usando el campo departamento_id proyecta los campos nombre, apellido, departamentos_info, departamento_nombre | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,099 INFO Instrucción: filtra registros cuyo Total sea mayor a 3000 | Colección: transacciones | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,100 INFO Instrucción: muestra los nombres y apellidos de los empleados del departamento de ventas | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,101 INFO Instrucción: cuenta cuántos empleados hay en cada departamento | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,101 INFO Instrucción: ordena los empleados por fecha de ingreso descendente | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,102 INFO Instrucción: busca empleados cuyo nombre comience con 'A' | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,103 INFO Instrucción: filtra transacciones realizadas entre 2023-01-01 y 2023-01-31 | Colección: transacciones | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,103 INFO Instrucción: muestra los 5 productos más vendidos | Colección: productos | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,104 INFO Instrucción: agrega la suma total de ventas por mes | Colección: ventas | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,104 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 19:14:38,106 INFO Instrucción: une la colección ventas con clientes usando cliente_id y proyecta nombre_cliente y total_venta | Colección: ventas | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,107 INFO Instrucción: filtra clientes que no hayan realizado compras en el penultimo año | Colección: clientes | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,107 INFO Instrucción: une la colección empleados con la colección departamentos usando el campo departamento_id | Colección: empleados | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,108 INFO Instrucción: crear campo dateMascara que convierta el campo Date a formato %Y%m%d usando los primeros 19 caracteres | Colección: header | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,109 INFO Instrucción: crear campo reg que concatene: '1', '002', el campo Date convertido a formato %Y%m%d%H%M%S usando los primeros 19 caracteres, '00', '01', un espacio, un salto de línea, otro salto de línea | Colección: header | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,110 INFO Instrucción: desanidar Devices | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,110 INFO Instrucción: desanidar Devices.ServicePoints | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,112 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,112 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles.Transactions | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,113 INFO Instrucción: agrupar por date, deviceId, branchCode, subChannelCode, shipOutCode, currencyCode, confirmationCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,114 INFO Instrucción: proyectar los caracteres de la posición 2 en adelante del deviceId | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,114 INFO Instrucción: crear campo confirmationCode que sea _id.confirmationCode o ' ' si es nulo | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,115 INFO Instrucción: crear campo totalParteEntera que sea el primer elemento del split del total por punto | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,116 INFO Instrucción: crear campo totalParteDecimal que sea el segundo elemento del split del total por punto o '00' si es nulo | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,117 INFO Instrucción: crear campo reg que sea la concatenación de '5', la condición de moneda, la fecha, '00', el deviceId con padding, el shipOutCode con padding, la condición de sucursal, el monto con padding y el código de confirmación con padding | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,118 INFO Instrucción: ordenar por deviceId y shipOutCode y subChannelCode y currencyCode | Colección: detalle | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,118 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles con preserveNullAndEmptyArrays | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,119 INFO Instrucción: desanidar Devices.ServicePoints.ShipOutCycles.Transactions con preserveNullAndEmptyArrays | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,119 INFO Instrucción: agrupar por deviceId, branchCode, subChannelCode, shipOutCode, currencyCode y sumar el total de Devices.ServicePoints.ShipOutCycles.Transactions.Total en soles y en dólares según el código de moneda | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,122 INFO Instrucción: luego agrupa todo y suma totalSoles y totalDolares, y cuenta total de registros en soles y en dólares según el código de moneda | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,123 INFO Instrucción: crear campo totalParteEnteraSoles que sea el primer elemento del split de totalSoles por punto | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,123 INFO Instrucción: crear campo totalParteDecimalSoles que sea el segundo elemento del split de totalSoles por punto o '00' si es nulo | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:38,124 INFO Instrucción: crear campo totalParteEnteraDolares que sea el primer elemento del split de totalDolares por punto | Colección: detalle2 | Generado: True | Válido: True | Error: None | Campos con espacio: []
+2025-10-30 19:14:47,051 INFO Inicio del análisis exploratorio y generación de queries
+2025-10-30 19:14:47,051 INFO Carga y análisis de estructura del dataset completado
+2025-10-30 19:14:47,051 INFO Cobertura y diversidad de instrucciones analizadas
+2025-10-30 19:14:47,052 INFO Sinónimos normalizados y consulta traducida
+2025-10-30 19:14:47,052 INFO Evaluación semántica del agente realizada
+2025-10-30 19:15:20,123 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:15:44,379 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 19:15:46,692 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:15:48,274 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:15:50,097 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:15:51,709 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:15:53,180 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:15:54,932 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:15:54,932 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 19:15:56,805 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:15:58,758 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:00,625 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:02,499 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:04,349 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:06,004 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:06,004 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 19:16:07,565 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:09,199 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:11,111 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:12,738 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:14,456 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:14,457 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 19:16:16,219 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:43,981 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:45,298 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:47,021 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:48,714 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:50,813 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:52,461 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:53,810 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:55,526 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:16:57,506 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:06,444 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:08,254 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:09,853 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:11,737 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:13,495 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:15,208 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:16,726 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:18,535 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:20,501 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:31,539 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:33,624 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:35,088 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:36,253 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:38,039 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:39,482 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:41,532 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:43,204 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:44,505 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:50,508 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:51,628 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:53,163 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:54,938 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:56,753 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:17:58,602 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:18:00,367 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:18:02,182 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:18:03,778 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"

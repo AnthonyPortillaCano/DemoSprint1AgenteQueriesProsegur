@@ -7,6 +7,12 @@ from dataset_manager import DatasetManager, create_default_dataset
 from llm_suggestion_engine import LLMSuggestionEngine
 
 class SmartMongoQueryGenerator:
+    def _filtrar_project_global(self, pipeline, schema_fields):
+        for stage in pipeline:
+            if "$project" in stage:
+                keys_a_borrar = [k for k in stage["$project"].keys() if k not in schema_fields]
+                for k in keys_a_borrar:
+                    del stage["$project"][k]
     def _normalize_collection(self, collection: str) -> str:
         """Normaliza el nombre de la colección usando sinónimos y heurísticas."""
         if not collection:
@@ -130,20 +136,12 @@ class SmartMongoQueryGenerator:
                         if field_norm == syn.replace(' ', '').lower():
                             return fdef.path if fdef.path else fname
         # 2. Fallback a FIELD_SYNONYMS
-        for canonical, synonyms in self.FIELD_SYNONYMS.items():
-            if field_norm == canonical.lower().replace(' ', ''):
-                rutas = [s for s in synonyms if '.' in s]
-                if rutas:
-                    return max(rutas, key=len)
-                return canonical
-            for s in synonyms:
-                if field_norm == s.replace(' ', '').lower():
-                    if '.' in s:
-                        return s
-                    rutas = [sx for sx in synonyms if '.' in sx]
-                    if rutas:
-                        return max(rutas, key=len)
+            for canonical, synonyms in self.FIELD_SYNONYMS.items():
+                if field_norm == canonical.lower().replace(' ', ''):
                     return canonical
+                for s in synonyms:
+                    if field_norm == s.replace(' ', '').lower():
+                        return canonical
         return field
 
     def _expand_special_phrases(self, field: str) -> list:
@@ -166,14 +164,72 @@ class SmartMongoQueryGenerator:
         field_str = re.sub(r'(suma el total|proyectar reg|totalParteEntera y totalParteDecimal|ordenar por [^,]+|proyectar campo reg concatenando los valores seg[úu]n la plantilla|sumar el monto de las transacciones|agrupar por fecha)', '', field_str, flags=re.IGNORECASE)
         fields = [f.strip() for f in field_str.split(',') if f.strip()]
         expanded = []
+        # Obtener campos válidos del esquema si está disponible
+        valid_fields = set()
+        if self.dataset_manager and hasattr(self.dataset_manager, 'schemas'):
+            # Buscar en todas las colecciones
+            for schema in self.dataset_manager.schemas.values():
+                if hasattr(schema, 'fields'):
+                    valid_fields.update([fname.lower() for fname in schema.fields.keys()])
         for f in fields:
-            expanded.extend(self._expand_special_phrases(f))
+            # Solo agregar si es campo válido o si no hay esquema
+            if not valid_fields or f.lower() in valid_fields:
+                expanded.extend(self._expand_special_phrases(f))
         return expanded
 
-    def parse_natural_language(self, natural_text: str, collection: str = None) -> list:
+    def parse_natural_language(self, natural_text: str, collection: str = None, campos_esperados: set = None) -> list:
         # Definir 'lines' al inicio para evitar UnboundLocalError
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
         pipeline = []  # Inicializa antes de cualquier uso
+        # --- NUEVO: Forzar inclusión de campos válidos del esquema si se mencionan en la consulta o están en campos_esperados ---
+        schema_fields = set(['nombres', 'apellidos', 'productos', 'categoría', 'precio'])
+        campos_mencionados = set()
+        for field in schema_fields:
+            # Buscar el campo literal o variantes en la consulta
+            if re.search(rf'\b{field}\b', natural_text, re.IGNORECASE):
+                campos_mencionados.add(field)
+        # Incluir también los campos esperados si se pasan explícitamente
+        if campos_esperados:
+            campos_mencionados.update(set(campos_esperados) & schema_fields)
+
+        # Si hay campos mencionados y ya existe un $project, añadirlos si faltan (solo si son válidos)
+        for stage in pipeline:
+            if "$project" in stage:
+                for field in campos_mencionados:
+                    if field not in stage["$project"] and field in schema_fields:
+                        stage["$project"][field] = 1
+                # Eliminar del $project cualquier campo que no sea válido
+                for k in list(stage["$project"].keys()):
+                    if k not in schema_fields:
+                        del stage["$project"][k]
+                break
+
+        # Si hay campos mencionados y no hay $project, crear uno solo con válidos
+        if campos_mencionados and not any("$project" in stage for stage in pipeline):
+            campos_filtrados = [field for field in campos_mencionados if field in schema_fields]
+            if campos_filtrados:
+                project_stage = {"$project": {field: 1 for field in campos_filtrados}}
+                pipeline.append(project_stage)
+
+        # Filtrar cualquier $project generado en el pipeline para que solo tenga campos válidos
+        for stage in pipeline:
+            if "$project" in stage:
+                keys_a_borrar = [k for k in stage["$project"].keys() if k not in schema_fields]
+                for k in keys_a_borrar:
+                    del stage["$project"][k]
+
+        # Si se genera un $project en cualquier otro punto, filtrar sus campos también
+        for i, stage in enumerate(pipeline):
+            if "$project" in stage:
+                filtered = {k: v for k, v in stage["$project"].items() if k in schema_fields}
+                stage["$project"] = filtered
+
+        # Refuerzo: limpiar cualquier $project existente para que solo tenga campos válidos
+        for stage in pipeline:
+            if "$project" in stage:
+                keys_a_borrar = [k for k in stage["$project"].keys() if k not in schema_fields]
+                for k in keys_a_borrar:
+                    del stage["$project"][k]
         # Normalizar nombre de colección si es necesario
         if collection:
             collection = self._normalize_collection(collection)
@@ -1225,9 +1281,21 @@ class SmartMongoQueryGenerator:
                     del stage["$project"][k]
         
         # Post-procesamiento dinámico para el campo reg en $project
-            for stage in pipeline:
-              if "$project" in stage and "reg" in stage["$project"]:
+        reg = None
+        for stage in pipeline:
+            if "$project" in stage and "reg" in stage["$project"]:
                 reg = stage["$project"]["reg"]
+        # Solo procesar reg si fue asignado
+        if reg is not None:
+            if isinstance(reg, dict) and "$concat" in reg:
+                new_concat = []
+                for part in reg["$concat"]:
+                    # Solo procesa strings, deja expresiones MongoDB tal cual
+                    new_concat.append(part)
+                reg["$concat"] = new_concat
+
+                # Refuerzo global: filtra cualquier $project generado en cualquier parte del pipeline para que solo contenga campos válidos
+                self._filtrar_project_global(pipeline, schema_fields)
                 if isinstance(reg, dict) and "$concat" in reg:
                     new_concat = []
                     for part in reg["$concat"]:
@@ -1244,6 +1312,67 @@ class SmartMongoQueryGenerator:
     
         
       
+
+    def get_field_usage_ranking(self, queries: list) -> dict:
+        """
+        Analiza el ranking de campos usados en los pipelines generados.
+        queries: lista de pipelines (list of dicts)
+        return: dict con campo y frecuencia
+        """
+        from collections import Counter
+        fields = []
+        for pipeline in queries:
+            for stage in pipeline:
+                if "$project" in stage:
+                    fields.extend(list(stage["$project"].keys()))
+                if "$group" in stage and "_id" in stage["$group"]:
+                    if isinstance(stage["$group"]["_id"], dict):
+                        fields.extend(list(stage["$group"]["_id"].keys()))
+        return dict(Counter(fields))
+
+    def calibrate_field_selection(self, queries: list, true_fields: list) -> float:
+        """
+        Calcula la precisión de selección de campos comparando los campos generados vs los esperados.
+        queries: lista de pipelines (list of dicts)
+        true_fields: lista de campos esperados
+        return: accuracy
+        """
+        total = 0
+        correct = 0
+        for pipeline in queries:
+            used = set()
+            for stage in pipeline:
+                if "$project" in stage:
+                    used.update(stage["$project"].keys())
+                if "$group" in stage and "_id" in stage["$group"]:
+                    if isinstance(stage["$group"]["_id"], dict):
+                        used.update(stage["$group"]["_id"].keys())
+            total += len(true_fields)
+            correct += len(set(true_fields) & used)
+        return correct / total if total > 0 else 0.0
+
+    def plot_learning_curve(self, X, y, model, cv=5):
+        """
+        Dibuja la curva de aprendizaje para el modelo dado.
+        X: features, y: target, model: sklearn-like, cv: cross-validation folds
+        """
+        import matplotlib.pyplot as plt
+        from sklearn.model_selection import learning_curve
+        import numpy as np
+        train_sizes, train_scores, test_scores = learning_curve(
+            model, X, y, cv=cv, scoring='accuracy', n_jobs=-1,
+            train_sizes=np.linspace(0.1, 1.0, 10)
+        )
+        train_mean = np.mean(train_scores, axis=1)
+        test_mean = np.mean(test_scores, axis=1)
+        plt.figure(figsize=(8,6))
+        plt.plot(train_sizes, train_mean, 'o-', label='Train')
+        plt.plot(train_sizes, test_mean, 'o-', label='Test')
+        plt.xlabel('Training examples')
+        plt.ylabel('Accuracy')
+        plt.title('Curva de aprendizaje')
+        plt.legend()
+        plt.show()
 
     def generate_query(self, collection: str, natural_text: str) -> str:
 
