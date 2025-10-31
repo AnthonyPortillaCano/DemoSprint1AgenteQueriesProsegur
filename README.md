@@ -106,6 +106,8 @@ También puedes abrir el notebook principal en la carpeta `notebooks/` y seguir 
 ## 📌 Roadmap
 - [x] Semana 2 → Estructura de datos + EDA + Logging
 - [x] Semana 3 → Agente generador de queries + Validación avanzada
+- [x] Semana 6 → Experimentos y validación automatizada
+- [x] Semana 7 → Métricas avanzadas y análisis de aprendizaje
 
 ---
 
@@ -153,3 +155,28 @@ También puedes abrir el notebook principal en la carpeta `notebooks/` y seguir 
 **Ejemplo de visualización:**
 - Gráfico de barras y líneas para comparar accuracy y latencia entre baseline, variantes y agente real.
 - Tabla resumen con métricas principales.
+
+## 📊 Análisis de Aprendizaje (Semana 7)
+
+### Métricas Avanzadas
+- Implementación de normalización de campos con manejo de acentos y casos
+- Evaluación dinámica de campos esperados según tipo de consulta
+- Métricas de recall mejoradas: de ~39% a ~67%
+
+### Curvas de Aprendizaje
+- Accuracy de entrenamiento: 100%
+- Accuracy de prueba: mejora hasta 97%
+- Estabilización del modelo: 60-70 ejemplos
+- Visualización de curvas de aprendizaje para análisis de rendimiento
+
+### Mejoras Implementadas
+- Normalización de campos para comparaciones flexibles
+- Expectativas dinámicas basadas en contexto de consulta
+- Sistema de evaluación más realista y contextual
+- Análisis detallado de curvas de aprendizaje
+
+### Resultados Clave
+- Alta precisión en conjunto de entrenamiento
+- Buena generalización en pruebas (~97%)
+- Identificación del punto óptimo de ejemplos (60+)
+- Validación de robustez del modelo
