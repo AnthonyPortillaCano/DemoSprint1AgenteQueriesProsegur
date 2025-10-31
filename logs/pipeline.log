@@ -3217,3 +3217,15 @@
 2025-10-30 19:52:03,275 INFO Sinónimos normalizados y consulta traducida
 2025-10-30 19:52:03,275 INFO Evaluación semántica del agente realizada
 2025-10-30 19:52:32,800 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:58:21,159 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:58:22,696 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 19:58:22,746 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 19:58:22,764 INFO Pipeline generado para JOIN: [{'$lookup': {'from': 'clientes', 'localField': 'cliente_id', 'foreignField': 'cliente_id', 'as': 'clientes_info'}}, {'$unwind': '$clientes_info'}, {'$project': {'nombre_cliente': 1, 'total_venta': 1}}]
+2025-10-30 20:01:59,667 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 20:02:00,783 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 20:02:02,365 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 20:02:03,897 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 20:02:05,241 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 20:02:06,645 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 20:02:08,153 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
+2025-10-30 20:02:10,185 INFO HTTP Request: POST https://openia2025nek.openai.azure.com/openai/deployments/gpt-4.1/chat/completions?api-version=2023-05-15 "HTTP/1.1 200 OK"
