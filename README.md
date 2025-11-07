@@ -196,7 +196,6 @@ En el cuaderno de la semana 8 se implementan y comparan dos enfoques de optimiza
 
 Incluye:
 - Pruning y early stopping
-- Registro de logs y artefactos
 - Tabla top-k y gráficos de evolución
 - Métricas de cobertura, recall, precisión y F1
 - Análisis de errores y recomendaciones
