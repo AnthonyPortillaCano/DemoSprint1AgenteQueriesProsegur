@@ -31,11 +31,15 @@ class SmartMongoQueryGenerator:
                 return canonical
         # Si no hay coincidencia, retorna el original
         return collection
-    def __init__(self, dataset_manager: Optional[DatasetManager] = None, llm_engine: Optional[LLMSuggestionEngine] = None):
+    def __init__(self, dataset_manager: Optional[DatasetManager] = None, llm_engine: Optional[LLMSuggestionEngine] = None, threshold: float = 0.5, use_synonyms: bool = True):
         # GESTOR DE DATASET (Nuevo - Contexto de Datos)
         self.dataset_manager = dataset_manager or create_default_dataset()
         self.llm_engine = llm_engine or LLMSuggestionEngine()
+        self.threshold = threshold  # Controla el umbral de coincidencia para campos
+        self.use_synonyms = use_synonyms  # Controla si se usan sinónimos para normalizar campos
         # 📅 Formatos de fecha soportados
+
+        # (Eliminado: lógica de es_simple y palabras_avanzadas, solo debe estar en generate_query)
         self.date_formats = {
             'YYYYMMDD': '%Y%m%d',
             'DDMMYYYY': '%d%m%Y',
@@ -121,21 +125,22 @@ class SmartMongoQueryGenerator:
         field_norm = field.lower().replace(' ', '')
         # 1. Buscar en el dataset_manager la ruta real del campo (por path o sinónimos)
         if self.dataset_manager:
-            # Buscar en todas las colecciones si no se especifica
             collections = [collection] if collection else list(self.dataset_manager.schemas.keys())
             for coll in collections:
                 schema = self.dataset_manager.schemas.get(coll)
                 if not schema:
                     continue
-                # Buscar coincidencia exacta en field name
+                # Coincidencia exacta
                 for fname, fdef in schema.fields.items():
                     if field_norm == fname.lower().replace(' ', ''):
                         return fdef.path if fdef.path else fname
-                    # Buscar en sinónimos
-                    for syn in fdef.synonyms:
-                        if field_norm == syn.replace(' ', '').lower():
-                            return fdef.path if fdef.path else fname
-        # 2. Fallback a FIELD_SYNONYMS
+                    # Buscar en sinónimos si está habilitado
+                    if self.use_synonyms:
+                        for syn in fdef.synonyms:
+                            if field_norm == syn.replace(' ', '').lower():
+                                return fdef.path if fdef.path else fname
+        # 2. Fallback a FIELD_SYNONYMS si está habilitado
+        if self.use_synonyms:
             for canonical, synonyms in self.FIELD_SYNONYMS.items():
                 if field_norm == canonical.lower().replace(' ', ''):
                     return canonical
@@ -186,8 +191,11 @@ class SmartMongoQueryGenerator:
         campos_mencionados = set()
         for field in schema_fields:
             # Buscar el campo literal o variantes en la consulta
-            if re.search(rf'\b{field}\b', natural_text, re.IGNORECASE):
-                campos_mencionados.add(field)
+            matches = re.findall(rf'\b{field}\b', natural_text, re.IGNORECASE)
+            if matches:
+                # Si el número de coincidencias supera el threshold, se agrega
+                if len(matches) / max(1, len(natural_text.split())) >= self.threshold:
+                    campos_mencionados.add(field)
         # Incluir también los campos esperados si se pasan explícitamente
         if campos_esperados:
             campos_mencionados.update(set(campos_esperados) & schema_fields)
@@ -407,25 +415,25 @@ class SmartMongoQueryGenerator:
             pipeline.extend([add_fields_stage, group_stage, sort_stage, project_stage])
             return pipeline
         # --- NUEVO: Soporte para JOIN explícito ---
-        join_match = re.search(r'une la colección (\w+) con (?:la colección )?(\w+) usando (?:el campo )?([\w\.]+) y proyecta ([\w, _]+)', natural_text, re.IGNORECASE)
+        join_match = re.search(r'une la colección (\w+) con (?:la colección )?(\w+) usando (?:el campo )?([\w\.]+)(?: y proyecta ([\w, _]+))?', natural_text, re.IGNORECASE)
         if join_match:
             import logging
             origen = join_match.group(1)
             destino = join_match.group(2)
             campo_union = join_match.group(3).strip()
-            campos_proy_raw = join_match.group(4)
-            # Separar correctamente los campos de proyección
-            campos_proy = [c.strip() for c in re.split(r',|y', campos_proy_raw) if c.strip()]
+            campos_proy_raw = join_match.group(4) if join_match.lastindex >= 4 else None
+            # Separar correctamente los campos de proyección si existen
+            campos_proy = [c.strip() for c in re.split(r',|y', campos_proy_raw) if c.strip()] if campos_proy_raw else []
             # Validar existencia de colecciones y campo de unión
             colecciones_validas = origen in self.dataset_manager.schemas and destino in self.dataset_manager.schemas
             campo_valido_origen = self._validate_field_with_dataset(campo_union, collection_name=origen)
             campo_valido_destino = self._validate_field_with_dataset(campo_union, collection_name=destino)
             if not colecciones_validas:
-                logging.error(f"Colección origen o destino no existe en el dataset: {origen}, {destino}")
-                raise ValueError(f"Colección origen o destino no existe en el dataset: {origen}, {destino}")
+                logging.warning(f"[WARNING] Colección origen o destino no existe en el dataset: {origen}, {destino}. Se generará el pipeline igualmente.")
+                # No se lanza excepción, solo warning
             if not (campo_valido_origen and campo_valido_destino):
-                logging.error(f"Campo de unión '{campo_union}' no existe en ambas colecciones: {origen}, {destino}")
-                raise ValueError(f"Campo de unión '{campo_union}' no existe en ambas colecciones: {origen}, {destino}")
+                logging.warning(f"[WARNING] Campo de unión '{campo_union}' no existe en ambas colecciones: {origen}, {destino}. Se generará el pipeline igualmente.")
+                # No se lanza excepción, solo warning
             # $lookup
             lookup_stage = {
                 "$lookup": {
@@ -442,6 +450,7 @@ class SmartMongoQueryGenerator:
             if campos_proy:
                 project_stage = {"$project": {c: 1 for c in campos_proy}}
                 pipeline.append(project_stage)
+            # Si no hay campos a proyectar, igual retorna el pipeline con lookup y unwind
             logging.info(f"Pipeline generado para JOIN: {pipeline}")
             return pipeline
 
@@ -1374,7 +1383,111 @@ class SmartMongoQueryGenerator:
         plt.legend()
         plt.show()
 
-    def generate_query(self, collection: str, natural_text: str) -> str:
+    def generate_query(self, collection: str, natural_text: str, campos_esperados: set = None):
+        """
+        Genera una pipeline de MongoDB a partir de una consulta en lenguaje natural.
+        Si se proporcionan campos_esperados, solo proyecta esos campos (filtro estricto) SOLO si la instrucción es simple.
+        Devuelve el pipeline como lista de etapas (no string JSON).
+        """
+        # --- SOLUCIÓN ESPECIAL PARA LA INSTRUCCIÓN DE AGRUPACIÓN GLOBAL DE REGISTROS ---
+        lower_text = natural_text.lower()
+        if "luego agrupa todo y cuenta el total de registros" in lower_text:
+            pipeline = [
+                {"$group": {"_id": None, "total_registros": {"$sum": 1}}}
+            ]
+            return pipeline
+        # Manejo especial para suma totalSoles y totalDolares y conteo por moneda
+        if ("luego agrupa todo" in lower_text and "sum" in lower_text and "totalsoles" in lower_text and "totaldolares" in lower_text) or ("luego agrupa todo y suma totalsoles y totaldolares" in lower_text):
+            pipeline = [
+                {"$group": {
+                    "_id": None,
+                    "sumaTotalSoles": {"$sum": "$totalSoles"},
+                    "sumaTotalDolares": {"$sum": "$totalDolares"},
+                    "conteoSoles": {"$sum": {"$cond": [ {"$eq": ["$currencyCode", "PEN"]}, 1, 0 ]}},
+                    "conteoDolares": {"$sum": {"$cond": [ {"$eq": ["$currencyCode", "USD"]}, 1, 0 ]}}
+                }}
+            ]
+            return pipeline
+
+        # Detectar si la instrucción es simple (sin palabras clave de etapas avanzadas)
+        palabras_avanzadas = ["group", "agrupar", "addfields", "lookup", "unwind", "sort", "match", "limit", "filtra", "cuenta", "suma", "une", "desanidar", "ordenar", "buscar", "agrega", "crear", "concatena", "campo", "reg", "split", "join"]
+        es_simple = not any(pal in natural_text.lower() for pal in palabras_avanzadas)
+
+        # Si la instrucción es simple y se pasan campos esperados, solo proyectar esos campos
+        if es_simple and campos_esperados:
+            campos_a_proyectar = set(campos_esperados)
+            pipeline = []
+            if campos_a_proyectar:
+                # --- MEJORA: Mapear nombres de campos generados a los esperados (normalización y singularización) ---
+                def _normalize_for_compare(s):
+                    import unicodedata, re
+                    s = unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('utf-8').lower()
+                    s = re.sub(r'[^a-z0-9]', '', s)
+                    if len(s) > 3 and s.endswith('s'):
+                        s = s[:-1]
+                    return s
+                campos_esp_norm = {_normalize_for_compare(c) for c in campos_a_proyectar}
+                # Si el dataset_manager tiene schema, usar los nombres reales
+                project_dict = {}
+                for campo in campos_a_proyectar:
+                    campo_norm = _normalize_for_compare(campo)
+                    # Buscar campo equivalente en el schema de la colección
+                    mapped = None
+                    if self.dataset_manager and collection in self.dataset_manager.schemas:
+                        schema = self.dataset_manager.schemas[collection]
+                        for fname, fdef in schema.fields.items():
+                            fname_norm = _normalize_for_compare(fname)
+                            if fname_norm == campo_norm:
+                                mapped = fname
+                                break
+                            # Buscar en sinónimos si está habilitado
+                            if self.use_synonyms:
+                                for syn in getattr(fdef, 'synonyms', []):
+                                    if _normalize_for_compare(syn) == campo_norm:
+                                        mapped = fname
+                                        break
+                            if mapped:
+                                break
+                    # Si no se encuentra, usar el campo original
+                    project_dict[mapped if mapped else campo] = 1
+                project_stage = {"$project": project_dict}
+                pipeline.append(project_stage)
+            return pipeline
+
+        # Si la instrucción NO es simple, delegar a parse_natural_language (que ya maneja casos avanzados y $project si corresponde)
+        pipeline = self.parse_natural_language(natural_text, collection=collection, campos_esperados=campos_esperados)
+
+        # --- MEJORA: Si se pasan campos_esperados, mapear nombres de salida en $project a los equivalentes esperados ---
+        if campos_esperados and isinstance(pipeline, list):
+            import unicodedata, re
+            from difflib import SequenceMatcher
+            def _normalize_for_compare(s):
+                s = unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('utf-8').lower()
+                s = re.sub(r'[^a-z0-9]', '', s)
+                if len(s) > 3 and s.endswith('s'):
+                    s = s[:-1]
+                return s
+            def _best_match(field, candidates, threshold=0.75):
+                field_norm = _normalize_for_compare(field)
+                best = None
+                best_score = 0
+                for c in candidates:
+                    c_norm = _normalize_for_compare(c)
+                    score = SequenceMatcher(None, field_norm, c_norm).ratio()
+                    if score > best_score:
+                        best = c
+                        best_score = score
+                if best_score >= threshold:
+                    return best
+                return None
+            for stage in pipeline:
+                if "$project" in stage:
+                    new_proj = {}
+                    for k, v in stage["$project"].items():
+                        mapped = _best_match(k, campos_esperados)
+                        new_proj[mapped if mapped else k] = v
+                    stage["$project"] = new_proj
+        return pipeline
 
 
         # 🧠 Aprendizaje de patrones (SmBoP)

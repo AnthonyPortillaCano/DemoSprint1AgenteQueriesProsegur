@@ -180,3 +180,39 @@ También puedes abrir el notebook principal en la carpeta `notebooks/` y seguir 
 - Buena generalización en pruebas (~97%)
 - Identificación del punto óptimo de ejemplos (60+)
 - Validación de robustez del modelo
+
+
+# Semana 8: Optimización de Hiperparámetros y Análisis de Errores
+
+Este repositorio contiene el cuaderno principal para los experimentos de la semana 8:
+
+- **Cuaderno principal:** `notebooks/EDA_Semana8.ipynb`
+
+## Descripción
+
+En el cuaderno de la semana 8 se implementan y comparan dos enfoques de optimización de hiperparámetros para el agente generador de queries MongoDB:
+- Búsqueda Aleatoria (Random Search)
+- Optimización Bayesiana (Optuna)
+
+Incluye:
+- Pruning y early stopping
+- Registro de logs y artefactos
+- Tabla top-k y gráficos de evolución
+- Métricas de cobertura, recall, precisión y F1
+- Análisis de errores y recomendaciones
+
+## Ejecución
+
+1. Abre el archivo `notebooks/EDA_Semana8.ipynb` en Jupyter o VS Code.
+2. Ejecuta las celdas en orden para reproducir los experimentos y visualizar los resultados.
+3. Los resultados y artefactos se guardan automáticamente en la carpeta `results/`.
+
+## Recomendaciones
+
+- Revisa las métricas y gráficos para comparar configuraciones.
+- Consulta las celdas de análisis de errores para identificar oportunidades de mejora en el agente.
+- Puedes modificar las consultas y campos esperados para ampliar los experimentos.
+
+---
+
+Para dudas o mejoras, consulta la sección de recomendaciones al final del cuaderno.

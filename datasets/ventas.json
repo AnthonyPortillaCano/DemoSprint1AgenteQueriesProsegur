@@ -16,7 +16,7 @@
         "path": "total_venta",
         "description": "Total de la venta",
         "examples": ["500"],
-        "synonyms": ["total_venta"]
+        "synonyms": ["total_venta", "total"]
       }
     },
     "sample_documents": [
