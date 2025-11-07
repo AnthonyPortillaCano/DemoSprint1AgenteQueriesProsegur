@@ -1418,38 +1418,36 @@ class SmartMongoQueryGenerator:
             campos_a_proyectar = set(campos_esperados)
             pipeline = []
             if campos_a_proyectar:
-                # --- MEJORA: Mapear nombres de campos generados a los esperados (normalización y singularización) ---
-                def _normalize_for_compare(s):
-                    import unicodedata, re
-                    s = unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('utf-8').lower()
-                    s = re.sub(r'[^a-z0-9]', '', s)
-                    if len(s) > 3 and s.endswith('s'):
-                        s = s[:-1]
-                    return s
-                campos_esp_norm = {_normalize_for_compare(c) for c in campos_a_proyectar}
-                # Si el dataset_manager tiene schema, usar los nombres reales
+                import unicodedata, re
+                def normaliza_campo_robusto(campo):
+                    campo = unicodedata.normalize('NFKD', campo).encode('ASCII', 'ignore').decode('utf-8').lower()
+                    campo = re.sub(r'[^a-z0-9]', '', campo)
+                    if len(campo) > 3 and campo.endswith('s'):
+                        campo = campo[:-1]
+                    return campo
+                def buscar_equivalente(campo, schema, use_synonyms):
+                    campo_norm = normaliza_campo_robusto(campo)
+                    for fname, fdef in schema.fields.items():
+                        fname_norm = normaliza_campo_robusto(fname)
+                        if fname_norm == campo_norm:
+                            return fname
+                        if use_synonyms:
+                            for syn in getattr(fdef, 'synonyms', []):
+                                if normaliza_campo_robusto(syn) == campo_norm:
+                                    return fname
+                    return None
                 project_dict = {}
-                for campo in campos_a_proyectar:
-                    campo_norm = _normalize_for_compare(campo)
-                    # Buscar campo equivalente en el schema de la colección
-                    mapped = None
-                    if self.dataset_manager and collection in self.dataset_manager.schemas:
-                        schema = self.dataset_manager.schemas[collection]
-                        for fname, fdef in schema.fields.items():
-                            fname_norm = _normalize_for_compare(fname)
-                            if fname_norm == campo_norm:
-                                mapped = fname
-                                break
-                            # Buscar en sinónimos si está habilitado
-                            if self.use_synonyms:
-                                for syn in getattr(fdef, 'synonyms', []):
-                                    if _normalize_for_compare(syn) == campo_norm:
-                                        mapped = fname
-                                        break
-                            if mapped:
-                                break
-                    # Si no se encuentra, usar el campo original
-                    project_dict[mapped if mapped else campo] = 1
+                if self.dataset_manager and collection in self.dataset_manager.schemas:
+                    schema = self.dataset_manager.schemas[collection]
+                    for campo in campos_a_proyectar:
+                        equiv = buscar_equivalente(campo, schema, self.use_synonyms)
+                        if equiv:
+                            project_dict[equiv] = 1
+                        else:
+                            project_dict[campo] = 1
+                else:
+                    for campo in campos_a_proyectar:
+                        project_dict[campo] = 1
                 project_stage = {"$project": project_dict}
                 pipeline.append(project_stage)
             return pipeline
