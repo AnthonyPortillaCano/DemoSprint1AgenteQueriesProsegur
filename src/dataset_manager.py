@@ -1,3 +1,4 @@
+    
 """
 🎯 GESTOR DE DATASET PARA GENERACIÓN DINÁMICA DE QUERIES
 
@@ -379,6 +380,20 @@ class DatasetManager:
             'learned_patterns': self.learned_patterns,
             'dataset_path': self.dataset_path
         }
+    def get_fields(self, collection_name: str = None) -> list:
+        """
+        Devuelve la lista de campos (FieldDefinition) de una colección.
+        Si no se especifica collection_name, usa la primera colección disponible.
+        """
+        if not self.schemas:
+            return []
+        if collection_name is None:
+            # Usar la primera colección si no se especifica
+            collection_name = next(iter(self.schemas.keys()))
+        schema = self.schemas.get(collection_name)
+        if not schema:
+            return []
+        return list(schema.fields.values())
 
 # 🎯 DATASET PREDEFINIDO PARA EL PROYECTO ACTUAL
 def create_default_dataset() -> DatasetManager:
