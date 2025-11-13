@@ -1,0 +1,5 @@
+[
+  {"usuario_id": 1, "nombre": "Juan", "edad": 30, "ciudad": "Lima"},
+  {"usuario_id": 2, "nombre": "Ana", "edad": 25, "ciudad": "Arequipa"},
+  {"usuario_id": 3, "nombre": "Pedro", "edad": 40, "ciudad": "Cusco"}
+]

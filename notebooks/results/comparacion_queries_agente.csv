@@ -1,0 +1,31 @@
+Consulta,Esperado,Generado,Aciertos,Errores
+muestra los clientes frecuentes,"['cliente', 'frecuencia']","['clientes', 'frecuentes']","['cliente', 'frecuencia']",[]
+cuál es el producto más caro,"['producto', 'precio']",['campo_no_encontrado'],[],"['producto', 'precio']"
+cuál es el cliente con más compras,"['cliente', 'compras']",['campo_no_encontrado'],[],"['cliente', 'compras']"
+cuál es el departamento con más ventas,"['ventas', 'departamento']",['campo_no_encontrado'],[],"['ventas', 'departamento']"
+muestra los nombres y apellidos de los clientes,"['cliente', 'nombre', 'apellido']","['clientes', 'apellido', 'nombre']","['cliente', 'nombre', 'apellido']",[]
+muestra los productos más vendidos,"['ventas', 'producto']","['vendidos', 'más', 'productos']","['ventas', 'producto']",[]
+cuenta cuántos clientes hay por ciudad,"['ciudad', 'cliente']",['campo_no_encontrado'],[],"['ciudad', 'cliente']"
+muestra el precio promedio de los productos,"['producto', 'precio']",['campo_no_encontrado'],[],"['producto', 'precio']"
+muestra los productos más vendidos,"['ventas', 'producto']","['vendidos', 'más', 'productos']","['ventas', 'producto']",[]
+cuál es el cliente con más compras,"['cliente', 'compras']",['campo_no_encontrado'],[],"['cliente', 'compras']"
+lista los empleados por departamento,"['empleado', 'departamento']",['campo_no_encontrado'],[],"['empleado', 'departamento']"
+cuenta cuántos empleados hay por área,"['empleado', 'area']",['campo_no_encontrado'],[],"['empleado', 'area']"
+cuenta cuántos productos hay en cada categoría,"['categoria', 'producto']","['categoria', 'count', '_id']",['categoria'],['producto']
+muestra los clientes frecuentes,"['cliente', 'frecuencia']","['clientes', 'frecuentes']","['cliente', 'frecuencia']",[]
+muestra los clientes frecuentes,"['cliente', 'frecuencia']","['clientes', 'frecuentes']","['cliente', 'frecuencia']",[]
+cuenta cuántos empleados hay por área,"['empleado', 'area']",['campo_no_encontrado'],[],"['empleado', 'area']"
+muestra los productos vendidos en el último mes,"['producto', 'fecha_venta']","['el', 'vendidos', 'productos', 'mes', 'último', 'en']","['producto', 'fecha_venta']",[]
+muestra los productos vendidos en el último mes,"['producto', 'fecha_venta']","['el', 'vendidos', 'productos', 'mes', 'último', 'en']","['producto', 'fecha_venta']",[]
+cuenta cuántos productos hay en cada categoría,"['categoria', 'producto']","['categoria', 'count', '_id']",['categoria'],['producto']
+cuenta cuántos empleados hay por área,"['empleado', 'area']",['campo_no_encontrado'],[],"['empleado', 'area']"
+cuál es el departamento con más ventas,"['ventas', 'departamento']",['campo_no_encontrado'],[],"['ventas', 'departamento']"
+cuál es el producto más caro,"['producto', 'precio']",['campo_no_encontrado'],[],"['producto', 'precio']"
+cuenta cuántos empleados hay por área,"['empleado', 'area']",['campo_no_encontrado'],[],"['empleado', 'area']"
+muestra los empleados con mayor antigüedad,"['empleado', 'antiguedad']","['mayor', 'antigüedad', 'con']",['antiguedad'],['empleado']
+muestra los empleados con mayor antigüedad,"['empleado', 'antiguedad']","['mayor', 'antigüedad', 'con']",['antiguedad'],['empleado']
+lista los empleados por departamento,"['empleado', 'departamento']",['campo_no_encontrado'],[],"['empleado', 'departamento']"
+muestra los productos vendidos en el último mes,"['producto', 'fecha_venta']","['el', 'vendidos', 'productos', 'mes', 'último', 'en']","['producto', 'fecha_venta']",[]
+cuenta cuántos productos hay por proveedor,"['producto', 'proveedor']",['campo_no_encontrado'],[],"['producto', 'proveedor']"
+muestra los productos vendidos en el último mes,"['producto', 'fecha_venta']","['el', 'vendidos', 'productos', 'mes', 'último', 'en']","['producto', 'fecha_venta']",[]
+cuál es el departamento con más ventas,"['ventas', 'departamento']",['campo_no_encontrado'],[],"['ventas', 'departamento']"

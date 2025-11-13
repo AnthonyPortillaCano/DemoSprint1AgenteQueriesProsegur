@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/MAESTRIA%20UNI/TERCER%20CICLO/PROYECTO%20DE%20INVESTIGACION%201/DemoSprint1/DemoSprint1Final/notebooks/mlruns/598546534675853042/956f64b81ac141a5900dafd868ee0f2f/artifacts
+end_time: 1762968217576
+entry_point_name: ''
+experiment_id: '598546534675853042'
+lifecycle_stage: active
+run_id: 956f64b81ac141a5900dafd868ee0f2f
+run_name: agente_query_train
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1762968214196
+status: 3
+tags: []
+user_id: antho

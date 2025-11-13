@@ -1,26 +1,17 @@
 {
-    "name": "clientes",
-    "description": "Colección de clientes de ejemplo",
-    "fields": {
-      "cliente_id": {
-        "name": "cliente_id",
-        "type": "number",
-        "path": "cliente_id",
-        "description": "ID del cliente",
-        "examples": ["101"],
-        "synonyms": ["cliente_id"]
-      },
-      "nombre_cliente": {
-        "name": "nombre_cliente",
-        "type": "string",
-        "path": "nombre_cliente",
-        "description": "Nombre del cliente",
-        "examples": ["Juan"],
-        "synonyms": ["nombre_cliente"]
-      }
-    },
-    "sample_documents": [
-      {"_id": 101, "cliente_id": 101, "nombre_cliente": "Juan"},
-      {"_id": 102, "cliente_id": 102, "nombre_cliente": "Ana"}
-    ]
-  }
+  "name": "clientes",
+  "description": "Colección de clientes de ejemplo",
+  "fields": {
+  "cliente_id": {"name": "cliente_id", "type": "number", "path": "cliente_id", "description": "ID del cliente", "examples": ["101"], "synonyms": ["cliente_id", "cliente"]},
+  "nombre_cliente": {"name": "nombre_cliente", "type": "string", "path": "nombre_cliente", "description": "Nombre del cliente", "examples": ["Juan"], "synonyms": ["nombre_cliente", "nombre", "cliente"]},
+    "apellido_cliente": {"name": "apellido_cliente", "type": "string", "path": "apellido_cliente", "description": "Apellido del cliente", "examples": ["Pérez"], "synonyms": ["apellido_cliente", "apellido"]},
+    "fecha_registro": {"name": "fecha_registro", "type": "string", "path": "fecha_registro", "description": "Fecha de registro", "examples": ["2024-01-10"], "synonyms": ["fecha_registro", "registro"]},
+    "email": {"name": "email", "type": "string", "path": "email", "description": "Correo electrónico", "examples": ["juan.perez@email.com"], "synonyms": ["email", "correo"]}
+  },
+  "sample_documents": [
+    {"_id": 101, "cliente_id": 101, "nombre_cliente": "Juan", "apellido_cliente": "Pérez", "fecha_registro": "2024-01-10", "email": "juan.perez@email.com"},
+    {"_id": 102, "cliente_id": 102, "nombre_cliente": "Ana", "apellido_cliente": "García", "fecha_registro": "2024-03-22", "email": "ana.garcia@email.com"},
+    {"_id": 103, "cliente_id": 103, "nombre_cliente": "Luis", "apellido_cliente": "Torres", "fecha_registro": "2025-05-18", "email": "luis.torres@email.com"},
+    {"_id": 104, "cliente_id": 104, "nombre_cliente": "María", "apellido_cliente": "López", "fecha_registro": "2025-07-30", "email": "maria.lopez@email.com"}
+  ]
+}

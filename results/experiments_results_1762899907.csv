@@ -1,0 +1,6 @@
+variant,nl,exact_match,latency_ms
+real_agent,Muestra los nombres y apellidos de los empleados,False,0.000
+real_agent,Proyecta solo el campo total_venta de ventas,False,1.003
+real_agent,Devuelve nombre y categoría de productos,False,0.000
+real_agent,Muestra el nombre y el departamento de los empleados,False,0.000
+real_agent,Proyecta solo el campo item de productos,False,0.000

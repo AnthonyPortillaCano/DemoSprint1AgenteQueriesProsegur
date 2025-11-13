@@ -1,0 +1,6 @@
+variant,nl,exact_match,latency_ms
+proyeccion,Muestra los nombres y apellidos de los empleados,False,0.000
+proyeccion,Proyecta solo el campo total_venta de ventas,False,0.000
+proyeccion,Devuelve nombre y categoría de productos,False,0.000
+proyeccion,Muestra el nombre y el departamento de los empleados,False,0.992
+proyeccion,Proyecta solo el campo item de productos,False,0.000

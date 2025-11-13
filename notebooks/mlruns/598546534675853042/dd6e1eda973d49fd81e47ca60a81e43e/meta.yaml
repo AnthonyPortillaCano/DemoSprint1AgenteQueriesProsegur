@@ -1,0 +1,14 @@
+artifact_uri: file:///c:/MAESTRIA%20UNI/TERCER%20CICLO/PROYECTO%20DE%20INVESTIGACION%201/DemoSprint1/DemoSprint1Final/notebooks/mlruns/598546534675853042/dd6e1eda973d49fd81e47ca60a81e43e/artifacts
+end_time: 1763003279020
+entry_point_name: ''
+experiment_id: '598546534675853042'
+lifecycle_stage: active
+run_id: dd6e1eda973d49fd81e47ca60a81e43e
+run_name: analisis_semantico_queries_mejorado
+source_name: ''
+source_type: 4
+source_version: ''
+start_time: 1763003278820
+status: 3
+tags: []
+user_id: antho

@@ -1,26 +1,21 @@
 {
-    "name": "ventas",
-    "description": "Colección de ventas de ejemplo",
-    "fields": {
-      "cliente_id": {
-        "name": "cliente_id",
-        "type": "number",
-        "path": "cliente_id",
-        "description": "ID del cliente",
-        "examples": ["101"],
-        "synonyms": ["cliente_id"]
-      },
-      "total_venta": {
-        "name": "total_venta",
-        "type": "number",
-        "path": "total_venta",
-        "description": "Total de la venta",
-        "examples": ["500"],
-        "synonyms": ["total_venta", "total"]
-      }
-    },
-    "sample_documents": [
-      {"_id": 1, "cliente_id": 101, "total_venta": 500},
-      {"_id": 2, "cliente_id": 102, "total_venta": 700}
-    ]
-  }
+  "name": "ventas",
+  "description": "Colección de ventas de ejemplo",
+  "fields": {
+  "cliente_id": {"name": "cliente_id", "type": "number", "path": "cliente_id", "description": "ID del cliente", "examples": ["101"], "synonyms": ["cliente_id", "cliente"]},
+    "total_venta": {"name": "total_venta", "type": "number", "path": "total_venta", "description": "Total de la venta", "examples": ["500"], "synonyms": ["total_venta", "total"]},
+    "fecha_venta": {"name": "fecha_venta", "type": "string", "path": "fecha_venta", "description": "Fecha de la venta", "examples": ["2025-11-01"], "synonyms": ["fecha", "fecha_venta"]},
+    "categoria_producto": {"name": "categoria_producto", "type": "string", "path": "categoria_producto", "description": "Categoría del producto", "examples": ["Electrónica"], "synonyms": ["categoria", "categoria_producto"]},
+    "producto": {"name": "producto", "type": "string", "path": "producto", "description": "Nombre del producto", "examples": ["Laptop"], "synonyms": ["producto", "articulo"]}
+  },
+  "indexes": [],
+  "sample_documents": [
+    {"_id": 1, "cliente_id": 101, "total_venta": 500, "fecha_venta": "2025-11-01", "categoria_producto": "Electrónica", "producto": "Laptop"},
+    {"_id": 2, "cliente_id": 102, "total_venta": 700, "fecha_venta": "2025-10-15", "categoria_producto": "Electrodomésticos", "producto": "Refrigeradora"},
+    {"_id": 3, "cliente_id": 103, "total_venta": 300, "fecha_venta": "2025-09-20", "categoria_producto": "Ropa", "producto": "Camisa"},
+    {"_id": 4, "cliente_id": 104, "total_venta": 1200, "fecha_venta": "2025-11-03", "categoria_producto": "Electrónica", "producto": "Celular"}
+  ],
+  "query_patterns": [],
+  "created_at": "2025-11-09T00:00:00",
+  "updated_at": "2025-11-09T00:00:00"
+}

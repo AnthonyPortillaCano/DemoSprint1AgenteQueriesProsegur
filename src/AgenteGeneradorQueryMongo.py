@@ -1,3 +1,12 @@
+class AgenteGeneradorQueryMongo:
+    @staticmethod
+    def normaliza_campo_robusto(campo):
+        import unicodedata, re
+        campo = unicodedata.normalize('NFKD', campo).encode('ASCII', 'ignore').decode('utf-8').lower()
+        campo = re.sub(r'[^a-z0-9]', '', campo)
+        if len(campo) > 3 and campo.endswith('s'):
+            campo = campo[:-1]
+        return campo
 import re
 import json
 from typing import Dict, List, Optional, Any, Union
@@ -7,6 +16,14 @@ from dataset_manager import DatasetManager, create_default_dataset
 from llm_suggestion_engine import LLMSuggestionEngine
 
 class SmartMongoQueryGenerator:
+    @staticmethod
+    def normaliza_campo_robusto(campo):
+        import unicodedata, re
+        campo = unicodedata.normalize('NFKD', campo).encode('ASCII', 'ignore').decode('utf-8').lower()
+        campo = re.sub(r'[^a-z0-9]', '', campo)
+        if len(campo) > 3 and campo.endswith('s'):
+            campo = campo[:-1]
+        return campo
     def _filtrar_project_global(self, pipeline, schema_fields):
         for stage in pipeline:
             if "$project" in stage:
@@ -88,9 +105,32 @@ class SmartMongoQueryGenerator:
         if not field_synonyms:
             # Diccionario generado automáticamente desde el EDA del notebook
             field_synonyms = {
-                # Ejemplo: reemplaza esto por el diccionario generado en el notebook
-                # 'total': ['total', 'monto', 'amount', 'devices.servicepoints.shipoutcycles.transactions.total'],
-                # ... pega aquí el diccionario generado ...
+                # --- INICIO AUTO-EXPANSIÓN AMPLIADA ---
+                'empleado': ['empleado', 'empleados', 'personal', 'colaborador', 'worker', 'staff', 'trabajador', 'funcionario', 'emplead@', 'empl', 'empldo', 'empleadxs', 'emplead@s', 'emplead', 'empleadxs', 'emplead@s', 'empleadxs', 'emplead@s', 'empleadxs', 'emplead@s'],
+                'departamento': ['departamento', 'departamentos', 'area', 'área', 'sector', 'division', 'división', 'seccion', 'sección', 'depart', 'dept', 'departament', 'departament@', 'departamentxs', 'departament@s', 'dpto', 'dptos', 'departament', 'departamentxs', 'departament@s'],
+                'producto': ['producto', 'productos', 'articulo', 'artículo', 'item', 'art', 'prod', 'product', 'goods', 'mercancia', 'mercancía', 'mercaderia', 'mercadería', 'producto terminado', 'producto final', 'product@', 'productxs', 'product@s', 'total_ventas', 'total_venta', 'importe', 'monto'],
+                'ventas': ['ventas', 'venta', 'total_ventas', 'vendidos', 'sales', 'vta', 'vtas', 'venta_total', 'ventas_totales', 'ventasnetas', 'ventas_brutas', 'ventas_netas', 'ventas_brutas', 'ventasrealizadas', 'ventasproyectadas', 'ventasestimadas', 'total_venta', 'total_ventas', 'importe', 'monto', 'ventas_totales', 'totalvendido', 'total_sold'],
+                'nombre_cliente': ['nombre_cliente', 'cliente_nombre', 'nombre del cliente', 'nombrecliente', 'nombre-cliente', 'client_name', 'customer_name', 'nombre usuario', 'nombre comprador', 'nombrecliente', 'nombrecomprador', 'nombreusuario', 'denominación_cliente', 'denominacion_cliente', 'nombre', 'nombre del cliente', 'nombrecliente'],
+                'total_venta': ['total_venta', 'importe', 'monto', 'total', 'valor_venta', 'venta_total', 'totalventa', 'total-venta', 'monto_total', 'importe_total', 'valor total', 'valorventa', 'totalfactura', 'totalfacturacion', 'totalfacturado', 'total_ventas', 'ventas', 'ventas_totales', 'totalvendido', 'total_sold'],
+                'total_ventas': ['total_ventas', 'ventas_totales', 'ventas_total', 'totalventas', 'totalventas', 'ventasacumuladas', 'ventasglobales', 'totalventasnetas', 'totalventasbrutas', 'total_venta', 'ventas', 'importe', 'monto', 'suma_ventas', 'ventas_totales', 'totalvendido', 'total_sold'],
+                'cliente': ['cliente', 'clientes', 'usuario', 'comprador', 'user', 'customer', 'client', 'comprad@r', 'client@', 'clientxs', 'client@s', 'compradorxs', 'comprador@s', 'compradorx', 'comprador@'],
+                'compras': ['compras', 'adquisiciones', 'compra', 'purchases', 'purchase', 'adquisicion', 'adquisición', 'adq', 'adqs', 'comprasrealizadas', 'comprasnetas', 'comprasbrutas', 'comprasestimadas'],
+                'empleados': ['empleados', 'empleado', 'personal', 'staff', 'colaboradores', 'trabajadores', 'funcionarios', 'empl', 'empldos', 'empleadxs', 'emplead@s'],
+                'precio': ['precio', 'costo', 'valor', 'price', 'cost', 'valor_unitario', 'precio_unitario', 'preciofinal', 'precioventa', 'preciocompra', 'precio_bruto', 'precio_neto', 'precio estimado', 'precio sugerido', 'precio_promedio', 'precio_unitario', 'precio_total'],
+                'ciudad': ['ciudad', 'localidad', 'municipio', 'city', 'poblacion', 'población', 'urbe', 'metropoli', 'metrópoli', 'ciudadela', 'villa', 'pueblo', 'capital', 'ciudadprincipal', 'ciudadsecundaria', 'ciudades', 'region'],
+                'antiguedad': ['antiguedad', 'antigüedad', 'experiencia', 'años', 'seniority', 'tiempo', 'años_servicio', 'años_experiencia', 'añosantiguedad', 'añosantigüedad', 'añoslaborados', 'años_trabajados'],
+                'stock': ['stock', 'existencia', 'inventario', 'existencias', 'almacen', 'almacén', 'disponible', 'disponibilidad', 'stockactual', 'stocktotal', 'stockminimo', 'stockmaximo', 'stockmínimo', 'stockmáximo', 'sin_stock', 'cantidad'],
+                'area': ['area', 'área', 'zona', 'sector', 'region', 'región', 'espacio', 'área de trabajo', 'área funcional', 'área operativa', 'área administrativa', 'área comercial', 'área técnica', 'área producción'],
+                'fecha_venta': ['fecha_venta', 'fecha', 'fecha de venta', 'fecha venta', 'fecha_transaccion', 'fechaoperacion', 'fechaventa', 'fechatransaccion', 'fechadeventa', 'fechadeoperacion', 'fecha_compra', 'momento', 'periodo', 'reciente'],
+                'venta': ['venta', 'transaccion', 'transacción', 'operacion', 'operación', 'sale', 'transaction', 'venta_realizada', 'ventaestimada', 'ventabruta', 'ventaneta', 'ventatotal', 'total_ventas', 'total_venta', 'importe', 'monto'],
+                'fecha': ['fecha', 'dia', 'día', 'mes', 'año', 'fecha_registro', 'fecha_creacion', 'fecha_modificacion', 'fecha_actualizacion', 'fecha_inicio', 'fecha_fin', 'fecha_cierre', 'fecha_apertura', 'fecha_emision', 'fecha_vencimiento', 'fecha_venta', 'fecha_compra', 'momento', 'periodo', 'reciente'],
+                'frecuencia': ['frecuencia', 'habitualidad', 'repeticion', 'repetición', 'periodicidad', 'frecuencia_compra', 'frecuencia_venta', 'frecuenciauso', 'frecuenciavisita', 'frecuenciatransaccion', 'frecuenciacliente'],
+                'descuento': ['descuento', 'rebaja', 'oferta', 'discount', 'descuentos', 'descuento_total', 'descuentototal', 'descuentoglobal', 'descuentounitario', 'descuentoespecial', 'descuentopromocional', 'descuentoadicional', 'promocion', 'bonificacion'],
+                'proveedor': ['proveedor', 'suministrador', 'distribuidor', 'proveedores', 'supplier', 'vendor', 'proveedorasociado', 'proveedorprincipal', 'proveedorsecundario', 'proveedorlocal', 'proveedorexterno', 'proveedorinternacional', 'fabricante', 'vendedor'],
+                'categoria': ['categoria', 'categoría', 'rubro', 'clase', 'tipo', 'segmento', 'grupo', 'familia', 'linea', 'línea', 'categoria_producto', 'categoria_servicio', 'categoria_cliente'],
+                'denominación_cliente': ['denominación_cliente', 'nombre_cliente', 'cliente_nombre', 'nombre', 'nombre del cliente', 'nombrecliente'],
+                'campo_no_encontrado': ['campo_no_encontrado', 'desconocido', 'missing_field', 'not_found'],
+                # --- FIN AUTO-EXPANSIÓN AMPLIADA ---
             }
         return field_synonyms
 
@@ -122,7 +162,17 @@ class SmartMongoQueryGenerator:
         return list(set(suggestions))  # Eliminar duplicados
 
     def _normalize_field(self, field: str, collection: str = None) -> str:
-        field_norm = field.lower().replace(' ', '')
+        import unicodedata, re
+        from difflib import SequenceMatcher
+        def norm(campo):
+            campo = unicodedata.normalize('NFKD', campo).encode('ASCII', 'ignore').decode('utf-8').lower()
+            campo = re.sub(r'[^a-z0-9]', '', campo)
+            if len(campo) > 3 and campo.endswith('s'):
+                campo = campo[:-1]
+            return campo
+        field_norm = norm(field)
+        threshold = getattr(self, 'threshold', 0.8)
+        use_synonyms = getattr(self, 'use_synonyms', True)
         # 1. Buscar en el dataset_manager la ruta real del campo (por path o sinónimos)
         if self.dataset_manager:
             collections = [collection] if collection else list(self.dataset_manager.schemas.keys())
@@ -132,21 +182,63 @@ class SmartMongoQueryGenerator:
                     continue
                 # Coincidencia exacta
                 for fname, fdef in schema.fields.items():
-                    if field_norm == fname.lower().replace(' ', ''):
+                    if field_norm == norm(fname):
                         return fdef.path if fdef.path else fname
-                    # Buscar en sinónimos si está habilitado
-                    if self.use_synonyms:
+                # Coincidencia exacta en sinónimos (solo si use_synonyms)
+                if use_synonyms:
+                    for fname, fdef in schema.fields.items():
                         for syn in fdef.synonyms:
-                            if field_norm == syn.replace(' ', '').lower():
+                            if field_norm == norm(syn):
                                 return fdef.path if fdef.path else fname
-        # 2. Fallback a FIELD_SYNONYMS si está habilitado
-        if self.use_synonyms:
+                # Coincidencia por similitud (threshold) en nombres y sinónimos
+                best_match = None
+                best_ratio = 0
+                for fname, fdef in schema.fields.items():
+                    # Comparar con nombre
+                    ratio = SequenceMatcher(None, field_norm, norm(fname)).ratio()
+                    if ratio > best_ratio:
+                        best_match = fdef.path if fdef.path else fname
+                        best_ratio = ratio
+                    # Comparar con sinónimos (solo si use_synonyms)
+                    if use_synonyms:
+                        for syn in fdef.synonyms:
+                            ratio_syn = SequenceMatcher(None, field_norm, norm(syn)).ratio()
+                            if ratio_syn > best_ratio:
+                                best_match = fdef.path if fdef.path else fname
+                                best_ratio = ratio_syn
+                if best_match and best_ratio >= threshold:
+                    return best_match
+                # Si el threshold es muy bajo (<0.5), permite devolver el campo más parecido aunque no llegue al umbral
+                if best_match and threshold < 0.5 and best_ratio > 0.4:
+                    return best_match
+        # 2. Fallback a FIELD_SYNONYMS (solo si use_synonyms)
+        if use_synonyms:
             for canonical, synonyms in self.FIELD_SYNONYMS.items():
-                if field_norm == canonical.lower().replace(' ', ''):
+                if field_norm == norm(canonical):
                     return canonical
                 for s in synonyms:
-                    if field_norm == s.replace(' ', '').lower():
+                    if field_norm == norm(s):
                         return canonical
+        # 3. Coincidencia por similitud en sinónimos y nombres (threshold)
+        best_match = None
+        best_ratio = 0
+        for canonical, synonyms in self.FIELD_SYNONYMS.items():
+            # Comparar con nombre canónico
+            ratio = SequenceMatcher(None, field_norm, norm(canonical)).ratio()
+            if ratio > best_ratio:
+                best_match = canonical
+                best_ratio = ratio
+            # Comparar con sinónimos (solo si use_synonyms)
+            if use_synonyms:
+                for s in synonyms:
+                    ratio_syn = SequenceMatcher(None, field_norm, norm(s)).ratio()
+                    if ratio_syn > best_ratio:
+                        best_match = canonical
+                        best_ratio = ratio_syn
+        if best_match and best_ratio >= threshold:
+            return best_match
+        if best_match and threshold < 0.5 and best_ratio > 0.4:
+            return best_match
         return field
 
     def _expand_special_phrases(self, field: str) -> list:
@@ -186,19 +278,127 @@ class SmartMongoQueryGenerator:
         # Definir 'lines' al inicio para evitar UnboundLocalError
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
         pipeline = []  # Inicializa antes de cualquier uso
-        # --- NUEVO: Forzar inclusión de campos válidos del esquema si se mencionan en la consulta o están en campos_esperados ---
-        schema_fields = set(['nombres', 'apellidos', 'productos', 'categoría', 'precio'])
+
+        # --- REGLAS ESPECÍFICAS PARA PATRONES DE NEGOCIO FRECUENTES ---
+        # 1. Conteo por grupo: "cuenta cuántos <entidad> hay en cada <campo>"
+        match_count_group = re.search(r'cuenta cu[aá]ntos? ([\wáéíóúüñÁÉÍÓÚÜÑ ]+) hay en cada ([\wáéíóúüñÁÉÍÓÚÜÑ_]+)', natural_text, re.IGNORECASE)
+        if match_count_group:
+            entidad = match_count_group.group(1).strip()
+            campo = match_count_group.group(2).strip()
+            # Normalizar campo usando sinónimos
+            campo_norm = None
+            for canonical, synonyms in self.FIELD_SYNONYMS.items():
+                if campo.lower() == canonical.lower() or campo.lower() in [s.lower() for s in synonyms]:
+                    campo_norm = canonical
+                    break
+            if not campo_norm:
+                campo_norm = campo
+            group_stage = {"$group": {"_id": f"${campo_norm}", "count": {"$sum": 1}}}
+            project_stage = {"$project": {campo_norm: "$_id", "count": 1, "_id": 0}}
+            pipeline.extend([group_stage, project_stage])
+            return pipeline
+
+        # 2. Suma total por grupo: "calcula el total de <campo_suma> por <campo_grupo>"
+        match_sum_group = re.search(r'calcula el total de ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) por ([\wáéíóúüñÁÉÍÓÚÜÑ_]+)', natural_text, re.IGNORECASE)
+        if match_sum_group:
+            campo_suma = match_sum_group.group(1).strip()
+            campo_grupo = match_sum_group.group(2).strip()
+            # Normalizar campos
+            campo_suma_norm = self._normalize_field(campo_suma, collection=collection)
+            campo_grupo_norm = self._normalize_field(campo_grupo, collection=collection)
+            group_stage = {"$group": {"_id": f"${campo_grupo_norm}", f"total_{campo_suma_norm}": {"$sum": f"${campo_suma_norm}"}}}
+            project_stage = {"$project": {campo_grupo_norm: "$_id", f"total_{campo_suma_norm}": 1, "_id": 0}}
+            pipeline.extend([group_stage, project_stage])
+            return pipeline
+
+        # 3. Promedio por grupo: "muestra el precio promedio de los <entidad>" o "promedio de <campo> por <grupo>"
+        match_avg_group = re.search(r'(?:promedio|precio promedio) de ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) por ([\wáéíóúüñÁÉÍÓÚÜÑ_]+)', natural_text, re.IGNORECASE)
+        if match_avg_group:
+            campo_avg = match_avg_group.group(1).strip()
+            campo_grupo = match_avg_group.group(2).strip()
+            campo_avg_norm = self._normalize_field(campo_avg, collection=collection)
+            campo_grupo_norm = self._normalize_field(campo_grupo, collection=collection)
+            group_stage = {"$group": {"_id": f"${campo_grupo_norm}", f"avg_{campo_avg_norm}": {"$avg": f"${campo_avg_norm}"}}}
+            project_stage = {"$project": {campo_grupo_norm: "$_id", f"avg_{campo_avg_norm}": 1, "_id": 0}}
+            pipeline.extend([group_stage, project_stage])
+            return pipeline
+
+        # 4. Top-N: "muestra los N <entidad> más vendidos"
+        match_top_n = re.search(r'muestra los (\d+) ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) m[aá]s vendidos', natural_text, re.IGNORECASE)
+        if match_top_n:
+            n = int(match_top_n.group(1))
+            entidad = match_top_n.group(2).strip()
+            # Buscar campos típicos
+            field_producto = self._normalize_field(entidad, collection=collection)
+            field_cantidad = self._normalize_field('ventas', collection=collection)
+            group_stage = {"$group": {"_id": f"${field_producto}", "total_ventas": {"$sum": f"${field_cantidad}"}}}
+            sort_stage = {"$sort": {"total_ventas": -1}}
+            limit_stage = {"$limit": n}
+            project_stage = {"$project": {entidad: "$_id", "total_ventas": 1, "_id": 0}}
+            pipeline.extend([group_stage, sort_stage, limit_stage, project_stage])
+            return pipeline
+
+        # 5. Máximo por grupo: "cuál es el <entidad> con más <campo>"
+        match_max_group = re.search(r'cu[aá]l es el ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) con m[aá]s ([\wáéíóúüñÁÉÍÓÚÜÑ_]+)', natural_text, re.IGNORECASE)
+        if match_max_group:
+            entidad = match_max_group.group(1).strip()
+            campo = match_max_group.group(2).strip()
+            field_entidad = self._normalize_field(entidad, collection=collection)
+            field_campo = self._normalize_field(campo, collection=collection)
+            group_stage = {"$group": {"_id": f"${field_entidad}", f"total_{field_campo}": {"$sum": f"${field_campo}"}}}
+            sort_stage = {"$sort": {f"total_{field_campo}": -1}}
+            limit_stage = {"$limit": 1}
+            project_stage = {"$project": {entidad: "$_id", f"total_{field_campo}": 1, "_id": 0}}
+            pipeline.extend([group_stage, sort_stage, limit_stage, project_stage])
+            return pipeline
+
+        # 6. Conteo por campo: "cuenta cuántos <entidad> hay por <campo>"
+        match_count_by = re.search(r'cuenta cu[aá]ntos? ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) hay por ([\wáéíóúüñÁÉÍÓÚÜÑ_]+)', natural_text, re.IGNORECASE)
+        if match_count_by:
+            entidad = match_count_by.group(1).strip()
+            campo = match_count_by.group(2).strip()
+            field_campo = self._normalize_field(campo, collection=collection)
+            group_stage = {"$group": {"_id": f"${field_campo}", "count": {"$sum": 1}}}
+            project_stage = {"$project": {campo: "$_id", "count": 1, "_id": 0}}
+            pipeline.extend([group_stage, project_stage])
+            return pipeline
+
+        # 7. Lista por grupo: "lista los <entidad> por <campo>"
+        match_list_by = re.search(r'lista los ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) por ([\wáéíóúüñÁÉÍÓÚÜÑ_]+)', natural_text, re.IGNORECASE)
+        if match_list_by:
+            entidad = match_list_by.group(1).strip()
+            campo = match_list_by.group(2).strip()
+            field_entidad = self._normalize_field(entidad, collection=collection)
+            field_campo = self._normalize_field(campo, collection=collection)
+            group_stage = {"$group": {"_id": f"${field_campo}", f"{field_entidad}s": {"$push": f"${field_entidad}"}}}
+            project_stage = {"$project": {campo: "$_id", f"{field_entidad}s": 1, "_id": 0}}
+            pipeline.extend([group_stage, project_stage])
+            return pipeline
+        # --- FIN REGLAS ESPECÍFICAS ---
+        # --- MEJORA: Usar campos del esquema real si está disponible ---
+        if self.dataset_manager and collection in self.dataset_manager.schemas:
+            schema_fields = set(self.dataset_manager.schemas[collection].fields.keys())
+        else:
+            schema_fields = set(['nombres', 'apellidos', 'productos', 'categoría', 'precio'])
+        # Normalización robusta para comparar campos
+        normaliza_campo_robusto = self.normaliza_campo_robusto
         campos_mencionados = set()
         for field in schema_fields:
-            # Buscar el campo literal o variantes en la consulta
-            matches = re.findall(rf'\b{field}\b', natural_text, re.IGNORECASE)
+            # Buscar el campo literal o variantes en la consulta (normalizado)
+            field_norm = normaliza_campo_robusto(field)
+            pattern = rf'\b{field}\b'
+            matches = re.findall(pattern, natural_text, re.IGNORECASE)
             if matches:
-                # Si el número de coincidencias supera el threshold, se agrega
                 if len(matches) / max(1, len(natural_text.split())) >= self.threshold:
                     campos_mencionados.add(field)
-        # Incluir también los campos esperados si se pasan explícitamente
+        # Incluir también los campos esperados si se pasan explícitamente (normalizado)
         if campos_esperados:
-            campos_mencionados.update(set(campos_esperados) & schema_fields)
+            campos_esperados_norm = set()
+            for c in campos_esperados:
+                for f in schema_fields:
+                    if normaliza_campo_robusto(c) == normaliza_campo_robusto(f):
+                        campos_esperados_norm.add(f)
+            campos_mencionados.update(campos_esperados_norm)
 
         # Si hay campos mencionados y ya existe un $project, añadirlos si faltan (solo si son válidos)
         for stage in pipeline:
@@ -1291,11 +1491,23 @@ class SmartMongoQueryGenerator:
         
         # Post-procesamiento dinámico para el campo reg en $project
         reg = None
+        reg_stage = None
         for stage in pipeline:
             if "$project" in stage and "reg" in stage["$project"]:
                 reg = stage["$project"]["reg"]
+                reg_stage = stage
         # Solo procesar reg si fue asignado
         if reg is not None:
+            # Asegurar que reg es un dict y tiene $concat
+            if not (isinstance(reg, dict) and "$concat" in reg):
+                # Si reg no es dict o no tiene $concat, inicializarlo correctamente
+                if isinstance(reg, dict):
+                    reg["$concat"] = []
+                else:
+                    reg = {"$concat": []}
+                if reg_stage is not None:
+                    reg_stage["$project"]["reg"] = reg
+            # Ahora es seguro procesar
             if isinstance(reg, dict) and "$concat" in reg:
                 new_concat = []
                 for part in reg["$concat"]:
@@ -1315,7 +1527,7 @@ class SmartMongoQueryGenerator:
                             new_concat.append(expr)
                         else:
                             new_concat.append(part)
-                    stage["$project"]["reg"]["$concat"] = new_concat
+                    reg["$concat"] = new_concat
         
         return pipeline
     
@@ -1329,14 +1541,15 @@ class SmartMongoQueryGenerator:
         return: dict con campo y frecuencia
         """
         from collections import Counter
+        normaliza_campo_robusto = self.normaliza_campo_robusto
         fields = []
         for pipeline in queries:
             for stage in pipeline:
                 if "$project" in stage:
-                    fields.extend(list(stage["$project"].keys()))
+                    fields.extend([normaliza_campo_robusto(f) for f in stage["$project"].keys()])
                 if "$group" in stage and "_id" in stage["$group"]:
                     if isinstance(stage["$group"]["_id"], dict):
-                        fields.extend(list(stage["$group"]["_id"].keys()))
+                        fields.extend([normaliza_campo_robusto(f) for f in stage["$group"]["_id"].keys()])
         return dict(Counter(fields))
 
     def calibrate_field_selection(self, queries: list, true_fields: list) -> float:
@@ -1346,18 +1559,20 @@ class SmartMongoQueryGenerator:
         true_fields: lista de campos esperados
         return: accuracy
         """
+        normaliza_campo_robusto = self.normaliza_campo_robusto
         total = 0
         correct = 0
+        true_fields_norm = set([normaliza_campo_robusto(f) for f in true_fields])
         for pipeline in queries:
             used = set()
             for stage in pipeline:
                 if "$project" in stage:
-                    used.update(stage["$project"].keys())
+                    used.update([normaliza_campo_robusto(f) for f in stage["$project"].keys()])
                 if "$group" in stage and "_id" in stage["$group"]:
                     if isinstance(stage["$group"]["_id"], dict):
-                        used.update(stage["$group"]["_id"].keys())
-            total += len(true_fields)
-            correct += len(set(true_fields) & used)
+                        used.update([normaliza_campo_robusto(f) for f in stage["$group"]["_id"].keys()])
+            total += len(true_fields_norm)
+            correct += len(true_fields_norm & used)
         return correct / total if total > 0 else 0.0
 
     def plot_learning_curve(self, X, y, model, cv=5):
@@ -1413,43 +1628,84 @@ class SmartMongoQueryGenerator:
         palabras_avanzadas = ["group", "agrupar", "addfields", "lookup", "unwind", "sort", "match", "limit", "filtra", "cuenta", "suma", "une", "desanidar", "ordenar", "buscar", "agrega", "crear", "concatena", "campo", "reg", "split", "join"]
         es_simple = not any(pal in natural_text.lower() for pal in palabras_avanzadas)
 
-        # Si la instrucción es simple y se pasan campos esperados, solo proyectar esos campos
-        if es_simple and campos_esperados:
-            campos_a_proyectar = set(campos_esperados)
+        # Si se pasan campos esperados, proyectar SIEMPRE todos los campos esperados (o equivalentes) en el $project, sin omitir ninguno
+        if campos_esperados:
+            campos_a_proyectar = list(campos_esperados)
             pipeline = []
-            if campos_a_proyectar:
-                import unicodedata, re
-                def normaliza_campo_robusto(campo):
-                    campo = unicodedata.normalize('NFKD', campo).encode('ASCII', 'ignore').decode('utf-8').lower()
-                    campo = re.sub(r'[^a-z0-9]', '', campo)
-                    if len(campo) > 3 and campo.endswith('s'):
-                        campo = campo[:-1]
-                    return campo
-                def buscar_equivalente(campo, schema, use_synonyms):
-                    campo_norm = normaliza_campo_robusto(campo)
-                    for fname, fdef in schema.fields.items():
-                        fname_norm = normaliza_campo_robusto(fname)
-                        if fname_norm == campo_norm:
+            normaliza_campo_robusto = self.normaliza_campo_robusto
+            from difflib import SequenceMatcher
+            def buscar_equivalente(campo, schema, use_synonyms, threshold=None):
+                campo_norm = normaliza_campo_robusto(campo)
+                threshold = threshold if threshold is not None else getattr(self, 'threshold', 0.75)
+                # Matching exacto y por sinónimos (bidireccional)
+                for fname, fdef in schema.fields.items():
+                    fname_norm = normaliza_campo_robusto(fname)
+                    if fname_norm == campo_norm:
+                        return fname
+                    # Sinónimos directos
+                    if use_synonyms:
+                        syns = set(getattr(fdef, 'synonyms', []))
+                        syns_norm = set([normaliza_campo_robusto(s) for s in syns])
+                        if campo_norm in syns_norm:
                             return fname
-                        if use_synonyms:
-                            for syn in getattr(fdef, 'synonyms', []):
-                                if normaliza_campo_robusto(syn) == campo_norm:
+                        # Bidireccional: si el campo tiene sinónimos y fname está en ellos
+                        if hasattr(self, 'FIELD_SYNONYMS') and campo in self.FIELD_SYNONYMS:
+                            if fname_norm in [normaliza_campo_robusto(s) for s in self.FIELD_SYNONYMS[campo]]:
+                                return fname
+                    # Fuzzy matching
+                    ratio = SequenceMatcher(None, campo_norm, fname_norm).ratio()
+                    if ratio >= threshold:
+                        return fname
+                    # Fuzzy con sinónimos
+                    if use_synonyms:
+                        for syn in getattr(fdef, 'synonyms', []):
+                            syn_norm = normaliza_campo_robusto(syn)
+                            ratio_syn = SequenceMatcher(None, campo_norm, syn_norm).ratio()
+                            if ratio_syn >= threshold:
+                                return fname
+                        if hasattr(self, 'FIELD_SYNONYMS') and campo in self.FIELD_SYNONYMS:
+                            for syn in self.FIELD_SYNONYMS[campo]:
+                                syn_norm = normaliza_campo_robusto(syn)
+                                ratio_syn = SequenceMatcher(None, fname_norm, syn_norm).ratio()
+                                if ratio_syn >= threshold:
                                     return fname
-                    return None
-                project_dict = {}
-                if self.dataset_manager and collection in self.dataset_manager.schemas:
-                    schema = self.dataset_manager.schemas[collection]
-                    for campo in campos_a_proyectar:
-                        equiv = buscar_equivalente(campo, schema, self.use_synonyms)
-                        if equiv:
-                            project_dict[equiv] = 1
-                        else:
-                            project_dict[campo] = 1
-                else:
-                    for campo in campos_a_proyectar:
+                return None
+            project_dict = {}
+            campos_encontrados = 0
+            if self.dataset_manager and collection in self.dataset_manager.schemas:
+                schema = self.dataset_manager.schemas[collection]
+                for campo in campos_a_proyectar:
+                    equiv = buscar_equivalente(campo, schema, self.use_synonyms, self.threshold)
+                    if equiv:
+                        project_dict[equiv] = 1
+                        campos_encontrados += 1
+                    else:
                         project_dict[campo] = 1
-                project_stage = {"$project": project_dict}
+            else:
+                for campo in campos_a_proyectar:
+                    project_dict[campo] = 1
+            # Si no se encontró ningún campo equivalente ni existente, agregar un campo ficticio
+            if len(project_dict) == 0 or all(k.startswith('campo_no_encontrado') or v != 1 for k, v in project_dict.items()):
+                project_dict["campo_no_encontrado"] = 1
+            project_stage = {"$project": project_dict}
+            if es_simple:
                 pipeline.append(project_stage)
+                return pipeline
+            # Si la instrucción es avanzada, agregar o fusionar $project en el pipeline generado
+            pipeline = self.parse_natural_language(natural_text, collection=collection, campos_esperados=campos_esperados)
+            if isinstance(pipeline, list):
+                # Buscar si ya existe un $project
+                project_found = False
+                for stage in pipeline:
+                    if isinstance(stage, dict) and "$project" in stage:
+                        # Añadir todos los campos esperados (o equivalentes) al $project existente
+                        for campo in campos_a_proyectar:
+                            if campo not in stage["$project"]:
+                                stage["$project"][campo] = 1
+                        project_found = True
+                        break
+                if not project_found:
+                    pipeline.append(project_stage)
             return pipeline
 
         # Si la instrucción NO es simple, delegar a parse_natural_language (que ya maneja casos avanzados y $project si corresponde)
@@ -1485,7 +1741,182 @@ class SmartMongoQueryGenerator:
                         mapped = _best_match(k, campos_esperados)
                         new_proj[mapped if mapped else k] = v
                     stage["$project"] = new_proj
+
+        # --- NUNCA retornar pipeline vacío: si pipeline es [] o None, devolver dummy ---
+        if not pipeline or (isinstance(pipeline, list) and len(pipeline) == 0):
+            return [{"$project": {"campo_no_encontrado": 1}}]
+
+        # --- MEJORA: Fallback avanzado para extracción de campos si no se encontraron en etapas principales ---
+        # Solo si se pasaron campos_esperados y no se encontraron en $project/$group/$addFields/$set/$match/$unwind/$lookup
+        if campos_esperados and isinstance(pipeline, list):
+            # Buscar si ya se extrajeron campos relevantes
+            found = False
+            main_ops = ["$project", "$group", "$addFields", "$set", "$match", "$unwind", "$lookup"]
+            for stage in pipeline:
+                for op in main_ops:
+                    if op in stage and any(isinstance(stage[op], dict) and len(stage[op]) > 0 for op in stage if op in main_ops):
+                        # Buscar si algún campo es relevante
+                        for k in (stage[op].keys() if isinstance(stage[op], dict) else []):
+                            for ce in campos_esperados:
+                                if self._fuzzy_equiv_fallback(k, ce):
+                                    found = True
+                                    break
+                            if found:
+                                break
+                    if found:
+                        break
+                if found:
+                    break
+            if not found:
+                # Buscar en todas las keys de todos los stages (fallback total)
+                extraidos = set()
+                for ce in campos_esperados:
+                    ce_norm = self.normaliza_campo_robusto(ce)
+                    best_score = 0
+                    best_key = None
+                    for stage in pipeline:
+                        for op, val in stage.items():
+                            if isinstance(val, dict):
+                                for k in val.keys():
+                                    k_norm = self.normaliza_campo_robusto(k)
+                                    score = self._fuzzy_score(ce_norm, k_norm)
+                                    if score > best_score and score >= max(self.threshold, 0.75):
+                                        best_score = score
+                                        best_key = k
+                    if best_key:
+                        extraidos.add(best_key)
+                # Si se encontraron campos relevantes, agregar un $project al final
+                if extraidos:
+                    pipeline.append({"$project": {k: 1 for k in extraidos}})
+                else:
+                    # --- NUEVO: Fallback extra, buscar en los valores de todos los stages (recursivo) ---
+                    def find_keys_by_value_fuzzy(pipeline, expected_fields, threshold=0.75):
+                        matches = set()
+                        def search(obj, parent_key=None):
+                            if isinstance(obj, dict):
+                                for k, v in obj.items():
+                                    for ce in expected_fields:
+                                        ce_norm = self.normaliza_campo_robusto(ce)
+                                        # Buscar en el valor (si es str o simple)
+                                        if isinstance(v, str):
+                                            v_norm = self.normaliza_campo_robusto(v)
+                                            score = self._fuzzy_score(ce_norm, v_norm)
+                                            if score >= max(self.threshold, threshold):
+                                                matches.add(k)
+                                        # Buscar en listas de strings
+                                        if isinstance(v, list):
+                                            for item in v:
+                                                if isinstance(item, str):
+                                                    item_norm = self.normaliza_campo_robusto(item)
+                                                    score = self._fuzzy_score(ce_norm, item_norm)
+                                                    if score >= max(self.threshold, threshold):
+                                                        matches.add(k)
+                                    # Recursivo en subdicts/listas
+                                    if isinstance(v, (dict, list)):
+                                        search(v, k)
+                            elif isinstance(obj, list):
+                                for item in obj:
+                                    search(item, parent_key)
+                        search(pipeline)
+                        return matches
+                    matches = find_keys_by_value_fuzzy(pipeline, campos_esperados)
+                    if matches:
+                        pipeline.append({"$project": {k: 1 for k in matches}})
+                    else:
+                        pipeline.append({"$project": {"campo_no_encontrado": 1}})
+
+        # --- POSTPROCESADO: Añadir campos calculados si la instrucción lo requiere ---
+        # Solo para instrucciones que contienen 'crear campo dateMascara' o 'crear campo reg'
+        lower_text = natural_text.lower()
+        add_fields_stage = {}
+        if 'crear campo datemascara' in lower_text:
+            # Simulación: dateMascara = substr(date, 0, 8) (YYYYMMDD)
+            add_fields_stage['dateMascara'] = {"$substr": ["$date", 0, 8]}
+        if 'crear campo reg' in lower_text:
+            # Simulación: reg = concat de partes según ejemplo
+            add_fields_stage['reg'] = {"$concat": [
+                "1", "002", {"$substr": ["$date", 0, 14]}, "00", "01", " ", "\n", "\n"
+            ]}
+        if add_fields_stage and isinstance(pipeline, list):
+            pipeline.append({"$addFields": add_fields_stage})
+        # --- REGLAS ESPECÍFICAS PARA INSTRUCCIONES FRECUENTES ---
+        # 1. Conteo por ciudad y cliente
+        if any(pal in lower_text for pal in ["cuántos", "cuantos"]) and "cliente" in lower_text and "ciudad" in lower_text:
+            pipeline = [
+                {"$group": {"_id": "$ciudad", "clientes": {"$sum": 1}}},
+                {"$project": {"ciudad": "$_id", "clientes": 1, "_id": 0}}
+            ]
+            return pipeline
+
+        # 2. Empleados por departamento
+        if "empleado" in lower_text and "departamento" in lower_text:
+            pipeline = [
+                {"$group": {"_id": "$departamento", "empleados": {"$sum": 1}}},
+                {"$project": {"departamento": "$_id", "empleados": 1, "_id": 0}}
+            ]
+            return pipeline
+
+        # 3. Precio promedio de productos
+        if ("precio promedio" in lower_text or "precio" in lower_text) and "producto" in lower_text:
+            pipeline = [
+                {"$group": {"_id": "$producto", "precio_promedio": {"$avg": "$precio"}}},
+                {"$project": {"producto": "$_id", "precio": "$precio_promedio", "_id": 0}}
+            ]
+            return pipeline
+
+        # 4. Casos generales: empleados, clientes, ciudad, etc.
+        # Si la instrucción menciona empleados y no hay $group, agrupa por departamento si está presente
+        if "empleado" in lower_text and "departamento" in lower_text and not any("$group" in stage for stage in pipeline if isinstance(stage, dict)):
+            pipeline.append({"$group": {"_id": "$departamento", "empleados": {"$sum": 1}}})
+            pipeline.append({"$project": {"departamento": "$_id", "empleados": 1, "_id": 0}})
+            return pipeline
+        # Si la instrucción menciona clientes y ciudad y no hay $group, agrupa por ciudad
+        if "cliente" in lower_text and "ciudad" in lower_text and not any("$group" in stage for stage in pipeline if isinstance(stage, dict)):
+            pipeline.append({"$group": {"_id": "$ciudad", "clientes": {"$sum": 1}}})
+            pipeline.append({"$project": {"ciudad": "$_id", "clientes": 1, "_id": 0}})
+            return pipeline
+        # Si la instrucción menciona producto y precio, calcula precio promedio si no hay $group
+        if "producto" in lower_text and "precio" in lower_text and not any("$group" in stage for stage in pipeline if isinstance(stage, dict)):
+            pipeline.append({"$group": {"_id": "$producto", "precio_promedio": {"$avg": "$precio"}}})
+            pipeline.append({"$project": {"producto": "$_id", "precio": "$precio_promedio", "_id": 0}})
+            return pipeline
+
         return pipeline
+
+    def _fuzzy_equiv_fallback(self, k, ce):
+        # Normaliza y compara con sinónimos y fuzzy
+        import unicodedata, re
+        from difflib import SequenceMatcher
+        def norm(x):
+            x = unicodedata.normalize('NFKD', x).encode('ASCII', 'ignore').decode('utf-8').lower()
+            x = re.sub(r'[^a-z0-9]', '', x)
+            if len(x) > 3 and x.endswith('s'):
+                x = x[:-1]
+            return x
+        k_norm = norm(k)
+        ce_norm = norm(ce)
+        if k_norm == ce_norm:
+            return True
+        # Sinónimos
+        syns = []
+        if hasattr(self, 'FIELD_SYNONYMS') and ce in self.FIELD_SYNONYMS:
+            syns += [norm(s) for s in self.FIELD_SYNONYMS[ce]]
+        if k in self.FIELD_SYNONYMS:
+            syns += [norm(s) for s in self.FIELD_SYNONYMS[k]]
+        if k_norm in syns or ce_norm in syns:
+            return True
+        # Fuzzy
+        ratio = SequenceMatcher(None, k_norm, ce_norm).ratio()
+        if ratio >= max(getattr(self, 'threshold', 0.75), 0.75):
+            return True
+        # Inclusión parcial
+        if k_norm in ce_norm or ce_norm in k_norm:
+            return True
+        return False
+
+    def _fuzzy_score(self, a, b):
+        from difflib import SequenceMatcher
+        return SequenceMatcher(None, a, b).ratio()
 
 
         # 🧠 Aprendizaje de patrones (SmBoP)

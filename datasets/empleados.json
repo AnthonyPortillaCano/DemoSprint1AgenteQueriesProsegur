@@ -1,0 +1,19 @@
+{
+  "name": "empleados",
+  "description": "Colección de empleados de ejemplo",
+  "fields": {
+    "empleado_id": {"name": "empleado_id", "type": "number", "path": "empleado_id", "description": "ID del empleado", "examples": ["201"], "synonyms": ["empleado_id", "id_empleado"]},
+    "nombre": {"name": "nombre", "type": "string", "path": "nombre", "description": "Nombre del empleado", "examples": ["Carlos"], "synonyms": ["nombre", "nombres"]},
+    "apellido": {"name": "apellido", "type": "string", "path": "apellido", "description": "Apellido del empleado", "examples": ["Ramírez"], "synonyms": ["apellido", "apellidos"]},
+    "departamento": {"name": "departamento", "type": "string", "path": "departamento", "description": "Departamento del empleado", "examples": ["Ventas"], "synonyms": ["departamento", "area"]}
+  },
+  "indexes": [],
+  "sample_documents": [
+    {"_id": 201, "empleado_id": 201, "nombre": "Carlos", "apellido": "Ramírez", "departamento": "Ventas"},
+    {"_id": 202, "empleado_id": 202, "nombre": "Lucía", "apellido": "Gómez", "departamento": "Recursos Humanos"},
+    {"_id": 203, "empleado_id": 203, "nombre": "Miguel", "apellido": "Soto", "departamento": "Finanzas"}
+  ],
+  "query_patterns": [],
+  "created_at": "2025-11-09T00:00:00",
+  "updated_at": "2025-11-09T00:00:00"
+}

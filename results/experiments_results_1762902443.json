@@ -1,0 +1,165 @@
+{
+  "summary": {
+    "real_agent": {
+      "accuracy": 0.0,
+      "mean_latency_ms": 0.1999378204345703,
+      "examples": 5
+    }
+  },
+  "results": [
+    {
+      "variant": "real_agent",
+      "nl": "Muestra los nombres y apellidos de los empleados",
+      "expected": [
+        {
+          "$project": {
+            "nombre": 1,
+            "apellido": 1,
+            "_id": 0
+          }
+        }
+      ],
+      "generated": {
+        "query": {
+          "$project": {
+            "apellido": 1,
+            "deviceId": 1,
+            "nombre": 1
+          }
+        }
+      },
+      "expected_fields": [],
+      "generated_fields": [
+        "apellido",
+        "deviceId",
+        "nombre"
+      ],
+      "score": 0.0,
+      "exact_match": false,
+      "latency_ms": 0.0,
+      "ts": "2025-11-11T18:07:23.053448"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "Proyecta solo el campo total_venta de ventas",
+      "expected": [
+        {
+          "$project": {
+            "total_venta": 1,
+            "_id": 0
+          }
+        }
+      ],
+      "generated": {
+        "query": {
+          "$project": {
+            "deviceId": 1,
+            "total_venta": 1
+          }
+        }
+      },
+      "expected_fields": [],
+      "generated_fields": [
+        "deviceId",
+        "total_venta"
+      ],
+      "score": 0.0,
+      "exact_match": false,
+      "latency_ms": 0.9996891021728516,
+      "ts": "2025-11-11T18:07:23.054447"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "Devuelve nombre y categoría de productos",
+      "expected": [
+        {
+          "$project": {
+            "nombre": 1,
+            "categoria": 1,
+            "_id": 0
+          }
+        }
+      ],
+      "generated": {
+        "query": {
+          "$project": {
+            "categoria": 1,
+            "deviceId": 1,
+            "nombre": 1
+          }
+        }
+      },
+      "expected_fields": [],
+      "generated_fields": [
+        "categoria",
+        "deviceId",
+        "nombre"
+      ],
+      "score": 0.0,
+      "exact_match": false,
+      "latency_ms": 0.0,
+      "ts": "2025-11-11T18:07:23.054447"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "Muestra el nombre y el departamento de los empleados",
+      "expected": [
+        {
+          "$project": {
+            "nombre": 1,
+            "departamento": 1,
+            "_id": 0
+          }
+        }
+      ],
+      "generated": {
+        "query": {
+          "$project": {
+            "departamento": 1,
+            "deviceId": 1,
+            "nombre": 1
+          }
+        }
+      },
+      "expected_fields": [],
+      "generated_fields": [
+        "departamento",
+        "deviceId",
+        "nombre"
+      ],
+      "score": 0.0,
+      "exact_match": false,
+      "latency_ms": 0.0,
+      "ts": "2025-11-11T18:07:23.054447"
+    },
+    {
+      "variant": "real_agent",
+      "nl": "Proyecta solo el campo item de productos",
+      "expected": [
+        {
+          "$project": {
+            "item": 1,
+            "_id": 0
+          }
+        }
+      ],
+      "generated": {
+        "query": {
+          "$project": {
+            "deviceId": 1,
+            "item": 1
+          }
+        }
+      },
+      "expected_fields": [],
+      "generated_fields": [
+        "deviceId",
+        "item"
+      ],
+      "score": 0.0,
+      "exact_match": false,
+      "latency_ms": 0.0,
+      "ts": "2025-11-11T18:07:23.054447"
+    }
+  ]
+}

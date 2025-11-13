@@ -1,3 +1,14 @@
+def build_eval_pairs_with_projection():
+    """
+    Devuelve una lista de pares (NL, expected) con consultas que requieren proyección ($project).
+    """
+    return [
+        ("Muestra los nombres y apellidos de los empleados", [{'$project': {'nombre': 1, 'apellido': 1, '_id': 0}}]),
+        ("Proyecta solo el campo total_venta de ventas", [{'$project': {'total_venta': 1, '_id': 0}}]),
+        ("Devuelve nombre y categoría de productos", [{'$project': {'nombre': 1, 'categoria': 1, '_id': 0}}]),
+        ("Muestra el nombre y el departamento de los empleados", [{'$project': {'nombre': 1, 'departamento': 1, '_id': 0}}]),
+        ("Proyecta solo el campo item de productos", [{'$project': {'item': 1, '_id': 0}}])
+    ]
 # Ejemplos manuales extraídos del notebook AgenteInteligente_QueriesMongoDB.ipynb
 MANUAL_EXAMPLES = [
     # (instrucción NL, colección)
@@ -165,12 +176,27 @@ def agent_simulator(nl: str, config: Dict[str, Any]) -> Dict:
     else:
         return {'query': match}
 
-def agent_real(nl: str) -> Dict:
+def agent_real(nl: str, expected: Dict = None) -> Dict:
     """Invoca el agente real para NL->MongoDB query. Devuelve un dict con clave 'query'."""
     if _agent_instance is None:
         raise ImportError("No se pudo instanciar SmartMongoQueryGenerator del agente real.")
+    campos_esperados = None
+    # Si se provee expected y contiene $project, extraer los campos esperados
+    if expected:
+        def extract_project_fields(exp):
+            if isinstance(exp, list):
+                for stage in exp:
+                    if isinstance(stage, dict) and '$project' in stage:
+                        return set(stage['$project'].keys())
+            elif isinstance(exp, dict) and '$project' in exp:
+                return set(exp['$project'].keys())
+            return None
+        campos_esperados = extract_project_fields(expected)
     # Usar la colección por defecto (transactions_collection)
-    result = _agent_instance.generate_query('transactions_collection', nl)
+    if campos_esperados:
+        result = _agent_instance.generate_query('transactions_collection', nl, campos_esperados=campos_esperados)
+    else:
+        result = _agent_instance.generate_query('transactions_collection', nl)
     # Si el resultado es string, intentar parsear a dict/list
     if isinstance(result, str):
         try:
@@ -226,9 +252,25 @@ def compare_queries(generated: Dict, expected: Dict) -> bool:
             if isinstance(stage, dict) and '$match' in stage:
                 return flexible_match(stage.get('$match'), expected.get('$match'))
         return False  # No se encontró etapa $match
+    # Si ambos son listas, comparar elemento a elemento
+    if isinstance(gen_query, list) and isinstance(expected, list):
+        if len(gen_query) != len(expected):
+            return False
+        return all(compare_queries(g, e) for g, e in zip(gen_query, expected))
+
     # Si es un dict con $match directamente
     if isinstance(gen_query, dict) and '$match' in gen_query:
-        return flexible_match(gen_query.get('$match'), expected.get('$match'))
+        if isinstance(expected, dict):
+            return flexible_match(gen_query.get('$match'), expected.get('$match'))
+        elif isinstance(expected, list):
+            # Buscar el primer dict con $match en la lista expected
+            for e in expected:
+                if isinstance(e, dict) and '$match' in e:
+                    return flexible_match(gen_query.get('$match'), e.get('$match'))
+            return False
+        else:
+            return False
+
     # Comparación exacta como fallback
     return gen_query == expected
 
@@ -243,17 +285,57 @@ def run_experiment(pairs: List[Tuple[str, Dict]], configs: Dict[str, Dict]) -> D
         for nl, expected in pairs:
             t0 = time.time()
             if name == 'real_agent':
-                generated = agent_real(nl)
+                generated = agent_real(nl, expected)
             else:
                 generated = agent_simulator(nl, cfg)
             t1 = time.time()
             latency = (t1 - t0) * 1000.0
             ok = compare_queries(generated, expected)
+
+            # Extraer campos esperados y generados (por ejemplo, del $project o del query)
+            def extract_fields(query_dict):
+                if not isinstance(query_dict, dict):
+                    return []
+                # Buscar $project
+                if '$project' in query_dict:
+                    return list(query_dict['$project'].keys())
+                # Buscar en pipeline
+                if 'query' in query_dict and isinstance(query_dict['query'], list):
+                    for stage in query_dict['query']:
+                        if isinstance(stage, dict) and '$project' in stage:
+                            return list(stage['$project'].keys())
+                # Buscar en query plano
+                if 'query' in query_dict and isinstance(query_dict['query'], dict) and '$project' in query_dict['query']:
+                    return list(query_dict['query']['$project'].keys())
+                return []
+
+            expected_fields = extract_fields(expected)
+            generated_fields = extract_fields(generated)
+
+            # Calcular score de recall/precision si hay campos
+            def score_fields(expected_fields, generated_fields):
+                if not expected_fields and not generated_fields:
+                    return 1.0
+                if not expected_fields or not generated_fields:
+                    return 0.0
+                expected_set = set(expected_fields)
+                generated_set = set(generated_fields)
+                recall = len(expected_set & generated_set) / len(expected_set) if expected_set else 0.0
+                precision = len(expected_set & generated_set) / len(generated_set) if generated_set else 0.0
+                if recall + precision == 0:
+                    return 0.0
+                return 2 * recall * precision / (recall + precision)
+
+            score = score_fields(expected_fields, generated_fields)
+
             results.append({
                 'variant': name,
                 'nl': nl,
                 'expected': expected,
                 'generated': generated,
+                'expected_fields': expected_fields,
+                'generated_fields': generated_fields,
+                'score': score,
                 'exact_match': bool(ok),
                 'latency_ms': latency,
                 'ts': datetime.now().isoformat()
