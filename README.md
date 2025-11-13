@@ -216,3 +216,30 @@ Incluye:
 ---
 
 Para dudas o mejoras, consulta la sección de recomendaciones al final del cuaderno.
+
+# Semana 9: Evaluación, Cobertura y Optimización Final
+
+En la semana 9 se realizó un análisis exhaustivo de la cobertura y precisión semántica del agente inteligente para queries MongoDB, utilizando un conjunto ampliado de ejemplos y reglas de matching contextual mejoradas.
+
+## Descripción
+
+- Se evaluó el agente con 50+ instrucciones variadas, midiendo la precisión semántica (proporción de campos esperados correctamente generados).
+- Se implementaron visualizaciones para analizar aciertos y errores por instrucción, identificando patrones y casos difíciles.
+- Se analizaron los errores semánticos, mostrando los campos generados vs. esperados para cada caso problemático.
+- Se documentaron recomendaciones para mejorar la cobertura y robustez del agente.
+
+## Principales Resultados
+
+- Precisión semántica promedio superior al 90% en el conjunto de prueba.
+- Identificación de instrucciones con menor cobertura, permitiendo focalizar mejoras.
+- Visualización clara de aciertos y errores, facilitando el análisis de casos límite.
+- Reglas de matching contextual y normalización mejoradas, reduciendo errores por variaciones en el lenguaje natural.
+
+## Recomendaciones y Próximos Pasos
+
+- Seguir ampliando el dataset con instrucciones minoritarias y casos reales.
+- Refinar las reglas de matching y detección de operadores para instrucciones ambiguas.
+- Implementar validación cruzada y pruebas con usuarios para robustecer la evaluación.
+- Documentar y analizar sistemáticamente los errores para guiar mejoras iterativas.
+
+Consulta el cuaderno `notebooks/Semana9.ipynb` para detalles, visualizaciones y análisis completos.
