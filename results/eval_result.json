@@ -1,0 +1,423 @@
+[
+  {
+    "id": "q_001",
+    "nl": "muestra los 5 productos más vendidos",
+    "collection": "ventas",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 0.9992122650146484,
+    "precision": 0.3333333333333333,
+    "recall": 0.3333333333333333,
+    "f1": 0.3333333333333333,
+    "exec_success": true,
+    "func_equiv": false,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$group": {
+          "_id": "$producto",
+          "total_ventas": {
+            "$sum": "$total_venta"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "total_ventas": -1
+        }
+      },
+      {
+        "$limit": 5
+      },
+      {
+        "$project": {
+          "productos": "$_id",
+          "total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$group": {
+          "_id": "$producto",
+          "total_vendidos": {
+            "$sum": "$cantidad"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "total_vendidos": -1
+        }
+      },
+      {
+        "$limit": 5
+      },
+      {
+        "$project": {
+          "producto": "$_id",
+          "total_vendidos": 1,
+          "_id": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "q_002",
+    "nl": "cuenta cuántos clientes hay por ciudad",
+    "collection": "clientes",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 2.0296573638916016,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "exec_success": true,
+    "func_equiv": true,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$group": {
+          "_id": "$ciudad",
+          "clientes": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$project": {
+          "ciudad": "$_id",
+          "clientes": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$group": {
+          "_id": "$ciudad",
+          "clientes": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$project": {
+          "ciudad": "$_id",
+          "clientes": 1,
+          "_id": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "q_003",
+    "nl": "lista los empleados por departamento",
+    "collection": "empleados",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 0.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "exec_success": true,
+    "func_equiv": true,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$group": {
+          "_id": "$departamento",
+          "empleados": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$project": {
+          "departamento": "$_id",
+          "empleados": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$group": {
+          "_id": "$departamento",
+          "empleados": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$project": {
+          "departamento": "$_id",
+          "empleados": 1,
+          "_id": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "q_004",
+    "nl": "precio promedio de productos",
+    "collection": "productos",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 3.0744075775146484,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": null,
+    "exec_success": false,
+    "func_equiv": false,
+    "exec_error": "Object of type ObjectId is not JSON serializable",
+    "generated_pipeline": [
+      {
+        "$project": {
+          "campo_no_encontrado": 1
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$group": {
+          "_id": "$producto",
+          "precio_promedio": {
+            "$avg": "$precio"
+          }
+        }
+      },
+      {
+        "$project": {
+          "producto": "$_id",
+          "precio": "$precio_promedio",
+          "_id": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "q_005",
+    "nl": "agrega la suma total de ventas por mes",
+    "collection": "ventas",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 1.5056133270263672,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "exec_success": true,
+    "func_equiv": false,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$addFields": {
+          "anio_mes": {
+            "$substr": [
+              "$fecha_venta",
+              0,
+              7
+            ]
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": "$anio_mes",
+          "suma_total_ventas": {
+            "$sum": "$total_venta"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "_id": 1
+        }
+      },
+      {
+        "$project": {
+          "mes": "$_id",
+          "suma_total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$addFields": {
+          "anio_mes": {
+            "$dateToString": {
+              "format": "%Y-%m",
+              "date": "$fecha"
+            }
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": "$anio_mes",
+          "suma_total_ventas": {
+            "$sum": "$total"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "_id": 1
+        }
+      },
+      {
+        "$project": {
+          "mes": "$_id",
+          "suma_total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "q_006",
+    "nl": "luego agrupa todo y cuenta el total de registros",
+    "collection": "ventas",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 0.0,
+    "precision": null,
+    "recall": null,
+    "f1": null,
+    "exec_success": true,
+    "func_equiv": true,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$group": {
+          "_id": null,
+          "total_registros": {
+            "$sum": 1
+          }
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$group": {
+          "_id": null,
+          "total_registros": {
+            "$sum": 1
+          }
+        }
+      }
+    ]
+  },
+  {
+    "id": "q_007",
+    "nl": "muestra los 3 productos más vendidos en 2024",
+    "collection": "ventas",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 1.0058879852294922,
+    "precision": 0.3333333333333333,
+    "recall": 0.3333333333333333,
+    "f1": 0.3333333333333333,
+    "exec_success": true,
+    "func_equiv": false,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$group": {
+          "_id": "$producto",
+          "total_ventas": {
+            "$sum": "$total_venta"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "total_ventas": -1
+        }
+      },
+      {
+        "$limit": 3
+      },
+      {
+        "$project": {
+          "productos": "$_id",
+          "total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$match": {
+          "fecha": {
+            "$gte": "2024-01-01",
+            "$lte": "2024-12-31"
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": "$producto",
+          "total_vendidos": {
+            "$sum": "$cantidad"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "total_vendidos": -1
+        }
+      },
+      {
+        "$limit": 3
+      },
+      {
+        "$project": {
+          "producto": "$_id",
+          "total_vendidos": 1,
+          "_id": 0
+        }
+      }
+    ]
+  },
+  {
+    "id": "q_008",
+    "nl": "filtra clientes cuyo nombre comience con 'Jo'",
+    "collection": "clientes",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 0.0,
+    "precision": 0.0,
+    "recall": null,
+    "f1": null,
+    "exec_success": false,
+    "func_equiv": false,
+    "exec_error": "Object of type ObjectId is not JSON serializable",
+    "generated_pipeline": [
+      {
+        "$project": {
+          "campo_no_encontrado": 1
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$match": {
+          "nombre": {
+            "$regex": "^Jo"
+          }
+        }
+      }
+    ]
+  }
+]

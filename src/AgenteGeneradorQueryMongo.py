@@ -48,12 +48,14 @@ class SmartMongoQueryGenerator:
                 return canonical
         # Si no hay coincidencia, retorna el original
         return collection
-    def __init__(self, dataset_manager: Optional[DatasetManager] = None, llm_engine: Optional[LLMSuggestionEngine] = None, threshold: float = 0.5, use_synonyms: bool = True):
+    def __init__(self, dataset_manager: Optional[DatasetManager] = None, llm_engine: Optional[LLMSuggestionEngine] = None, threshold: float = 0.5, use_synonyms: bool = True, use_schema_resolver: bool = False):
         # GESTOR DE DATASET (Nuevo - Contexto de Datos)
         self.dataset_manager = dataset_manager or create_default_dataset()
         self.llm_engine = llm_engine or LLMSuggestionEngine()
         self.threshold = threshold  # Controla el umbral de coincidencia para campos
         self.use_synonyms = use_synonyms  # Controla si se usan sinónimos para normalizar campos
+        # Opt-in: resolver de esquema (mapeo de tokens a campos en dataset_manager)
+        self.use_schema_resolver = use_schema_resolver
         # 📅 Formatos de fecha soportados
 
         # (Eliminado: lógica de es_simple y palabras_avanzadas, solo debe estar en generate_query)
@@ -1881,6 +1883,27 @@ class SmartMongoQueryGenerator:
             pipeline.append({"$project": {"producto": "$_id", "precio": "$precio_promedio", "_id": 0}})
             return pipeline
 
+        # Si el resolutor de esquema está activado, intentar resolver y (opcionalmente) aplicar mapeo de campos
+        try:
+            if getattr(self, 'use_schema_resolver', False) and isinstance(pipeline, list):
+                mapping = self.resolve_fields_for_pipeline(pipeline, collection=collection, threshold=getattr(self, 'threshold', None))
+                applied = {k: v for k, v in mapping.items() if v.get('matched') is not None and v.get('score', 0) >= getattr(self, 'threshold', 0.75)}
+                if applied:
+                    from copy import deepcopy
+                    mapped_pipeline = deepcopy(pipeline)
+                    mapped_pipeline = self._apply_field_mapping(mapped_pipeline, applied)
+                    # Guardar el mapping aplicado para trazabilidad sin alterar el retorno esperado
+                    self._last_field_resolution = {'original': mapping, 'applied': applied}
+                    pipeline = mapped_pipeline
+                else:
+                    self._last_field_resolution = {'original': mapping, 'applied': {}}
+        except Exception as e:
+            try:
+                import logging
+                logging.exception("Error al aplicar resolver de esquema: %s", e)
+            except Exception:
+                print(f"Error al aplicar resolver de esquema: {e}")
+
         return pipeline
 
     def _fuzzy_equiv_fallback(self, k, ce):
@@ -1917,6 +1940,189 @@ class SmartMongoQueryGenerator:
     def _fuzzy_score(self, a, b):
         from difflib import SequenceMatcher
         return SequenceMatcher(None, a, b).ratio()
+
+    def analyze_pipeline(self, pipeline: list, collection: str = None, threshold: float = None) -> dict:
+        """
+        Analiza una pipeline generada y propone un mapeo fuzzy de los campos usados
+        frente al esquema conocido (si `dataset_manager` está disponible).
+
+        No modifica la pipeline. Retorna un dict con:
+          - field_mappings: {campo_en_pipeline: {matched: campo_schema|None, score: 0.0}}
+          - confidence: promedio de scores (0..1)
+
+        Uso previsto: diagnóstico y trazabilidad desde el evaluator sin alterar
+        el flujo de generación actual.
+        """
+        import unicodedata, re
+        from difflib import SequenceMatcher
+
+        # Preparar candidatos desde schema si está disponible
+        schema_fields = []
+        if hasattr(self, 'dataset_manager') and self.dataset_manager and collection and collection in self.dataset_manager.schemas:
+            schema = self.dataset_manager.schemas[collection]
+            # schema.fields puede ser un dict-like con field names as keys
+            try:
+                schema_fields = list(schema.fields.keys())
+            except Exception:
+                # Fallback: intentar iterar atributos de schema
+                try:
+                    schema_fields = [f.name for f in schema]
+                except Exception:
+                    schema_fields = []
+
+        def normalize_name(s: str) -> str:
+            s = str(s or '')
+            s = unicodedata.normalize('NFKD', s).encode('ASCII', 'ignore').decode('utf-8').lower()
+            s = re.sub(r'[^a-z0-9]', '', s)
+            return s
+
+        def best_match(cand: str):
+            cand_n = normalize_name(cand)
+            best = None
+            best_score = 0.0
+            for f in schema_fields:
+                score = SequenceMatcher(None, cand_n, normalize_name(f)).ratio()
+                if score > best_score:
+                    best_score = score
+                    best = f
+            return best, best_score
+
+        # Extraer nombres de campos usados en la pipeline (heurística conservadora)
+        used = set()
+
+        def walk(obj):
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    # keys in $project are likely field names
+                    if k == '$project' and isinstance(v, dict):
+                        for pk in v.keys():
+                            used.add(pk)
+                    # group _id puede ser string o dict
+                    if k == '$group' and isinstance(v, dict) and '_id' in v:
+                        _id = v['_id']
+                        if isinstance(_id, str) and _id.startswith('$'):
+                            used.add(_id.lstrip('$'))
+                        elif isinstance(_id, dict):
+                            for gid in _id.keys():
+                                used.add(gid)
+                    # match / sort / project may contain '$field' references
+                    if isinstance(v, str) and v.startswith('$'):
+                        used.add(v.lstrip('$'))
+                    # recursive
+                    walk(v)
+            elif isinstance(obj, list):
+                for item in obj:
+                    walk(item)
+
+        walk(pipeline)
+
+        # Para cada campo usado, proponer mejor match
+        mappings = {}
+        scores = []
+        for field in sorted(used):
+            matched, score = (None, 0.0)
+            if schema_fields:
+                matched, score = best_match(field)
+            mappings[field] = {'matched': matched, 'score': float(score)}
+            scores.append(score)
+
+        confidence = float(sum(scores) / len(scores)) if scores else 0.0
+
+        return {'field_mappings': mappings, 'confidence': confidence}
+
+
+    def resolve_field(self, token: str, collection: str = None, threshold: float = None) -> dict:
+        """
+        Resolver un token de campo frente al esquema conocido usando sinónimos y fuzzy.
+        Retorna: {'matched': campo_schema|None, 'score': float}
+        """
+        from difflib import SequenceMatcher
+
+        threshold = threshold if threshold is not None else getattr(self, 'threshold', 0.75)
+        if not hasattr(self, 'dataset_manager') or not self.dataset_manager or not collection or collection not in self.dataset_manager.schemas:
+            return {'matched': None, 'score': 0.0}
+
+        schema = self.dataset_manager.schemas[collection]
+        tok_norm = self.normaliza_campo_robusto(token)
+        best = None
+        best_score = 0.0
+
+        for fname, fdef in schema.fields.items():
+            fname_norm = self.normaliza_campo_robusto(fname)
+            if fname_norm == tok_norm:
+                return {'matched': fname, 'score': 1.0}
+            # fuzzy direct
+            score = self._fuzzy_score(tok_norm, fname_norm)
+            if score > best_score:
+                best_score = score
+                best = fname
+            # synonyms on field definition
+            for syn in getattr(fdef, 'synonyms', []):
+                syn_norm = self.normaliza_campo_robusto(syn)
+                s2 = self._fuzzy_score(tok_norm, syn_norm)
+                if s2 > best_score:
+                    best_score = s2
+                    best = fname
+
+        if best_score >= threshold:
+            return {'matched': best, 'score': float(best_score)}
+        return {'matched': None, 'score': float(best_score)}
+
+
+    def resolve_fields_for_pipeline(self, pipeline: list, collection: str = None, threshold: float = None) -> dict:
+        """
+        Extrae nombres de campos desde una pipeline (heurística) y devuelve un mapping {campo_pipeline: {matched, score}}
+        """
+        used = set()
+
+        def walk(obj):
+            if isinstance(obj, dict):
+                for k, v in obj.items():
+                    # keys que no son operadores ($) suelen ser campos
+                    if isinstance(k, str) and not k.startswith('$'):
+                        used.add(k)
+                    # valores string con referencia $campo
+                    if isinstance(v, str):
+                        if v.startswith('$'):
+                            used.add(v.lstrip('$'))
+                    # recursivo
+                    walk(v)
+            elif isinstance(obj, list):
+                for item in obj:
+                    walk(item)
+
+        walk(pipeline)
+        mapping = {}
+        for u in sorted(used):
+            mapping[u] = self.resolve_field(u, collection=collection, threshold=threshold)
+        return mapping
+
+
+    def _apply_field_mapping(self, pipeline: list, mapping: dict) -> list:
+        """
+        Aplica un mapping {orig: {matched,score}} a la pipeline, reemplazando claves y referencias tipo "$campo".
+        Devuelve una copia transformada de la pipeline.
+        """
+        from copy import deepcopy
+
+        def _repl(obj):
+            if isinstance(obj, dict):
+                new = {}
+                for k, v in obj.items():
+                    newk = mapping.get(k, {}).get('matched', k)
+                    new[newk] = _repl(v)
+                return new
+            if isinstance(obj, list):
+                return [_repl(x) for x in obj]
+            if isinstance(obj, str):
+                if obj.startswith('$'):
+                    fld = obj.lstrip('$')
+                    mapped = mapping.get(fld, {}).get('matched')
+                    return f"${mapped}" if mapped else obj
+                return obj
+            return obj
+
+        return _repl(deepcopy(pipeline))
 
 
         # 🧠 Aprendizaje de patrones (SmBoP)
@@ -2037,14 +2243,27 @@ class SmartMongoQueryGenerator:
         pipeline = limpiar_campos(pipeline)
         pipeline = [etapa for etapa in pipeline if es_operador_valido(etapa)]
 
-        # Generar query final como string JSON del pipeline
-        generated_query = json.dumps(pipeline, indent=2, ensure_ascii=False)
+        # Generar query final: devolver siempre la pipeline como lista de stages
+        # Guardar también una representación en string para trazabilidad/registro
+        generated_pipeline = pipeline
+        try:
+            generated_pipeline_str = json.dumps(pipeline, indent=2, ensure_ascii=False)
+        except Exception:
+            generated_pipeline_str = None
 
-        # 🧠 Aprender del patrón generado (SmBoP)
+        # 🧠 Aprender del patrón generado (SmBoP) — pasar la representación en string si está disponible
         if self.dataset_manager:
-            self.dataset_manager.learn_from_query(collection, natural_text, generated_query)
+            try:
+                self.dataset_manager.learn_from_query(collection, natural_text, generated_pipeline_str if generated_pipeline_str is not None else generated_pipeline)
+            except Exception:
+                # No romper la generación si el dataset_manager falla al registrar
+                pass
 
-        return generated_query
+        # Guardar última pipeline generada para trazabilidad
+        self._last_generated_pipeline = generated_pipeline
+        self._last_generated_pipeline_str = generated_pipeline_str
+
+        return generated_pipeline
 
 
     def _validate_query_fields(self, natural_text: str, collection: str):

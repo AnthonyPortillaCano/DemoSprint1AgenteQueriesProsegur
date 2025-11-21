@@ -1,0 +1,572 @@
+[
+  {
+    "id": "q_001",
+    "nl": "muestra los 5 productos más vendidos",
+    "collection": "ventas",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 0.0,
+    "precision": 0.875,
+    "recall": 0.875,
+    "f1": 0.875,
+    "exec_success": true,
+    "func_equiv": false,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$group": {
+          "_id": "$producto",
+          "total_ventas": {
+            "$sum": "$total_venta"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "total_ventas": -1
+        }
+      },
+      {
+        "$limit": 5
+      },
+      {
+        "$project": {
+          "productos": "$_id",
+          "total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "mapped_pipeline": [
+      {
+        "$group": {
+          "_id": "$producto",
+          "total_ventas": {
+            "$sum": "$total_venta"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "total_ventas": -1
+        }
+      },
+      {
+        "$limit": 5
+      },
+      {
+        "$project": {
+          "producto": "$_id",
+          "total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$group": {
+          "_id": "$producto",
+          "total_vendidos": {
+            "$sum": "$cantidad"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "total_vendidos": -1
+        }
+      },
+      {
+        "$limit": 5
+      },
+      {
+        "$project": {
+          "producto": "$_id",
+          "total_vendidos": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "mapping_applied": true
+  },
+  {
+    "id": "q_002",
+    "nl": "cuenta cuántos clientes hay por ciudad",
+    "collection": "clientes",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 1.0006427764892578,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "exec_success": true,
+    "func_equiv": true,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$group": {
+          "_id": "$ciudad",
+          "clientes": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$project": {
+          "ciudad": "$_id",
+          "clientes": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "mapped_pipeline": [
+      {
+        "$group": {
+          "_id": "$ciudad",
+          "clientes": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$project": {
+          "ciudad": "$_id",
+          "clientes": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$group": {
+          "_id": "$ciudad",
+          "clientes": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$project": {
+          "ciudad": "$_id",
+          "clientes": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "mapping_applied": true
+  },
+  {
+    "id": "q_003",
+    "nl": "lista los empleados por departamento",
+    "collection": "empleados",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 0.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "exec_success": true,
+    "func_equiv": true,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$group": {
+          "_id": "$departamento",
+          "empleados": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$project": {
+          "departamento": "$_id",
+          "empleados": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "mapped_pipeline": [
+      {
+        "$group": {
+          "_id": "$departamento",
+          "empleados": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$project": {
+          "departamento": "$_id",
+          "empleados": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$group": {
+          "_id": "$departamento",
+          "empleados": {
+            "$sum": 1
+          }
+        }
+      },
+      {
+        "$project": {
+          "departamento": "$_id",
+          "empleados": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "mapping_applied": true
+  },
+  {
+    "id": "q_004",
+    "nl": "precio promedio de productos",
+    "collection": "productos",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 0.0,
+    "precision": 0.5,
+    "recall": 0.14285714285714285,
+    "f1": 0.22222222222222224,
+    "exec_success": true,
+    "func_equiv": false,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$project": {
+          "campo_no_encontrado": 1
+        }
+      }
+    ],
+    "mapped_pipeline": [
+      {
+        "$project": {
+          "campo_no_encontrado": 1
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$group": {
+          "_id": "$producto",
+          "precio_promedio": {
+            "$avg": "$precio"
+          }
+        }
+      },
+      {
+        "$project": {
+          "producto": "$_id",
+          "precio": "$precio_promedio",
+          "_id": 0
+        }
+      }
+    ],
+    "mapping_applied": true
+  },
+  {
+    "id": "q_005",
+    "nl": "agrega la suma total de ventas por mes",
+    "collection": "ventas",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 0.9982585906982422,
+    "precision": 0.9,
+    "recall": 0.75,
+    "f1": 0.8181818181818182,
+    "exec_success": true,
+    "func_equiv": false,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$addFields": {
+          "anio_mes": {
+            "$substr": [
+              "$fecha_venta",
+              0,
+              7
+            ]
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": "$anio_mes",
+          "suma_total_ventas": {
+            "$sum": "$total_venta"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "_id": 1
+        }
+      },
+      {
+        "$project": {
+          "mes": "$_id",
+          "suma_total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "mapped_pipeline": [
+      {
+        "$addFields": {
+          "anio_mes": {
+            "$substr": [
+              "$fecha_venta",
+              0,
+              7
+            ]
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": "$anio_mes",
+          "suma_total_ventas": {
+            "$sum": "$total_venta"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "_id": 1
+        }
+      },
+      {
+        "$project": {
+          "mes": "$_id",
+          "suma_total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$addFields": {
+          "anio_mes": {
+            "$dateToString": {
+              "format": "%Y-%m",
+              "date": "$fecha"
+            }
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": "$anio_mes",
+          "suma_total_ventas": {
+            "$sum": "$total"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "_id": 1
+        }
+      },
+      {
+        "$project": {
+          "mes": "$_id",
+          "suma_total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "mapping_applied": true
+  },
+  {
+    "id": "q_006",
+    "nl": "luego agrupa todo y cuenta el total de registros",
+    "collection": "ventas",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 0.0,
+    "precision": 1.0,
+    "recall": 1.0,
+    "f1": 1.0,
+    "exec_success": true,
+    "func_equiv": true,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$group": {
+          "_id": null,
+          "total_registros": {
+            "$sum": 1
+          }
+        }
+      }
+    ],
+    "mapped_pipeline": [
+      {
+        "$group": {
+          "_id": null,
+          "total_registros": {
+            "$sum": 1
+          }
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$group": {
+          "_id": null,
+          "total_registros": {
+            "$sum": 1
+          }
+        }
+      }
+    ],
+    "mapping_applied": true
+  },
+  {
+    "id": "q_007",
+    "nl": "muestra los 3 productos más vendidos en 2024",
+    "collection": "ventas",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 1.001596450805664,
+    "precision": 0.875,
+    "recall": 0.5833333333333334,
+    "f1": 0.7000000000000001,
+    "exec_success": true,
+    "func_equiv": false,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$group": {
+          "_id": "$producto",
+          "total_ventas": {
+            "$sum": "$total_venta"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "total_ventas": -1
+        }
+      },
+      {
+        "$limit": 3
+      },
+      {
+        "$project": {
+          "productos": "$_id",
+          "total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "mapped_pipeline": [
+      {
+        "$group": {
+          "_id": "$producto",
+          "total_ventas": {
+            "$sum": "$total_venta"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "total_ventas": -1
+        }
+      },
+      {
+        "$limit": 3
+      },
+      {
+        "$project": {
+          "producto": "$_id",
+          "total_ventas": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$match": {
+          "fecha": {
+            "$gte": "2024-01-01",
+            "$lte": "2024-12-31"
+          }
+        }
+      },
+      {
+        "$group": {
+          "_id": "$producto",
+          "total_vendidos": {
+            "$sum": "$cantidad"
+          }
+        }
+      },
+      {
+        "$sort": {
+          "total_vendidos": -1
+        }
+      },
+      {
+        "$limit": 3
+      },
+      {
+        "$project": {
+          "producto": "$_id",
+          "total_vendidos": 1,
+          "_id": 0
+        }
+      }
+    ],
+    "mapping_applied": true
+  },
+  {
+    "id": "q_008",
+    "nl": "filtra clientes cuyo nombre comience con 'Jo'",
+    "collection": "clientes",
+    "syntactic_valid": true,
+    "parse_error": null,
+    "gen_error": null,
+    "latency_ms": 0.0,
+    "precision": 0.0,
+    "recall": 0.0,
+    "f1": null,
+    "exec_success": true,
+    "func_equiv": false,
+    "exec_error": null,
+    "generated_pipeline": [
+      {
+        "$project": {
+          "campo_no_encontrado": 1
+        }
+      }
+    ],
+    "mapped_pipeline": [
+      {
+        "$project": {
+          "campo_no_encontrado": 1
+        }
+      }
+    ],
+    "expected_pipeline": [
+      {
+        "$match": {
+          "nombre": {
+            "$regex": "^Jo"
+          }
+        }
+      }
+    ],
+    "mapping_applied": true
+  }
+]
