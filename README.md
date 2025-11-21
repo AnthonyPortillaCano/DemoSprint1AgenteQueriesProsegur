@@ -253,9 +253,9 @@ El cuaderno `notebooks/Semana10.ipynb` centraliza la ejecución, análisis compa
 
 - **Ejecución automática de la evaluación**: Permite correr el script de evaluación del agente en los modos `strict` y `mapped` directamente desde el notebook, generando archivos de resultados y mostrando tablas y figuras clave de métricas como exactitud sintáctica, éxito de ejecución, equivalencia funcional y F1.
 - **Comparación de variantes y análisis de ablaciones**: Explica y guía cómo realizar ablaciones (cambios en parámetros como `use_synonyms`, `threshold`, etc.) editando el script fuente, ejecutando cada variante y guardando los resultados por separado. Incluye funciones y celdas para cargar, comparar y visualizar el impacto de cada ablación en las métricas principales.
-- **Protocolo experimental y reproducibilidad**: Proporciona plantillas para documentar el protocolo experimental (K-folds, seeds, reproducibilidad), analizar el impacto de cada cambio y justificar mejoras en la tesis.
+- **Protocolo experimental y reproducibilidad**: Proporciona plantillas para documentar el protocolo experimental (K-folds, seeds, reproducibilidad), analizar el impacto de cada cambio y justificar .
 - **Comparación histórica**: Permite comparar los resultados actuales con los de semanas anteriores (por ejemplo, Semana 9 vs Semana 10), mostrando la evolución y mejora del agente.
-- **Bitácora y soporte para la tesis**: Espacios markdown para resumir hallazgos, analizar errores y justificar mejoras, facilitando la documentación para la defensa de tesis.
+- **Bitácora y soporte para la tesis**: Espacios markdown para resumir hallazgos, analizar errores y justificar mejoras.
 
 ## ¿Cómo usar el cuaderno Semana10.ipynb?
 1. Abre `notebooks/Semana10.ipynb` en Jupyter o VS Code.
@@ -263,11 +263,5 @@ El cuaderno `notebooks/Semana10.ipynb` centraliza la ejecución, análisis compa
    - Generar y visualizar los resultados de la evaluación automática.
    - Realizar y documentar ablaciones (modifica los parámetros del agente en el script fuente según la guía del cuaderno).
    - Comparar métricas y analizar el impacto de cada variante y de la evolución histórica.
-3. Usa las celdas markdown para resumir hallazgos, analizar errores y justificar decisiones en la tesis.
-
-**Nota:** Para las ablaciones, es necesario editar manualmente el archivo `src/eval/generate_query_eval.py` para cambiar los parámetros del agente antes de ejecutar cada variante y guardar los resultados con un nombre diferente (ejemplo: `eval_result_no_synonyms.json`).
-
+3. Usa las celdas markdown para resumir hallazgos, analizar errores y justificar .
 El cuaderno está diseñado para ser autoexplicativo y servir como bitácora de experimentos y resultados finales.
-
----
----
