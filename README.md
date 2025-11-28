@@ -265,3 +265,31 @@ El cuaderno `notebooks/Semana10.ipynb` centraliza la ejecución, análisis compa
    - Comparar métricas y analizar el impacto de cada variante y de la evolución histórica.
 3. Usa las celdas markdown para resumir hallazgos, analizar errores y justificar .
 El cuaderno está diseñado para ser autoexplicativo y servir como bitácora de experimentos y resultados finales.
+
+# Semana 11: Matriz de Consistencia y Evidencia Experimental
+
+Este cuaderno documenta el desarrollo, validación y resultados experimentales del proyecto:
+
+**Agente Inteligente para la Generación Automática de Queries MongoDB a partir de Lenguaje Natural**
+
+## Contenido principal
+- Matriz de consistencia completa y alineada (problema, objetivos, hipótesis, variables, operacionalización, resultados)
+- Plan de generalización y adaptación a nuevos dominios
+- Ejemplos reales de evaluación del agente generador de queries
+- Cálculo de métricas objetivas: F1-score, cobertura de operadores, validez estructural, tiempo de generación
+- Análisis de casos fallidos y normalización de campos
+- Interpretación de resultados y recomendaciones
+
+## Evidencias clave
+- **F1-score promedio real sobre 100 ejemplos:** 0.98
+- **Validez estructural alta:** queries generadas válidas y ejecutables
+- **Cobertura de operadores:** alta, medido sobre ejemplos variados
+- **Mapeo de campos robusto:** diccionario de equivalencias ampliado y validado
+- **Reducción de errores y tiempo:** demostrado en pruebas automáticas y manuales
+
+## Uso
+Este cuaderno puede ser utilizado como evidencia , demostrando la coherencia entre los objetivos, hipótesis, variables y resultados experimentales obtenidos.
+
+---
+
+Para más detalles, consulta las celdas de la matriz de consistencia y los bloques de código de evaluación en el propio notebook.

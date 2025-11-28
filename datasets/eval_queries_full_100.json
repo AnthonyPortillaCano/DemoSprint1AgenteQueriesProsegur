@@ -1,0 +1,96 @@
+[
+  {
+    "id": "q_001",
+    "collection": "ventas",
+    "nl": "muestra los 5 productos más vendidos",
+    "tags": ["top_n", "producto"],
+    "difficulty": "easy",
+    "expected_pipeline": [
+      {"$group": {"_id": "$producto", "total_vendidos": {"$sum": "$cantidad"}}},
+      {"$sort": {"total_vendidos": -1}},
+      {"$limit": 5},
+      {"$project": {"producto": "$_id", "total_vendidos": 1, "_id": 0}}
+    ]
+  },
+  {
+    "id": "q_002",
+    "collection": "clientes",
+    "nl": "cuenta cuántos clientes hay por ciudad",
+    "tags": ["count_by", "cliente", "ciudad"],
+    "difficulty": "easy",
+    "expected_pipeline": [
+      {"$group": {"_id": "$ciudad", "clientes": {"$sum": 1}}},
+      {"$project": {"ciudad": "$_id", "clientes": 1, "_id": 0}}
+    ]
+  },
+  {
+    "id": "q_003",
+    "collection": "empleados",
+    "nl": "lista los empleados por departamento",
+    "tags": ["list_by", "empleado", "departamento"],
+    "difficulty": "easy",
+    "expected_pipeline": [
+      {"$group": {"_id": "$departamento", "empleados": {"$sum": 1}}},
+      {"$project": {"departamento": "$_id", "empleados": 1, "_id": 0}}
+    ]
+  },
+  {
+    "id": "q_004",
+    "collection": "productos",
+    "nl": "precio promedio de productos",
+    "tags": ["avg", "producto", "precio"],
+    "difficulty": "easy",
+    "expected_pipeline": [
+      {"$group": {"_id": "$producto", "precio_promedio": {"$avg": "$precio"}}},
+      {"$project": {"producto": "$_id", "precio": "$precio_promedio", "_id": 0}}
+    ]
+  },
+  {
+    "id": "q_005",
+    "collection": "ventas",
+    "nl": "agrega la suma total de ventas por mes",
+    "tags": ["group_month", "suma"],
+    "difficulty": "medium",
+    "expected_pipeline": [
+      {"$addFields": {"anio_mes": {"$dateToString": {"format": "%Y-%m", "date": "$fecha"}}}},
+      {"$group": {"_id": "$anio_mes", "suma_total_ventas": {"$sum": "$total"}}},
+      {"$sort": {"_id": 1}},
+      {"$project": {"mes": "$_id", "suma_total_ventas": 1, "_id": 0}}
+    ]
+  },
+  {
+    "id": "q_006",
+    "collection": "ventas",
+    "nl": "luego agrupa todo y cuenta el total de registros",
+    "tags": ["global_group", "count"],
+    "difficulty": "easy",
+    "expected_pipeline": [
+      {"$group": {"_id": null, "total_registros": {"$sum": 1}}}
+    ]
+  },
+  {
+    "id": "q_007",
+    "collection": "ventas",
+    "nl": "muestra los 3 productos más vendidos en 2024",
+    "tags": ["top_n", "filter", "fecha"],
+    "difficulty": "medium",
+    "expected_pipeline": [
+      {"$match": {"fecha": {"$gte": "2024-01-01", "$lte": "2024-12-31"}}},
+      {"$group": {"_id": "$producto", "total_vendidos": {"$sum": "$cantidad"}}},
+      {"$sort": {"total_vendidos": -1}},
+      {"$limit": 3},
+      {"$project": {"producto": "$_id", "total_vendidos": 1, "_id": 0}}
+    ]
+  },
+  {
+    "id": "q_008",
+    "collection": "clientes",
+    "nl": "filtra clientes cuyo nombre comience con 'Jo'",
+    "tags": ["regex", "filter"],
+    "difficulty": "medium",
+    "expected_pipeline": [
+      {"$match": {"nombre": {"$regex": "^Jo"}}}
+    ]
+  }
+ 
+]
