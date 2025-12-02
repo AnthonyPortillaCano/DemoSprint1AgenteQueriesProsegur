@@ -1,5 +1,14 @@
-[
-  {"usuario_id": 1, "nombre": "Juan", "edad": 30, "ciudad": "Lima"},
-  {"usuario_id": 2, "nombre": "Ana", "edad": 25, "ciudad": "Arequipa"},
-  {"usuario_id": 3, "nombre": "Pedro", "edad": 40, "ciudad": "Cusco"}
-]
+{
+  "name": "usuarios",
+  "description": "Esquema placeholder para usuarios (no es colección real)",
+  "fields": {},
+  "indexes": [],
+  "sample_documents": [
+    {"usuario_id": 1, "nombre": "Juan", "edad": 30, "ciudad": "Lima"},
+    {"usuario_id": 2, "nombre": "Ana", "edad": 25, "ciudad": "Arequipa"},
+    {"usuario_id": 3, "nombre": "Pedro", "edad": 40, "ciudad": "Cusco"}
+  ],
+  "query_patterns": [],
+  "created_at": "2025-01-01T00:00:00",
+  "updated_at": "2025-01-01T00:00:00"
+}

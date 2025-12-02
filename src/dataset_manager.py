@@ -76,16 +76,29 @@ class DatasetManager:
         self._load_existing_datasets()
     
     def _load_existing_datasets(self):
-        """Carga datasets existentes desde archivos JSON que sean esquemas válidos (con clave 'fields')."""
-        for filename in os.listdir(self.dataset_path):
+        """Carga datasets existentes desde archivos JSON que sean esquemas válidos (con clave 'fields'). Nunca falla: si hay error, loguea y sigue."""
+        import logging
+        try:
+            files = os.listdir(self.dataset_path)
+        except Exception as e:
+            logging.error(f"[DatasetManager] No se pudo listar la carpeta de datasets: {e}. Se usará esquema vacío.")
+            self.schemas = {}
+            return
+        for filename in files:
             if filename.endswith('.json'):
                 collection_name = filename.replace('.json', '')
                 try:
                     schema = self.load_schema(collection_name, skip_invalid=True)
                     if schema is None:
+                        logging.warning(f"[DatasetManager] El archivo {filename} no es un esquema válido o está vacío.")
                         continue
-                except Exception:
+                except Exception as ex:
+                    logging.error(f"[DatasetManager] Error al cargar el esquema {filename}: {ex}. Se omite este archivo.")
                     continue
+        # Si no se cargó ningún esquema, dejar al menos un esquema vacío para evitar fallos aguas abajo
+        if not self.schemas:
+            logging.warning("[DatasetManager] No se cargó ningún esquema. Se usará un esquema vacío por defecto.")
+            self.schemas = {}
     
     def create_schema(self, collection_name: str, description: str = "") -> CollectionSchema:
         """

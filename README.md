@@ -74,7 +74,7 @@ Python 3.11.7
 
       ```powershell
       # Ejecutar API (FastAPI)
-      uvicorn src.main:app --reload
+      $env:PYTHONPATH="C:\MAESTRIA UNI\TERCER CICLO\PROYECTO DE INVESTIGACION 1\DemoSprint1\DemoSprint1Final"; uvicorn src.main:app --reload
 
       # Ejecutar la web (Streamlit)
       streamlit run src/app.py

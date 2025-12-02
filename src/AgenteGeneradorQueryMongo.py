@@ -1,3 +1,4 @@
+
 class AgenteGeneradorQueryMongo:
     @staticmethod
     def normaliza_campo_robusto(campo):
@@ -10,10 +11,12 @@ class AgenteGeneradorQueryMongo:
 import re
 import json
 from typing import Dict, List, Optional, Any, Union
-from dataset_manager import DatasetManager, create_default_dataset
-
-
-from llm_suggestion_engine import LLMSuggestionEngine
+try:
+    from dataset_manager import DatasetManager, create_default_dataset
+    from llm_suggestion_engine import LLMSuggestionEngine
+except ImportError:
+    from src.dataset_manager import DatasetManager, create_default_dataset
+    from src.llm_suggestion_engine import LLMSuggestionEngine
 
 class SmartMongoQueryGenerator:
     @staticmethod
@@ -25,9 +28,14 @@ class SmartMongoQueryGenerator:
             campo = campo[:-1]
         return campo
     def _filtrar_project_global(self, pipeline, schema_fields):
-        for stage in pipeline:
+        for i, stage in enumerate(pipeline):
             if "$project" in stage:
-                keys_a_borrar = [k for k in stage["$project"].keys() if k not in schema_fields]
+                # Detectar campos generados por $group en el pipeline anterior
+                generated_fields = set()
+                if i > 0 and "$group" in pipeline[i-1]:
+                    generated_fields.update(pipeline[i-1]["$group"].keys())
+                # Permitir campos del esquema y generados por $group
+                keys_a_borrar = [k for k in stage["$project"].keys() if k not in schema_fields and k not in generated_fields]
                 for k in keys_a_borrar:
                     del stage["$project"][k]
     def _normalize_collection(self, collection: str) -> str:
@@ -278,8 +286,102 @@ class SmartMongoQueryGenerator:
 
     def parse_natural_language(self, natural_text: str, collection: str = None, campos_esperados: set = None) -> list:
         # Definir 'lines' al inicio para evitar UnboundLocalError
+        import datetime
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
         pipeline = []  # Inicializa antes de cualquier uso
+
+        # --- MEJORA: Detección de expresiones temporales como 'último mes' ---
+        lower_text = natural_text.lower()
+        temporal_match = None
+        if 'último mes' in lower_text or 'ultimo mes' in lower_text:
+            temporal_match = 'last_month'
+        # Puedes agregar más patrones temporales aquí
+
+        # Buscar campo de fecha principal en la colección (por sinónimos)
+        fecha_field = None
+        if collection and self.dataset_manager and collection in self.dataset_manager.schemas:
+            schema = self.dataset_manager.schemas[collection]
+            for fname, fdef in schema.fields.items():
+                # Buscar por sinónimos comunes de fecha
+                all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
+                if any(s in ['fecha', 'fecha_venta', 'fecha de venta', 'fecha venta', 'fecha_transaccion', 'fechaoperacion', 'fechaventa', 'fechatransaccion', 'fechadeventa', 'fechadeoperacion', 'fecha_compra'] for s in all_syns):
+                    fecha_field = fname
+                    break
+        # Fallback: buscar en FIELD_SYNONYMS si no se encontró
+        if not fecha_field and hasattr(self, 'FIELD_SYNONYMS'):
+            for canonical, syns in self.FIELD_SYNONYMS.items():
+                if canonical.lower().startswith('fecha') or 'fecha' in canonical.lower():
+                    fecha_field = canonical
+                    break
+        # PATCH: Si la colección es 'ventas' y no se encontró campo de fecha, usar 'fecha_venta' explícitamente
+        if (not fecha_field) and collection and collection.lower() == 'ventas':
+            # Verifica que 'fecha_venta' esté en el esquema
+            if self.dataset_manager and collection in self.dataset_manager.schemas:
+                schema = self.dataset_manager.schemas[collection]
+                if 'fecha_venta' in schema.fields:
+                    fecha_field = 'fecha_venta'
+
+        # Si se detectó expresión temporal y hay campo de fecha, y la instrucción pide ventas del último mes, sumar total_venta
+        if temporal_match == 'last_month' and fecha_field:
+            lower_text = natural_text.lower()
+            # Solo activar suma si la colección es ventas y la instrucción pide ventas
+            if collection and collection.lower() == 'ventas' and ('ventas' in lower_text or 'venta' in lower_text):
+                today = datetime.date.today()
+                first_day_this_month = today.replace(day=1)
+                last_day_last_month = first_day_this_month - datetime.timedelta(days=1)
+                first_day_last_month = last_day_last_month.replace(day=1)
+                match_stage = {"$match": {
+                    fecha_field: {
+                        "$gte": str(first_day_last_month),
+                        "$lte": str(last_day_last_month)
+                    }
+                }}
+                # Buscar campo de suma (total_venta)
+                total_field = None
+                if self.dataset_manager and collection in self.dataset_manager.schemas:
+                    schema = self.dataset_manager.schemas[collection]
+                    for fname, fdef in schema.fields.items():
+                        all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
+                        if 'total_venta' in all_syns or 'total' in all_syns or 'importe' in all_syns or 'monto' in all_syns:
+                            total_field = fname
+                            break
+                if not total_field:
+                    total_field = 'total_venta'  # Fallback
+                # Si los datos pueden estar como string, agrega conversión en el pipeline
+                add_fields_stage = {
+                    "$addFields": {
+                        "fecha_venta_date": {"$dateFromString": {"dateString": f"${fecha_field}"}},
+                        "total_venta_num": {"$toDouble": f"${total_field}"}
+                    }
+                }
+                match_stage = {"$match": {
+                    "fecha_venta_date": {
+                        "$gte": {"$dateFromString": {"dateString": str(first_day_last_month)}},
+                        "$lte": {"$dateFromString": {"dateString": str(last_day_last_month)}}
+                    }
+                }}
+                group_stage = {"$group": {"_id": None, "total_venta": {"$sum": "$total_venta_num"}}}
+                project_stage = {"$project": {"total_venta": 1}}
+                pipeline.extend([add_fields_stage, match_stage, group_stage, project_stage])
+                return pipeline
+            else:
+                # Comportamiento anterior para otros casos con fecha relativa
+                today = datetime.date.today()
+                first_day_this_month = today.replace(day=1)
+                last_day_last_month = first_day_this_month - datetime.timedelta(days=1)
+                first_day_last_month = last_day_last_month.replace(day=1)
+                match_stage = {"$match": {
+                    fecha_field: {
+                        "$gte": str(first_day_last_month),
+                        "$lte": str(last_day_last_month)
+                    }
+                }}
+                pipeline.append(match_stage)
+                if collection and self.dataset_manager and collection in self.dataset_manager.schemas:
+                    schema = self.dataset_manager.schemas[collection]
+                    project_fields = {fname: 1 for fname in schema.fields.keys()}
+                    if len(pipeline) == 1:
+                        pipeline.append({"$project": project_fields})
 
         # --- REGLAS ESPECÍFICAS PARA PATRONES DE NEGOCIO FRECUENTES ---
         # 1. Conteo por grupo: "cuenta cuántos <entidad> hay en cada <campo>"
@@ -299,6 +401,186 @@ class SmartMongoQueryGenerator:
             project_stage = {"$project": {campo_norm: "$_id", "count": 1, "_id": 0}}
             pipeline.extend([group_stage, project_stage])
             return pipeline
+         # Regla específica para transacciones mayores a un monto en un mes
+        match_transacciones_monto_mes = re.search(r'transacciones? mayores? a \$?(\d+)[^\d]*(en|de)?\s*(noviembre|diciembre|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre)?', natural_text, re.IGNORECASE)
+        if match_transacciones_monto_mes and collection and collection.lower() == "transactions_collection":
+            monto = float(match_transacciones_monto_mes.group(1))
+            # mes = match_transacciones_monto_mes.group(4)
+            meses = [
+                     "enero", "febrero", "marzo", "abril", "mayo", "junio",
+                     "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+            texto_lower = natural_text.lower()
+
+            pattern = r'\b(' + '|'.join(re.escape(m) for m in meses) + r')\b'
+            m = re.search(pattern, texto_lower, flags=re.IGNORECASE)
+            mes = m.group(1) if m else None
+            
+            print("mes:", mes)
+            # Buscar campo de fecha y monto en el esquema
+            fecha_field = None
+            monto_field = None
+            if self.dataset_manager and collection in self.dataset_manager.schemas:
+                schema = self.dataset_manager.schemas[collection]
+                for fname, fdef in schema.fields.items():
+                    syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
+                    if any(s in ['date', 'fecha', 'fechahora', 'timestamp'] for s in syns):
+                        fecha_field = fname
+                    if any(s in ['total', 'monto', 'amount'] for s in syns):
+                        monto_field = fname
+            if not fecha_field:
+                fecha_field = 'Date'
+            if not monto_field:
+                monto_field = 'Total'
+            # $unwind para desanidar arrays
+            pipeline.append({"$unwind": "$Devices"})
+            pipeline.append({"$unwind": "$Devices.ServicePoints"})
+            pipeline.append({"$unwind": "$Devices.ServicePoints.ShipOutCycles"})
+            pipeline.append({"$unwind": "$Devices.ServicePoints.ShipOutCycles.Transactions"})
+            # $match por monto y mes (siempre incluir filtro de mes si se menciona)
+            meses_map = {'enero': 1, 'febrero': 2, 'marzo': 3, 'abril': 4, 'mayo': 5, 'junio': 6, 'julio': 7, 'agosto': 8, 'septiembre': 9, 'octubre': 10, 'noviembre': 11, 'diciembre': 12}
+            match_dict = {f"Devices.ServicePoints.ShipOutCycles.Transactions.{monto_field}": {"$gt": monto}}
+            if mes:
+                mes_num = meses_map.get(mes.lower(), None)
+                if mes_num:
+                    match_dict["$expr"] = {
+                        "$eq": [
+                            {"$month": f"$Devices.ServicePoints.ShipOutCycles.Transactions.{fecha_field}"},
+                            mes_num
+                        ]
+                    }
+            pipeline.append({"$match": match_dict})
+            # $project solo con campos válidos y anidados
+            project_stage = {"$project": {
+                "Date": "$Devices.ServicePoints.ShipOutCycles.Transactions.Date",
+                "Total": "$Devices.ServicePoints.ShipOutCycles.Transactions.Total",
+                "_id": 0
+            }}
+            pipeline.append(project_stage)
+            return pipeline
+         # Nueva regla: "¿Qué clientes compraron más de 5 veces este año?"
+        match_clientes_mas_5_ano = re.search(r'(clientes|compradores).*compraron.*(más de|mas de)\s*(\d+)\s*veces.*(este año|en \d{4})', natural_text, re.IGNORECASE)
+        if match_clientes_mas_5_ano and collection and collection.lower() == "ventas":
+            # Detectar campo de fecha y cliente usando nombres canónicos del esquema
+            fecha_field = 'fecha_venta'
+            cliente_field = 'cliente_id'
+            if self.dataset_manager and collection in self.dataset_manager.schemas:
+                schema = self.dataset_manager.schemas[collection]
+                # Buscar por sinónimos, pero priorizar los nombres canónicos
+                for fname, fdef in schema.fields.items():
+                    all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
+                    if any(s in ['fecha', 'fecha_venta', 'fecha de venta', 'fecha venta', 'fecha_transaccion', 'fechaoperacion', 'fechaventa', 'fechatransaccion', 'fechadeventa', 'fechadeoperacion', 'fecha_compra'] for s in all_syns):
+                        fecha_field = fname
+                    if any(s in ['cliente_id', 'cliente'] for s in all_syns):
+                        cliente_field = fname
+            # Detectar año
+            year_match = re.search(r'en (\d{4})', natural_text)
+            if year_match:
+                year = int(year_match.group(1))
+            else:
+                year = datetime.date.today().year
+            # Detectar cantidad
+            cantidad_match = re.search(r'(más de|mas de)\s*(\d+)\s*veces', natural_text)
+            if cantidad_match:
+                min_veces = int(cantidad_match.group(2))
+            else:
+                min_veces = 5
+            # $match por año
+            match_stage = {"$match": {
+                fecha_field: {"$regex": f"^{year}-"}
+            }}
+            # $group por cliente
+            group_stage = {"$group": {
+                "_id": f"${cliente_field}",
+                "num_compras": {"$sum": 1}
+            }}
+            # $match para filtrar clientes con más de min_veces compras
+            match_count_stage = {"$match": {"num_compras": {"$gt": min_veces}}}
+            # $project para mostrar cliente y num_compras usando nombres canónicos
+            project_stage = {"$project": {cliente_field: "$_id", "num_compras": 1, "_id": 0}}
+            pipeline.extend([match_stage, group_stage, match_count_stage, project_stage])
+            return pipeline
+
+            # Nueva regla: "¿Cuántas ventas se hicieron por canal online en el último trimestre?"
+        match_canal_trimestre = re.search(r'(cu[aá]ntas ventas|cu[aá]ntos|total de ventas).*canal\s+online.*(trimestre|último trimestre|quarter)', natural_text, re.IGNORECASE)
+        if match_canal_trimestre and collection and collection.lower() == "ventas":
+                # Detectar campo de fecha
+                fecha_field = None
+                canal_field = None
+                if self.dataset_manager and collection in self.dataset_manager.schemas:
+                    schema = self.dataset_manager.schemas[collection]
+                    for fname, fdef in schema.fields.items():
+                        all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
+                        if any(s in ['fecha', 'fecha_venta', 'fecha de venta', 'fecha venta', 'fecha_transaccion', 'fechaoperacion', 'fechaventa', 'fechatransaccion', 'fechadeventa', 'fechadeoperacion', 'fecha_compra'] for s in all_syns):
+                            fecha_field = fname
+                        if any(s in ['canal', 'canal_venta', 'canal_transaccion', 'canalcompra', 'canalventa'] for s in all_syns):
+                            canal_field = fname
+                if not fecha_field:
+                    fecha_field = 'fecha_venta'
+                if not canal_field:
+                    canal_field = 'canal'
+                # Calcular fechas del último trimestre
+                today = datetime.date.today()
+                current_month = today.month
+                current_year = today.year
+                # Trimestre actual
+                if current_month in [1,2,3]:
+                    start_month = 1
+                elif current_month in [4,5,6]:
+                    start_month = 4
+                elif current_month in [7,8,9]:
+                    start_month = 7
+                else:
+                    start_month = 10
+                # Último trimestre
+                if start_month == 1:
+                    last_q_start = datetime.date(current_year-1, 10, 1)
+                    last_q_end = datetime.date(current_year-1, 12, 31)
+                else:
+                    last_q_start = datetime.date(current_year, start_month-3, 1)
+                    last_q_end = datetime.date(current_year, start_month-1, 1) + datetime.timedelta(days=31)
+                    last_q_end = last_q_end.replace(day=1) - datetime.timedelta(days=1)
+                # $match por canal online y fechas del último trimestre
+                match_stage = {"$match": {
+                    canal_field: {"$regex": "online", "$options": "i"},
+                    fecha_field: {"$gte": str(last_q_start), "$lte": str(last_q_end)}
+                }}
+                group_stage = {"$group": {"_id": f"${canal_field}", "total_ventas": {"$sum": 1}}}
+                # El campo 'canal' no existe en el esquema, pero sí en $_id del $group
+                project_stage = {"$project": {f"{canal_field}": "$_id", "total_ventas": 1, "_id": 0}}
+                pipeline.extend([match_stage, group_stage, project_stage])
+                return pipeline
+            # Regla específica: total de ventas por producto y ciudad en [año]
+        match_total_ventas_prod_ciudad = re.search(r"total de ventas por producto y ciudad en (\d{4})", natural_text.lower())
+        if match_total_ventas_prod_ciudad and collection and collection.lower() == "ventas":
+                anio = int(match_total_ventas_prod_ciudad.group(1))
+                # Detectar campo de fecha
+                fecha_field = None
+                if self.dataset_manager and collection in self.dataset_manager.schemas:
+                    schema = self.dataset_manager.schemas[collection]
+                    for fname, fdef in schema.fields.items():
+                        all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
+                        if any(s in ['fecha', 'fecha_venta', 'fecha de venta', 'fecha venta', 'fecha_transaccion', 'fechaoperacion', 'fechaventa', 'fechatransaccion', 'fechadeventa', 'fechadeoperacion', 'fecha_compra'] for s in all_syns):
+                            fecha_field = fname
+                            break
+                if not fecha_field:
+                    fecha_field = 'fecha_venta'
+                # $match por año
+                match_stage = {"$match": {
+                    fecha_field: {
+                        "$regex": f"^{anio}-"
+                    }
+                }}
+                # $group por producto y ciudad
+                producto_field = self._normalize_field('producto', collection=collection)
+                ciudad_field = self._normalize_field('ciudad', collection=collection)
+                total_field = self._normalize_field('total_venta', collection=collection)
+                group_stage = {"$group": {
+                    "_id": {"producto": f"${producto_field}", "ciudad": f"${ciudad_field}"},
+                    "total_ventas": {"$sum": f"${total_field}"}
+                }}
+                project_stage = {"$project": {"producto": "$_id.producto", "ciudad": "$_id.ciudad", "total_ventas": 1, "_id": 0}}
+                pipeline.extend([match_stage, group_stage, project_stage])
+                return pipeline
 
         # 2. Suma total por grupo: "calcula el total de <campo_suma> por <campo_grupo>"
         match_sum_group = re.search(r'calcula el total de ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) por ([\wáéíóúüñÁÉÍÓÚÜÑ_]+)', natural_text, re.IGNORECASE)
@@ -323,6 +605,68 @@ class SmartMongoQueryGenerator:
             group_stage = {"$group": {"_id": f"${campo_grupo_norm}", f"avg_{campo_avg_norm}": {"$avg": f"${campo_avg_norm}"}}}
             project_stage = {"$project": {campo_grupo_norm: "$_id", f"avg_{campo_avg_norm}": 1, "_id": 0}}
             pipeline.extend([group_stage, project_stage])
+            return pipeline
+
+        # 3b. Multi-field group with total and average: soporta variantes de redacción
+        match_multi_group = re.search(
+            r'(agru(p|pe)[\w\s]*ventas[\w\s]*por ([\wáéíóúüñÁÉÍÓÚÜÑ_,\sy]+)[,\s]*(mostrando|y)?[\w\s]*(total|suma|sumatoria)?[\w\s]*(y|e)?[\w\s]*(promedio|media)?[\w\s]*(por grupo)?)',
+            natural_text.lower()
+        )
+        if match_multi_group and collection and collection.lower() == "ventas":
+            # Extraer campos de agrupación
+            campos_match = re.search(r'por ([\wáéíóúüñÁÉÍÓÚÜÑ_,\sy]+?)(?:,| mostrando| y |$)', natural_text.lower())
+            if campos_match:
+                campos = campos_match.group(1)
+                campos = [c.strip() for c in re.split(r',| y ', campos) if c.strip()]
+            else:
+                campos = []
+            # Normalizar campos
+            campos_norm = [self._normalize_field(c, collection=collection) for c in campos]
+            # Detectar campo de total (usualmente total_venta o similar)
+            total_field = self._normalize_field('total_venta', collection=collection)
+            # Detectar campo de fecha para extraer mes si corresponde
+            fecha_field = self._normalize_field('fecha_venta', collection=collection)
+            # Si uno de los campos es mes, crear campo mes a partir de fecha
+            add_fields_stage = None
+            group_id = {}
+            project_fields = {}
+            for c, c_norm in zip(campos, campos_norm):
+                if c_norm in ['mes', 'month']:
+                    add_fields_stage = {"$addFields": {"mes": {"$month": f"${fecha_field}"}}}
+                    group_id['mes'] = "$mes"
+                    project_fields['mes'] = "$_id.mes"
+                else:
+                    group_id[c_norm] = f"${c_norm}"
+                    project_fields[c_norm] = f"$_id.{c_norm}"
+            group_stage = {"$group": {"_id": group_id, "total": {"$sum": f"${total_field}"}, "promedio": {"$avg": f"${total_field}"}}}
+            project_fields['total'] = 1
+            project_fields['promedio'] = 1
+            project_fields['_id'] = 0
+            project_stage = {"$project": project_fields}
+            if add_fields_stage:
+                pipeline.extend([add_fields_stage, group_stage, project_stage])
+            else:
+                pipeline.extend([group_stage, project_stage])
+            return pipeline
+
+
+        # 4. Agrupación y orden por monto descendente: "Dame las ventas por producto, agrupadas por cliente y ordenadas por monto descendente"
+        match_group_sort = re.search(r'ventas por ([\wáéíóúüñÁÉÍÓÚÜÑ_]+),? agrupadas? por ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) y ordenadas? por (monto|total|importe|valor) descendente', natural_text, re.IGNORECASE)
+        if match_group_sort and collection and collection.lower() == "ventas":
+            campo1 = match_group_sort.group(1).strip()
+            campo2 = match_group_sort.group(2).strip()
+            campo_monto = match_group_sort.group(3).strip()
+            # Normalizar campos
+            campo1_norm = self._normalize_field(campo1, collection=collection)
+            campo2_norm = self._normalize_field(campo2, collection=collection)
+            monto_norm = self._normalize_field('total_venta', collection=collection)
+            # $group por cliente y producto
+            group_stage = {"$group": {"_id": {campo2_norm: f"${campo2_norm}", campo1_norm: f"${campo1_norm}"}, "total_venta": {"$sum": f"${monto_norm}"}}}
+            # $sort por total_venta descendente
+            sort_stage = {"$sort": {"total_venta": -1}}
+            # $project para mostrar campos relevantes
+            project_stage = {"$project": {campo2_norm: "$_id." + campo2_norm, campo1_norm: "$_id." + campo1_norm, "total_venta": 1, "_id": 0}}
+            pipeline.extend([group_stage, sort_stage, project_stage])
             return pipeline
 
         # 4. Top-N: "muestra los N <entidad> más vendidos"
@@ -409,9 +753,15 @@ class SmartMongoQueryGenerator:
                     if field not in stage["$project"] and field in schema_fields:
                         stage["$project"][field] = 1
                 # Eliminar del $project cualquier campo que no sea válido
-                for k in list(stage["$project"].keys()):
-                    if k not in schema_fields:
-                        del stage["$project"][k]
+                campos_invalidos = [k for k in list(stage["$project"].keys()) if k not in schema_fields]
+                for k in campos_invalidos:
+                    del stage["$project"][k]
+                # Si se eliminaron todos los campos y no queda ninguno válido, sugerir los campos válidos
+                if len(stage["$project"]) == 0 and len(campos_invalidos) > 0:
+                    # Sugerir campos válidos en la colección
+                    for f in schema_fields:
+                        stage["$project"][f] = 1
+                    stage["$project"]["campo_no_encontrado"] = 1
                 break
 
         # Si hay campos mencionados y no hay $project, crear uno solo con válidos
@@ -420,6 +770,7 @@ class SmartMongoQueryGenerator:
             if campos_filtrados:
                 project_stage = {"$project": {field: 1 for field in campos_filtrados}}
                 pipeline.append(project_stage)
+                
 
         # Filtrar cualquier $project generado en el pipeline para que solo tenga campos válidos
         for stage in pipeline:
@@ -479,7 +830,7 @@ class SmartMongoQueryGenerator:
             if match_substr:
                 n = int(match_substr.group(1))
                 campo = match_substr.group(2)
-                project_stage = {"$project": {f"{campo}_substr": {"$substr": [f"${campo}", 0, n]}, "_id": 0}}
+                project_stage = {"$project": {campo: {"$substr": [f"${campo}", 0, n]}, "_id": 0}}
                 pipeline.append(project_stage)
                 return pipeline
         pipeline = []  # Inicializa antes de cualquier uso
@@ -656,28 +1007,49 @@ class SmartMongoQueryGenerator:
             logging.info(f"Pipeline generado para JOIN: {pipeline}")
             return pipeline
 
-        # --- NUEVO: Soporte para 'muestra los 5 productos más vendidos' ---
-        top_vendidos_match = re.search(r'muestra los (\d+) productos m[aá]s vendidos', natural_text, re.IGNORECASE)
-        if top_vendidos_match:
-            top_n = int(top_vendidos_match.group(1))
-            # Asume campos típicos: producto/nombre y cantidad vendida
-            # Buscar campo producto y cantidad en el dataset o usar nombres comunes
+        # --- MEJORA: Soporte para 'lista los productos más vendidos esta semana' y variantes ---
+        top_vendidos_semana_match = re.search(r'(lista|muestra) (los )?(?P<n>\d+)? ?productos m[aá]s vendidos( esta semana)?', natural_text, re.IGNORECASE)
+        if top_vendidos_semana_match:
+            import datetime
+            n = top_vendidos_semana_match.group('n')
+            top_n = int(n) if n else 10  # Por defecto top 10 si no se especifica
+            # Si la colección es 'productos', pero el campo 'total_venta' no existe, forzar a 'ventas'
+            schema_fields = set()
+            original_collection = collection
+            if self.dataset_manager and collection in self.dataset_manager.schemas:
+                schema_fields = set(self.dataset_manager.schemas[collection].fields.keys())
+            if (collection == 'productos' or collection.lower() == 'productos') and 'total_venta' not in schema_fields:
+                if 'ventas' in self.dataset_manager.schemas:
+                    collection = 'ventas'
+                    schema_fields = set(self.dataset_manager.schemas[collection].fields.keys())
+            # Determinar rango de la semana actual
+            today = datetime.date.today()
+            start_of_week = today - datetime.timedelta(days=today.weekday())
+            end_of_week = start_of_week + datetime.timedelta(days=6)
+            # Buscar campos relevantes
             field_producto = self._normalize_field('producto', collection=collection)
-            if field_producto == 'producto':
-                # fallback a 'nombre' si no existe 'producto'
-                field_producto = self._normalize_field('nombre', collection=collection)
-            field_cantidad = self._normalize_field('cantidad', collection=collection)
-            if field_cantidad == 'cantidad':
-                # fallback a 'vendidos' o 'ventas' si no existe 'cantidad'
-                field_cantidad = self._normalize_field('vendidos', collection=collection)
-                if field_cantidad == 'vendidos':
-                    field_cantidad = self._normalize_field('ventas', collection=collection)
-            # $group por producto, suma cantidad
-            group_stage = {"$group": {"_id": f"${field_producto}", "total_vendidos": {"$sum": f"${field_cantidad}"}}}
-            sort_stage = {"$sort": {"total_vendidos": -1}}
+            field_cantidad = self._normalize_field('total_venta', collection=collection)
+            # Validar que el campo producto existe en el esquema de la colección
+            if field_producto not in schema_fields:
+                # Buscar un campo similar (por ejemplo, 'producto' en ventas, 'nombre' en productos)
+                for f in schema_fields:
+                    if 'producto' in f:
+                        field_producto = f
+                        break
+            # Filtro por semana
+            match_stage = {"$match": {
+                "fecha_venta": {
+                    "$gte": str(start_of_week),
+                    "$lte": str(end_of_week)
+                }
+            }}
+            # Agrupar por producto y sumar total_venta
+            group_stage = {"$group": {"_id": f"${field_producto}", "total_venta": {"$sum": f"${field_cantidad}"}}}
+            sort_stage = {"$sort": {"total_venta": -1}}
             limit_stage = {"$limit": top_n}
-            project_stage = {"$project": {"producto": "$_id", "total_vendidos": 1, "_id": 0}}
-            pipeline.extend([group_stage, sort_stage, limit_stage, project_stage])
+            # El nombre del campo proyectado debe coincidir con el campo real
+            project_stage = {"$project": {field_producto: "$_id", "total_venta": 1, "_id": 0}}
+            pipeline.extend([match_stage, group_stage, sort_stage, limit_stage, project_stage])
             return pipeline
 
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
@@ -1233,7 +1605,6 @@ class SmartMongoQueryGenerator:
                                             {"$strLenCP": {"$concat": ["000000000000000", {"$toString": {"$sum": ["$totalRegSoles", "$totalRegDolares", 2]}}]}},
                                             -15
                                         ]},
-                                        15
                                     ]
                                 },
                                 {
@@ -1606,8 +1977,135 @@ class SmartMongoQueryGenerator:
         Si se proporcionan campos_esperados, solo proyecta esos campos (filtro estricto) SOLO si la instrucción es simple.
         Devuelve el pipeline como lista de etapas (no string JSON).
         """
+        # --- Si parse_natural_language soporta la instrucción, usar su resultado ---
+
+        pipeline_nlp = self.parse_natural_language(natural_text, collection=collection, campos_esperados=campos_esperados)
+        if pipeline_nlp and isinstance(pipeline_nlp, list) and len(pipeline_nlp) > 0:
+            return pipeline_nlp
         # --- SOLUCIÓN ESPECIAL PARA LA INSTRUCCIÓN DE AGRUPACIÓN GLOBAL DE REGISTROS ---
         lower_text = natural_text.lower()
+
+        # --- NUEVO: Conteo de clientes nuevos por mes ("¿Cuántos clientes nuevos hubo en octubre?") ---
+        import calendar
+        import datetime
+        meses_es = [
+            'enero', 'febrero', 'marzo', 'abril', 'mayo', 'junio',
+            'julio', 'agosto', 'septiembre', 'octubre', 'noviembre', 'diciembre'
+        ]
+        
+        # --- MEJORA: Para ventas, si los campos ya son del tipo correcto, simplifica el pipeline ---
+        if (
+            ("venta" in lower_text or "ventas" in lower_text)
+            and ("último mes" in lower_text or "ultimo mes" in lower_text or "mes pasado" in lower_text)
+            and ("total" in lower_text or "suma" in lower_text or "cuánto" in lower_text or "cuanto" in lower_text)
+        ):
+            # Detectar si los campos ya son del tipo correcto
+            is_fecha_date = False
+            is_total_num = False
+            if self.dataset_manager and collection in self.dataset_manager.schemas:
+                schema = self.dataset_manager.schemas[collection]
+                if 'fecha_venta' in schema.fields:
+                    tipo_fecha = getattr(schema.fields['fecha_venta'], 'type', None)
+                    if tipo_fecha and tipo_fecha.lower() in ['date', 'datetime', 'timestamp']:
+                        is_fecha_date = True
+                if 'total_venta' in schema.fields:
+                    tipo_total = getattr(schema.fields['total_venta'], 'type', None)
+                    if tipo_total and tipo_total.lower() in ['double', 'number', 'decimal', 'float', 'int', 'integer']:
+                        is_total_num = True
+            # Calcular fechas de inicio y fin del mes pasado
+            import datetime
+            today = datetime.datetime.now()
+            first_day_this_month = today.replace(day=1)
+            last_month_end = first_day_this_month - datetime.timedelta(days=1)
+            last_month_start = last_month_end.replace(day=1)
+            fecha_ini = last_month_start.strftime("%Y-%m-%dT00:00:00Z")
+            fecha_fin = last_month_end.strftime("%Y-%m-%dT23:59:59Z")
+            if is_fecha_date and is_total_num:
+                # Pipeline óptimo usando ISODate string directamente
+                pipeline = [
+                    {"$match": {"fecha_venta": {"$gte": fecha_ini, "$lte": fecha_fin}}},
+                    {"$group": {"_id": None, "total_venta": {"$sum": "$total_venta"}}},
+                    {"$project": {"total_venta": 1, "_id": 0}}
+                ]
+                return pipeline
+            # Si no, usar el pipeline robusto (con conversiones)
+            pipeline = [
+                {"$addFields": {
+                    "fecha_venta_date": {"$dateFromString": {"dateString": "$fecha_venta"}},
+                    "total_venta_num": {"$toDouble": "$total_venta"}
+                }},
+                {"$match": {
+                    "fecha_venta_date": {
+                        "$gte": {"$dateFromString": {"dateString": fecha_ini}},
+                        "$lte": {"$dateFromString": {"dateString": fecha_fin}}
+                    }
+                }},
+                {"$group": {"_id": None, "total_venta": {"$sum": "$total_venta_num"}}},
+                {"$project": {"total_venta": 1, "_id": 0}}
+            ]
+            return pipeline
+        if (('cuántos' in lower_text or 'cuantos' in lower_text) and 'cliente' in lower_text and 'nuevo' in lower_text and any(m in lower_text for m in meses_es)):
+            # Detectar el mes mencionado
+            mes_idx = None
+            for i, mes in enumerate(meses_es):
+                if mes in lower_text:
+                    mes_idx = i + 1
+                    break
+            if mes_idx:
+                # Determinar año (por defecto, año actual)
+                anio_actual = datetime.datetime.now().year
+                # Buscar si se menciona un año explícito
+                import re
+                anio_match = re.search(r'(20\d{2})', lower_text)
+                if anio_match:
+                    anio = int(anio_match.group(1))
+                else:
+                    anio = anio_actual
+                # Calcular rango de fechas ISO
+                fecha_ini_iso = f"{anio}-{mes_idx:02d}-01T00:00:00Z"
+                last_day = calendar.monthrange(anio, mes_idx)[1]
+                fecha_fin_iso = f"{anio}-{mes_idx:02d}-{last_day:02d}T23:59:59Z"
+
+                # Verificar si el campo es string o fecha (asumimos string por defecto)
+                is_string = True
+                if self.dataset_manager and collection in self.dataset_manager.schemas:
+                    schema = self.dataset_manager.schemas[collection]
+                    if 'fecha_registro' in schema.fields:
+                        tipo = getattr(schema.fields['fecha_registro'], 'type', None)
+                        if tipo and tipo.lower() in ['date', 'datetime', 'timestamp']:
+                            is_string = False
+
+                if is_string:
+                    # Si es string, convertir en el $match usando $dateFromString directamente
+                    pipeline = [
+                        {"$match": {
+                            "$expr": {
+                                "$and": [
+                                    {"$gte": [
+                                        {"$dateFromString": {"dateString": "$fecha_registro"}},
+                                        {"$toDate": fecha_ini_iso}
+                                    ]},
+                                    {"$lte": [
+                                        {"$dateFromString": {"dateString": "$fecha_registro"}},
+                                        {"$toDate": fecha_fin_iso}
+                                    ]}
+                                ]
+                            }
+                        }},
+                        {"$count": "clientes_nuevos"}
+                    ]
+                else:
+                    # Si ya es tipo fecha, filtra directamente
+                    pipeline = [
+                        {"$match": {
+                            "fecha_registro": {
+                                "$gte": {"$toDate": fecha_ini_iso},
+                                "$lte": {"$toDate": fecha_fin_iso}
+                            }
+                        }},
+                        {"$count": "clientes_nuevos"}
+                    ]
+                return pipeline
         if "luego agrupa todo y cuenta el total de registros" in lower_text:
             pipeline = [
                 {"$group": {"_id": None, "total_registros": {"$sum": 1}}}
@@ -1744,8 +2242,17 @@ class SmartMongoQueryGenerator:
                         new_proj[mapped if mapped else k] = v
                     stage["$project"] = new_proj
 
-        # --- NUNCA retornar pipeline vacío: si pipeline es [] o None, devolver dummy ---
+        # --- NUNCA retornar pipeline vacío: si pipeline es [] o None, intentar fallback para 'crear campo X' ---
         if not pipeline or (isinstance(pipeline, list) and len(pipeline) == 0):
+            import re
+            # Si la instrucción es 'crear campo ...', generar un $project con ese/estos campos
+            match = re.match(r'crear campo ([\w, ]+)', natural_text.strip(), re.IGNORECASE)
+            if match:
+                fields = [f.strip() for f in match.group(1).split(',') if f.strip()]
+                project_stage = {"$project": {}}
+                for field in fields:
+                    project_stage["$project"][field] = 1
+                return [project_stage]
             return [{"$project": {"campo_no_encontrado": 1}}]
 
         # --- MEJORA: Fallback avanzado para extracción de campos si no se encontraron en etapas principales ---
