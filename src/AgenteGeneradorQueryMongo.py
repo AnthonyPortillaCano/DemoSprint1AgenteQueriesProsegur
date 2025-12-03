@@ -285,11 +285,184 @@ class SmartMongoQueryGenerator:
         return expanded
 
     def parse_natural_language(self, natural_text: str, collection: str = None, campos_esperados: set = None) -> list:
-        # Definir 'lines' al inicio para evitar UnboundLocalError
+               
         import datetime
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
-        pipeline = []  # Inicializa antes de cualquier uso
+        pipeline = []
 
+        # REGLA MEJORADA: Proyección avanzada dinámica para dateMascara y reg
+        for line in lines:
+            # Detecta instrucciones para proyección avanzada
+            match_date = re.search(r'Proyecta el campo ([\w]+) como la fecha en formato ([A-Z0-9]+) usando los primeros (\d+) caracteres del campo ([\w]+)', line)
+            match_reg = re.search(r'Proyecta el campo ([\w]+) concatenando: ([^,]+), ([^,]+), la fecha en formato ([A-Z0-9]+) usando los primeros (\d+) caracteres del campo ([\w]+), ([^,]+), ([^,]+), un espacio y un salto de línea', line)
+            if match_date and match_reg:
+                # Extrae parámetros dinámicamente
+                campo_dateMascara = match_date.group(1)
+                formato_dateMascara = match_date.group(2)
+                num_caracteres_dateMascara = int(match_date.group(3))
+                campo_origen_dateMascara = match_date.group(4)
+
+                campo_reg = match_reg.group(1)
+                concat_1 = match_reg.group(2)
+                concat_2 = match_reg.group(3)
+                formato_reg = match_reg.group(4)
+                num_caracteres_reg = int(match_reg.group(5))
+                campo_origen_reg = match_reg.group(6)
+                concat_3 = match_reg.group(7)
+                concat_4 = match_reg.group(8)
+
+                project_stage = {
+                    "$project": {
+                        "_id": 0,
+                        campo_dateMascara: {
+                            "$dateToString": {
+                                "date": {
+                                    "$dateFromString": {
+                                        "dateString": {"$substr": [f"${campo_origen_dateMascara}", 0, num_caracteres_dateMascara]}
+                                    }
+                                },
+                                "format": f"%{formato_dateMascara}"
+                            }
+                        },
+                        campo_reg: {
+                            "$concat": [
+                                concat_1,
+                                concat_2,
+                                {
+                                    "$dateToString": {
+                                        "date": {
+                                            "$dateFromString": {
+                                                "dateString": {"$substr": [f"${campo_origen_reg}", 0, num_caracteres_reg]}
+                                            }
+                                        },
+                                        "format": f"%{formato_reg}"
+                                    }
+                                },
+                                concat_3,
+                                concat_4,
+                                " ",
+                                "\n"
+                            ]
+                        }
+                    }
+                }
+                pipeline.append(project_stage)
+                return pipeline
+            # REGLA FLEXIBLE MEJORADA: Pipeline avanzado Devices/ServicePoints/ShipOutCycles/Transactions con sumas condicionales y proyección dinámica
+            if re.search(r"desanida|unwind|expandir.*devices.*servicepoints.*shipoutcycles.*transactions|pipeline avanzado|sumas condicionales por moneda|proyecta partes enteras y decimales|campo reg con padding", natural_text, re.IGNORECASE):
+                pipeline = [
+                    {"$unwind": "$Devices"},
+                    {"$unwind": "$Devices.ServicePoints"},
+                    {"$unwind": {"path": "$Devices.ServicePoints.ShipOutCycles", "preserveNullAndEmptyArrays": True}},
+                    {"$unwind": {"path": "$Devices.ServicePoints.ShipOutCycles.Transactions", "preserveNullAndEmptyArrays": True}},
+                    {"$group": {
+                        "_id": {
+                            "deviceId": "$Devices.Id",
+                            "branchCode": "$Devices.BranchCode",
+                            "subChannelCode": "$Devices.ServicePoints.ShipOutCycles.SubChannelCode",
+                            "shipOutCode": "$Devices.ServicePoints.ShipOutCycles.Code",
+                            "currencyCode": "$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode",
+                        },
+                        "totalSoles": {
+                            "$sum": {
+                                "$cond": [
+                                    {"$eq": ["$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode", "PEN"]},
+                                    "$Devices.ServicePoints.ShipOutCycles.Transactions.Total", 0
+                                ]
+                            }
+                        },
+                        "totalDolares": {
+                            "$sum": {
+                                "$cond": [
+                                    {"$eq": ["$Devices.ServicePoints.ShipOutCycles.Transactions.CurrencyCode", "USD"]},
+                                    "$Devices.ServicePoints.ShipOutCycles.Transactions.Total", 0
+                                ]
+                            }
+                        }
+                    }},
+                    {"$group": {
+                        "_id": 0,
+                        "totalSoles": {"$sum": "$totalSoles"},
+                        "totalDolares": {"$sum": "$totalDolares"},
+                        "totalRegSoles": {
+                            "$sum": {
+                                "$cond": [
+                                    {"$eq": ["$_id.currencyCode", "PEN"]}, 1, 0
+                                ]
+                            }
+                        },
+                        "totalRegDolares": {
+                            "$sum": {
+                                "$cond": [
+                                    {"$eq": ["$_id.currencyCode", "USD"]}, 1, 0
+                                ]
+                            }
+                        }
+                    }},
+                    {"$project": {
+                        "totalParteEnteraSoles": {"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalSoles"}}, "."]}, 0]},
+                        "totalParteDecimalSoles": {"$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalSoles"}}, "."]}, 1]}, "0"]}, "00"]},
+                        "totalParteEnteraDolares": {"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalDolares"}}, "."]}, 0]},
+                        "totalParteDecimalDolares": {"$ifNull": [{"$concat": [{"$arrayElemAt": [{"$split": [{"$toString": {"$toDecimal": "$totalDolares"}}, "."]}, 1]}, "0"]}, "00"]},
+                        "totalRegSoles": "$totalRegSoles",
+                        "totalRegDolares": "$totalRegDolares"
+                    }},
+                    {"$project": {
+                        "_id": 0,
+                        "reg": {
+                            "$concat": [
+                                "9",
+                                {"$substrCP": [{"$concat": ["000000000000000", {"$toString": {"$sum": ["$totalRegSoles", "$totalRegDolares", 2]}}]}, {"$sum": [{"$strLenCP": {"$concat": ["000000000000000", {"$toString": {"$sum": ["$totalRegSoles", "$totalRegDolares", 2]}}]}}, -15]}, 15]},
+                                {"$substrCP": [{"$concat": ["000000000000000", {"$toString": "$totalRegSoles"}]}, {"$sum": [{"$strLenCP": {"$concat": ["000000000000000", {"$toString": "$totalRegSoles"}] }}, -15]}, 15]},
+                                {"$substrCP": [{"$concat": ["000000000000000", {"$toString": "$totalRegDolares"}]}, {"$sum": [{"$strLenCP": {"$concat": ["000000000000000", {"$toString": "$totalRegDolares"}] }}, -15]}, 15]},
+                                {"$substr": [{"$concat": ["0000000000000", "$totalParteEnteraSoles", {"$substr": ["$totalParteDecimalSoles", 0, 2]}]}, {"$sum": [{"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraSoles", "00"]}}, -15]}, {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraSoles", "00"]}}]},
+                                {"$substr": [{"$concat": ["0000000000000", "$totalParteEnteraDolares", {"$substr": ["$totalParteDecimalDolares", 0, 2]}]}, {"$sum": [{"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraDolares", "00"]}}, -15]}, {"$strLenCP": {"$concat": ["0000000000000", "$totalParteEnteraDolares", "00"]}}]},
+                                "\n"
+                            ]
+                        }
+                    }}
+                ]
+                return pipeline
+            # Compatibilidad con la regla estática anterior (legacy)
+            if ("dateMascara" in line and "reg" in line) or (
+                "Proyecta el campo dateMascara" in line and "Proyecta el campo reg" in line):
+                project_stage = {
+                    "$project": {
+                        "_id": 0,
+                        "dateMascara": {
+                            "$dateToString": {
+                                "date": {
+                                    "$dateFromString": {
+                                        "dateString": {"$substr": ["$Date", 0, 19]}
+                                    }
+                                },
+                                "format": "%Y%m%d"
+                            }
+                        },
+                        "reg": {
+                            "$concat": [
+                                "1",
+                                "002",
+                                {
+                                    "$dateToString": {
+                                        "date": {
+                                            "$dateFromString": {
+                                                "dateString": {"$substr": ["$Date", 0, 19]}
+                                            }
+                                        },
+                                        "format": "%Y%m%d%H%M%S"
+                                    }
+                                },
+                                "00",
+                                "01",
+                                " ",
+                                "\n"
+                            ]
+                        }
+                    }
+                }
+                pipeline.append(project_stage)
+                return pipeline
         # --- MEJORA: Detección de expresiones temporales como 'último mes' ---
         lower_text = natural_text.lower()
         temporal_match = None
@@ -550,37 +723,46 @@ class SmartMongoQueryGenerator:
                 pipeline.extend([match_stage, group_stage, project_stage])
                 return pipeline
             # Regla específica: total de ventas por producto y ciudad en [año]
-        match_total_ventas_prod_ciudad = re.search(r"total de ventas por producto y ciudad en (\d{4})", natural_text.lower())
-        if match_total_ventas_prod_ciudad and collection and collection.lower() == "ventas":
-                anio = int(match_total_ventas_prod_ciudad.group(1))
-                # Detectar campo de fecha
-                fecha_field = None
-                if self.dataset_manager and collection in self.dataset_manager.schemas:
-                    schema = self.dataset_manager.schemas[collection]
-                    for fname, fdef in schema.fields.items():
-                        all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
-                        if any(s in ['fecha', 'fecha_venta', 'fecha de venta', 'fecha venta', 'fecha_transaccion', 'fechaoperacion', 'fechaventa', 'fechatransaccion', 'fechadeventa', 'fechadeoperacion', 'fecha_compra'] for s in all_syns):
-                            fecha_field = fname
-                            break
-                if not fecha_field:
-                    fecha_field = 'fecha_venta'
-                # $match por año
-                match_stage = {"$match": {
-                    fecha_field: {
-                        "$regex": f"^{anio}-"
-                    }
-                }}
-                # $group por producto y ciudad
-                producto_field = self._normalize_field('producto', collection=collection)
-                ciudad_field = self._normalize_field('ciudad', collection=collection)
-                total_field = self._normalize_field('total_venta', collection=collection)
-                group_stage = {"$group": {
-                    "_id": {"producto": f"${producto_field}", "ciudad": f"${ciudad_field}"},
-                    "total_ventas": {"$sum": f"${total_field}"}
-                }}
-                project_stage = {"$project": {"producto": "$_id.producto", "ciudad": "$_id.ciudad", "total_ventas": 1, "_id": 0}}
-                pipeline.extend([match_stage, group_stage, project_stage])
-                return pipeline
+        match_total_ventas_campos_anio = re.search(r"total de ventas por ([\wáéíóúüñÁÉÍÓÚÜÑ_]+)(?: y ([\wáéíóúüñÁÉÍÓÚÜÑ_]+))? en (\d{4})", natural_text.lower())
+        if match_total_ventas_campos_anio and collection and collection.lower() == "ventas":
+            anio = int(match_total_ventas_campos_anio.group(3))
+            campos = [match_total_ventas_campos_anio.group(1)]
+            if match_total_ventas_campos_anio.group(2):
+                campos.append(match_total_ventas_campos_anio.group(2))
+            # Detectar campo de fecha
+            fecha_field = None
+            if self.dataset_manager and collection in self.dataset_manager.schemas:
+                schema = self.dataset_manager.schemas[collection]
+                for fname, fdef in schema.fields.items():
+                    all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
+                    if any(s in ['fecha', 'fecha_venta', 'fecha de venta', 'fecha venta', 'fecha_transaccion', 'fechaoperacion', 'fechaventa', 'fechatransaccion', 'fechadeventa', 'fechadeoperacion', 'fecha_compra'] for s in all_syns):
+                        fecha_field = fname
+                        break
+            if not fecha_field:
+                fecha_field = 'fecha_venta'
+            # $match por año
+            match_stage = {"$match": {
+                fecha_field: {
+                    "$regex": f"^{anio}-"
+                }
+            }}
+            # $group por campos dinámicos
+            campos_group = {}
+            for campo in campos:
+                campo_norm = self._normalize_field(campo, collection=collection)
+                campos_group[campo_norm] = f"${campo_norm}"
+            total_field = self._normalize_field('total_venta', collection=collection)
+            group_stage = {"$group": {
+                "_id": campos_group,
+                "total_ventas": {"$sum": f"${total_field}"}
+            }}
+            # $project dinámico
+            project_fields = {campo: f"$_id.{self._normalize_field(campo, collection=collection)}" for campo in campos}
+            project_fields["total_ventas"] = 1
+            project_fields["_id"] = 0
+            project_stage = {"$project": project_fields}
+            pipeline.extend([match_stage, group_stage, project_stage])
+            return pipeline
 
         # 2. Suma total por grupo: "calcula el total de <campo_suma> por <campo_grupo>"
         match_sum_group = re.search(r'calcula el total de ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) por ([\wáéíóúüñÁÉÍÓÚÜÑ_]+)', natural_text, re.IGNORECASE)
@@ -1902,7 +2084,7 @@ class SmartMongoQueryGenerator:
                             new_concat.append(part)
                     reg["$concat"] = new_concat
         
-        return pipeline
+                return pipeline
     
         
       
@@ -2770,6 +2952,9 @@ class SmartMongoQueryGenerator:
         self._last_generated_pipeline = generated_pipeline
         self._last_generated_pipeline_str = generated_pipeline_str
 
+        # Salvaguarda final: nunca retornar lista vacía, sino None
+        if isinstance(generated_pipeline, list) and len(generated_pipeline) == 0:
+            return None
         return generated_pipeline
 
 

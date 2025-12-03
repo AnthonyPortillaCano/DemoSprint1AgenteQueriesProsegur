@@ -6,7 +6,9 @@
   "nombre_cliente": {"name": "nombre_cliente", "type": "string", "path": "nombre_cliente", "description": "Nombre del cliente", "examples": ["Juan"], "synonyms": ["nombre_cliente", "nombre", "cliente"]},
     "apellido_cliente": {"name": "apellido_cliente", "type": "string", "path": "apellido_cliente", "description": "Apellido del cliente", "examples": ["Pérez"], "synonyms": ["apellido_cliente", "apellido"]},
     "fecha_registro": {"name": "fecha_registro", "type": "string", "path": "fecha_registro", "description": "Fecha de registro", "examples": ["2024-01-10"], "synonyms": ["fecha_registro", "registro"]},
-    "email": {"name": "email", "type": "string", "path": "email", "description": "Correo electrónico", "examples": ["juan.perez@email.com"], "synonyms": ["email", "correo"]}
+    "email": {"name": "email", "type": "string", "path": "email", "description": "Correo electrónico", "examples": ["juan.perez@email.com"], "synonyms": ["email", "correo"]},
+    "dateMascara": {"name": "dateMascara", "type": "string", "path": "dateMascara", "description": "Fecha calculada en formato YYYYMMDD", "examples": ["20240110"], "synonyms": ["dateMascara", "fecha_mascara", "fecha_formateada"]},
+    "reg": {"name": "reg", "type": "string", "path": "reg", "description": "Campo calculado concatenado para exportación avanzada", "examples": ["10022024011000000001 \n"], "synonyms": ["reg", "registro_concatenado", "campo_reg"]}
   },
   "sample_documents": [
     {"_id": 101, "cliente_id": 101, "nombre_cliente": "Juan", "apellido_cliente": "Pérez", "fecha_registro": "2024-01-10", "email": "juan.perez@email.com"},
