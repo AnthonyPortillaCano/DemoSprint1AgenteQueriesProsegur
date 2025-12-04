@@ -263,7 +263,7 @@ El cuaderno `notebooks/Semana10.ipynb` centraliza la ejecución, análisis compa
    - Generar y visualizar los resultados de la evaluación automática.
    - Realizar y documentar ablaciones (modifica los parámetros del agente en el script fuente según la guía del cuaderno).
    - Comparar métricas y analizar el impacto de cada variante y de la evolución histórica.
-3. Usa las celdas markdown para resumir hallazgos, analizar errores y justificar .
+3. Usa las celdas markdown para resumir hallazgos, analizar errores y justificar mejoras.
 El cuaderno está diseñado para ser autoexplicativo y servir como bitácora de experimentos y resultados finales.
 
 # Semana 11: Matriz de Consistencia y Evidencia Experimental
@@ -293,3 +293,18 @@ Este cuaderno puede ser utilizado como evidencia , demostrando la coherencia ent
 ---
 
 Para más detalles, consulta las celdas de la matriz de consistencia y los bloques de código de evaluación en el propio notebook.
+
+---
+
+## 📒 Avances y análisis en Semana 12
+
+En el cuaderno `notebooks/Semana12.ipynb` se documenta la evaluación avanzada del agente generador de queries MongoDB, incluyendo:
+
+- **Evaluación por slices:** Se analizan diferentes tipos de instrucciones (slices) y se identifican los problemáticos usando métricas como F1-score, score semántico, intervalos de confianza y tamaño de muestra.
+- **Diagnóstico y evidencia:** Para cada slice problemático se reporta la causa probable (por ejemplo, sinónimos mal mapeados, queries ambiguas o datos insuficientes) y se muestra evidencia concreta de los errores detectados.
+- **Plan de mitigación:** Se proponen acciones para mejorar el desempeño del agente, como ampliar el diccionario de sinónimos, agregar ejemplos específicos y mejorar el pipeline de generación.
+- **Visualización:** Se incluyen tablas y gráficas comparativas de métricas por slice, así como reportes automáticos y recomendaciones.
+- **Validación semántica:** Se compara el desempeño técnico (F1-score) con la utilidad real de la consulta (score semántico), mostrando casos donde la coincidencia de campos es alta pero la respuesta no es útil, y viceversa.
+- **Matriz de consistencia:** Se alinean los objetivos, hipótesis y resultados experimentales, facilitando la trazabilidad y justificación de mejoras.
+
+Este análisis permite identificar y priorizar mejoras en el agente, asegurando una evaluación honesta y robusta tanto en métricas técnicas como en utilidad semántica.

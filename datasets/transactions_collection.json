@@ -20,6 +20,17 @@
       "is_indexed": true,
       "validation_rules": null
     },
+      "reg": {
+        "name": "reg",
+        "type": "string",
+        "path": "Devices.ServicePoints.ShipOutCycles.Transactions.reg",
+        "description": "Campo de registro adicional para la transacción",
+        "examples": ["REG001", "REG002"],
+        "synonyms": ["registro", "reg", "código de registro"],
+        "is_required": false,
+        "is_indexed": false,
+        "validation_rules": null
+      },
     "deviceId": {
       "name": "deviceId",
       "type": "string",
@@ -37,6 +48,71 @@
       ],
       "is_required": true,
       "is_indexed": true,
+      "validation_rules": null
+    },
+     "totalParteEnteraSoles": {
+      "name": "totalParteEnteraSoles",
+      "type": "number",
+      "path": "Devices.ServicePoints.ShipOutCycles.Transactions.totalParteEnteraSoles",
+      "description": "Parte entera del monto total en soles de la transacción",
+      "examples": [
+        "100",
+        "250"
+      ],
+      "synonyms": [
+        "parte entera soles",
+        "total soles entero",
+        "totalParteEnteraSoles"
+      ],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "totalpartedecimaldolares": {
+      "name": "totalpartedecimaldolares",
+      "type": "number",
+      "path": "Devices.ServicePoints.ShipOutCycles.Transactions.totalpartedecimaldolares",
+      "description": "Parte decimal del monto total en dólares de la transacción",
+      "examples": [
+        "0.50",
+        "0.75"
+      ],
+      "synonyms": [
+        "parte decimal dólares",
+        "total dólares decimal",
+        "totalpartedecimaldolares"
+      ],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "totalregdolares": {
+      "name": "totalregdolares",
+      "type": "number",
+      "path": "Devices.ServicePoints.ShipOutCycles.Transactions.totalregdolares",
+      "description": "Monto total registrado en dólares de la transacción",
+      "examples": ["100.00", "250.75"],
+      "synonyms": ["total registrado dólares", "totalregdolares", "monto dólares registrado"],
+      "is_required": false,
+      "is_indexed": false,
+      "validation_rules": null
+    },
+    "totalparteenteradolares": {
+      "name": "totalparteenteradolares",
+      "type": "number",
+      "path": "Devices.ServicePoints.ShipOutCycles.Transactions.totalparteenteradolares",
+      "description": "Parte entera del monto total en dólares de la transacción",
+      "examples": [
+        "100",
+        "250"
+      ],
+      "synonyms": [
+        "parte entera dólares",
+        "total dólares entero",
+        "totalparteenteradolares"
+      ],
+      "is_required": false,
+      "is_indexed": false,
       "validation_rules": null
     },
     "BranchCode": {
@@ -197,6 +273,24 @@
       ],
       "is_required": false,
       "is_indexed": false,
+      "validation_rules": null
+    }
+    ,
+    "_id": {
+      "name": "_id",
+      "type": "string",
+      "path": "_id",
+      "description": "Identificador único del documento en MongoDB",
+      "examples": [
+        "656f1c2e8f1b2c0012345678"
+      ],
+      "synonyms": [
+        "id",
+        "_id",
+        "identificador"
+      ],
+      "is_required": true,
+      "is_indexed": true,
       "validation_rules": null
     }
   },
@@ -454,6 +548,6 @@
     }
   ],
   "query_patterns": [],
-  "created_at": "2025-12-03T14:01:04.578610",
-  "updated_at": "2025-12-03T14:01:04.578610"
+  "created_at": "2025-12-04T00:18:41.496304",
+  "updated_at": "2025-12-04T00:18:41.496304"
 }

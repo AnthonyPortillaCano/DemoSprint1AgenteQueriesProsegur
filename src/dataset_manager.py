@@ -744,20 +744,20 @@ def create_default_dataset() -> DatasetManager:
     dataset_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../datasets/'))
     manager = DatasetManager(dataset_path=dataset_path)
 
-    schema = manager.create_schema(
-        "transactions_collection",
-        "Colección de transacciones con estructura anidada"
-    )
+    # schema = manager.create_schema(
+    #     "transactions_collection",
+    #     "Colección de transacciones con estructura anidada"
+    # )
 
-    # Agregar definiciones
-    for field in field_definitions:
-        manager.add_field("transactions_collection", field)
+    # # Agregar definiciones
+    # for field in field_definitions:
+    #     manager.add_field("transactions_collection", field)
 
-    # Agregar documentos de ejemplo
-    for doc in sample_docs:
-        manager.add_sample_document("transactions_collection", doc)
+    # # Agregar documentos de ejemplo
+    # for doc in sample_docs:
+    #     manager.add_sample_document("transactions_collection", doc)
 
-    manager.save_schema("transactions_collection")
+    # manager.save_schema("transactions_collection")
     return manager
 
 

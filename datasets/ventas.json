@@ -10,6 +10,15 @@
     "producto": {"name": "producto", "type": "string", "path": "producto", "description": "Nombre del producto", "examples": ["Laptop"], "synonyms": ["producto", "articulo"]},
     "ciudad": {"name": "ciudad", "type": "string", "path": "ciudad", "description": "Ciudad de la venta", "examples": ["Lima"], "synonyms": ["ciudad", "city", "localidad"]},
     "canal": {"name": "canal", "type": "string", "path": "canal", "description": "Canal de la venta (online, tienda, etc.)", "examples": ["online", "tienda"], "synonyms": ["canal", "canal_venta", "canal_transaccion"]}
+      ,
+      "_id": {"name": "_id", "type": "number", "path": "_id", "description": "Identificador único del documento en MongoDB", "examples": ["1"], "synonyms": ["id", "_id", "identificador"]}
+      ,
+      "num_compras": {"name": "num_compras", "type": "number", "path": "num_compras", "description": "Número de compras realizadas por el cliente", "examples": ["5"], "synonyms": ["num_compras", "compras", "cantidad_compras", "n_compras"]}
+      ,
+      "promedio": {"name": "promedio", "type": "number", "path": "promedio", "description": "Promedio de ventas o compras", "examples": ["350.5"], "synonyms": ["promedio", "average", "media"]},
+      "total": {"name": "total", "type": "number", "path": "total", "description": "Total general de ventas o compras", "examples": ["1500"], "synonyms": ["total", "suma", "importe_total"]}
+      ,
+      "nombre_cliente": {"name": "nombre_cliente", "type": "string", "path": "nombre_cliente", "description": "Nombre del cliente asociado a la venta", "examples": ["Juan"], "synonyms": ["nombre_cliente", "nombre", "cliente"]}
   },
   "indexes": [],
   "sample_documents": [

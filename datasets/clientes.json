@@ -9,6 +9,16 @@
     "email": {"name": "email", "type": "string", "path": "email", "description": "Correo electrónico", "examples": ["juan.perez@email.com"], "synonyms": ["email", "correo"]},
     "dateMascara": {"name": "dateMascara", "type": "string", "path": "dateMascara", "description": "Fecha calculada en formato YYYYMMDD", "examples": ["20240110"], "synonyms": ["dateMascara", "fecha_mascara", "fecha_formateada"]},
     "reg": {"name": "reg", "type": "string", "path": "reg", "description": "Campo calculado concatenado para exportación avanzada", "examples": ["10022024011000000001 \n"], "synonyms": ["reg", "registro_concatenado", "campo_reg"]}
+      ,
+      "_id": {"name": "_id", "type": "number", "path": "_id", "description": "Identificador único del documento en MongoDB", "examples": ["101"], "synonyms": ["id", "_id", "identificador"]}
+        ,
+        "totalregsoles": {"name": "totalregsoles", "type": "number", "path": "totalregsoles", "description": "Total de registro en soles", "examples": ["100.50"], "synonyms": ["totalregsoles", "total soles registro"]},
+        "totalregdolares": {"name": "totalregdolares", "type": "number", "path": "totalregdolares", "description": "Total de registro en dólares", "examples": ["50.75"], "synonyms": ["totalregdolares", "total dólares registro"]},
+        "totalpartedecimalsoles": {"name": "totalpartedecimalsoles", "type": "number", "path": "totalpartedecimalsoles", "description": "Parte decimal del total en soles", "examples": ["0.50"], "synonyms": ["totalpartedecimalsoles", "parte decimal soles"]},
+        "reg": {"name": "reg", "type": "string", "path": "reg", "description": "Campo calculado concatenado para exportación avanzada", "examples": ["10022024011000000001 \n"], "synonyms": ["reg", "registro_concatenado", "campo_reg"]},
+        "totalparteenteradolares": {"name": "totalparteenteradolares", "type": "number", "path": "totalparteenteradolares", "description": "Parte entera del total en dólares", "examples": ["100"], "synonyms": ["totalparteenteradolares", "parte entera dólares"]},
+        "totalparteenterasoles": {"name": "totalparteenterasoles", "type": "number", "path": "totalparteenterasoles", "description": "Parte entera del total en soles", "examples": ["250"], "synonyms": ["totalparteenterasoles", "parte entera soles"]},
+        "totalpartedecimaldolares": {"name": "totalpartedecimaldolares", "type": "number", "path": "totalpartedecimaldolares", "description": "Parte decimal del total en dólares", "examples": ["0.75"], "synonyms": ["totalpartedecimaldolares", "parte decimal dólares"]}
   },
   "sample_documents": [
     {"_id": 101, "cliente_id": 101, "nombre_cliente": "Juan", "apellido_cliente": "Pérez", "fecha_registro": "2024-01-10", "email": "juan.perez@email.com"},
