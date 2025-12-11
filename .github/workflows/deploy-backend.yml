@@ -3,7 +3,7 @@ name: Deploy Backend (FastAPI) to Azure App Service
 on:
   push:
     branches:
-      - main
+      - sprint4-02
 
 jobs:
   build-and-deploy:
