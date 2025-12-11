@@ -1,8 +1,7 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
-# More info on Python, GitHub Actions, and Azure App Service: https://aka.ms/python-webapps-actions
 
-name: Build and deploy Python app to Azure Web App - apppythonnek
+name: Build and deploy container app to Azure Web App - apppythonnek
 
 on:
   push:
@@ -19,58 +18,46 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Python version
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.11'
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
 
-      # 🛠️ Local Build Section (Optional)
-      # The following section in your workflow is designed to catch build issues early on the client side, before deployment. This can be helpful for debugging and validation. However, if this step significantly increases deployment time and early detection is not critical for your workflow, you may remove this section to streamline the deployment process.
-      - name: Create and Start virtual environment and Install dependencies
-        run: |
-          python -m venv antenv
-          source antenv/bin/activate
-          pip install -r requirements.txt
-                
-      # By default, when you enable GitHub CI/CD integration through the Azure portal, the platform automatically sets the SCM_DO_BUILD_DURING_DEPLOYMENT application setting to true. This triggers the use of Oryx, a build engine that handles application compilation and dependency installation (e.g., pip install) directly on the platform during deployment. Hence, we exclude the antenv virtual environment directory from the deployment artifact to reduce the payload size. 
-      - name: Upload artifact for deployment jobs
-        uses: actions/upload-artifact@v4
+      - name: Log in to container registry
+        uses: docker/login-action@v2
         with:
-          name: python-app
-          path: |
-            .
-            !antenv/
+          registry: mcr.microsoft.com/
+          username: ${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_9C7D570475CD40AC99FD11C5991E5A9D }}
+          password: ${{ secrets.AZUREAPPSERVICE_CONTAINERPASSWORD_E20D3076D9DE4076A488DDED6DF883DC }}
 
-      # 🚫 Opting Out of Oryx Build
-      # If you prefer to disable the Oryx build process during deployment, follow these steps:
-      # 1. Remove the SCM_DO_BUILD_DURING_DEPLOYMENT app setting from your Azure App Service Environment variables.
-      # 2. Refer to sample workflows for alternative deployment strategies: https://github.com/Azure/actions-workflow-samples/tree/master/AppService
-      
+      - name: Build and push container image to registry
+        uses: docker/build-push-action@v3
+        with:
+          context: .
+          push: true
+          tags: mcr.microsoft.com/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_9C7D570475CD40AC99FD11C5991E5A9D }}/appsvc/staticsite:${{ github.sha }}
+          file: ./Dockerfile
 
   deploy:
     runs-on: ubuntu-latest
-    needs: build
     permissions:
       id-token: write #This is required for requesting the JWT
       contents: read #This is required for actions/checkout
 
+    needs: build
+    
     steps:
-      - name: Download artifact from build job
-        uses: actions/download-artifact@v4
-        with:
-          name: python-app
       
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_E20C8FD0B88149DCBD7A76C0C46D1A6C }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_4E078155A6E5467C9C53C67DE37EF7EB }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_6DBD6950C37C4CB4A3AB127975B61DD6 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_AE876D1ACD1944488E31686E5777CC9A }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_7E0381D6A48D4E89BDA8B2D824CB5838 }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_CF5C03BE1D3544CFB0ED6D35CA63C8E3 }}
 
-      - name: 'Deploy to Azure Web App'
-        uses: azure/webapps-deploy@v3
+      - name: Deploy to Azure Web App
         id: deploy-to-webapp
+        uses: azure/webapps-deploy@v2
         with:
           app-name: 'apppythonnek'
           slot-name: 'Production'
+          images: 'mcr.microsoft.com/${{ secrets.AZUREAPPSERVICE_CONTAINERUSERNAME_9C7D570475CD40AC99FD11C5991E5A9D }}/appsvc/staticsite:${{ github.sha }}'
           
