@@ -201,6 +201,12 @@ def assist(request: QueryRequest):
                 'usuarios': ['usuario', 'usuarios', 'user', 'users'],
                 'transactions_collection': ['transaccion', 'transacciones', 'movimiento', 'transactions', 'transacción', 'transacciones', 'transacciones mayores', 'monto transaccion', 'muestra las transacciones'],
             }
+
+            # Nueva regla: Si la consulta menciona 'precio promedio' y 'producto(s)', priorizar 'productos' si existe
+            if (('precio promedio' in text_lower or 'promedio de precio' in text_lower or 'precio medio' in text_lower) and ('producto' in text_lower or 'productos' in text_lower)):
+                if 'productos' in collection_candidates:
+                    return 'productos'
+
             # Regla especial: si la consulta menciona clientes y compras/veces, priorizar ventas
             if (('cliente' in text_lower or 'clientes' in text_lower) and ('compraron' in text_lower or 'compra' in text_lower or 'compras' in text_lower or 'veces' in text_lower)):
                 if 'ventas' in collection_candidates:
@@ -223,15 +229,16 @@ def assist(request: QueryRequest):
             return collection_candidates[0] if collection_candidates else "labs"
 
         collection = infer_collection(natural_text)
+        print("Colección inferida final jaja:", collection)
         # Generar el pipeline como objeto Python usando la colección inferida
-        pipeline = generator.parse_natural_language(natural_text, collection=collection)
-        is_valid, error_msg = validate_pipeline_structure(pipeline)
-        if not is_valid:
-            return {
-                "error": f"Pipeline inválido: {error_msg}",
-                "status": "error"
-            }
-        print("Colección inferida:", collection)
+        # pipeline = generator.generate_query(natural_text, collection=collection)
+        # is_valid, error_msg = validate_pipeline_structure(pipeline)
+        # if not is_valid:
+        #     return {
+        #         "error": f"Pipeline inválido: {error_msg}",
+        #         "status": "error"
+        #     }
+        # print("Colección inferida:", collection)
         # Generar la query como string usando el método correcto y la colección inferida
         query_str = generator.generate_query(collection, natural_text)
         suggestions = llm_engine.suggest_query_improvement(natural_text, query_str)

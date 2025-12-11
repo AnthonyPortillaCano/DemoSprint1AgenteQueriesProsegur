@@ -4,13 +4,14 @@
   "fields": {
     "item": {"name": "item", "type": "string", "path": "item", "description": "Nombre del producto", "examples": ["Laptop"], "synonyms": ["item", "producto", "articulo"]},
     "categoria": {"name": "categoria", "type": "string", "path": "categoria", "description": "Categoría del producto", "examples": ["Electrónica"], "synonyms": ["categoria", "categoría"]},
-    "precio": {"name": "precio", "type": "number", "path": "precio", "description": "Precio del producto", "examples": ["1200"], "synonyms": ["precio"]}
+    "precio": {"name": "precio", "type": "number", "path": "precio", "description": "Precio del producto", "examples": ["1200"], "synonyms": ["precio"]},
+    "stock": {"name": "stock", "type": "number", "path": "stock", "description": "Stock disponible del producto", "examples": ["10"], "synonyms": ["stock", "existencias", "cantidad"]}
   },
   "indexes": [],
   "sample_documents": [
-    {"_id": 1, "item": "Laptop", "categoria": "Electrónica", "precio": 1200},
-    {"_id": 2, "item": "Celular", "categoria": "Electrónica", "precio": 800},
-    {"_id": 3, "item": "Refrigeradora", "categoria": "Electrodomésticos", "precio": 1500}
+    {"_id": 1, "item": "Laptop", "categoria": "Electrónica", "precio": 1200, "stock": 15},
+    {"_id": 2, "item": "Celular", "categoria": "Electrónica", "precio": 800, "stock": 30},
+    {"_id": 3, "item": "Refrigeradora", "categoria": "Electrodomésticos", "precio": 1500, "stock": 8}
   ],
   "query_patterns": [],
   "created_at": "2025-11-09T00:00:00",
