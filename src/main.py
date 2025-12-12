@@ -229,7 +229,7 @@ def assist(request: QueryRequest):
             return collection_candidates[0] if collection_candidates else "labs"
 
         collection = infer_collection(natural_text)
-        print("Colección inferida final jaja:", collection)
+        print("Colección inferida final V1:", collection)
         # Generar el pipeline como objeto Python usando la colección inferida
         # pipeline = generator.generate_query(natural_text, collection=collection)
         # is_valid, error_msg = validate_pipeline_structure(pipeline)

@@ -308,3 +308,44 @@ En el cuaderno `notebooks/Semana12.ipynb` se documenta la evaluación avanzada d
 - **Matriz de consistencia:** Se alinean los objetivos, hipótesis y resultados experimentales, facilitando la trazabilidad y justificación de mejoras.
 
 Este análisis permite identificar y priorizar mejoras en el agente, asegurando una evaluación honesta y robusta tanto en métricas técnicas como en utilidad semántica.
+
+# Semana 13: Comparativo y Optimización de Agente Generador de Queries MongoDB
+
+## Objetivo
+Comparar el desempeño técnico y la percepción de usuario entre el agente baseline y el agente actual para la generación de queries MongoDB. Documentar métricas de latencia, throughput, exactitud y robustez, así como las optimizaciones implementadas y su impacto.
+
+## Contenido principal
+- **Notebook principal:** `notebooks/Semana13.ipynb`
+- **Agentes evaluados:**
+  - `SmartMongoQueryGenerator` (actual)
+  - `SmartMongoQueryGeneratorBaseline` (baseline)
+- **Datasets:** Carpeta `datasets/` (instrucciones, colecciones, etc.)
+
+## Experimentos realizados
+1. **Generación de instrucciones variadas** para  casos reales y edge cases.
+2. **Ejecución de ambos agentes** sobre las mismas instrucciones.
+3. **Medición de métricas técnicas:**
+   - Latencia (p50, p95)
+   - Throughput (queries/s)
+   - Exactitud y robustez (detección de errores, campos no encontrados)
+4. **Visualización de resultados:**
+   - Tablas comparativas
+   - Gráficos de barras e histogramas
+5. **Optimización del agente actual:**
+   - Uso de `lru_cache` para normalización
+   - Compilación de expresiones regulares
+   - Uso de sets para validación rápida
+   - Paralelización con `ThreadPoolExecutor`
+6. **Análisis de percepción de usuario:**
+   - Encuesta a usuarios internos
+   - Resultados y comentarios destacados
+
+## Evidencia y entregables
+- Notebook con código, resultados y visualizaciones (`notebooks/Semana13.ipynb`)
+- Logs y resultados en `results/`
+- Este README
+
+## Conclusiones
+- El agente actual muestra mejoras en robustez y exactitud respecto al baseline.
+- Las optimizaciones implementadas para la latencia y mejoran el throughput.
+- La percepción de usuario es positiva y se alinea con las métricas técnicas.

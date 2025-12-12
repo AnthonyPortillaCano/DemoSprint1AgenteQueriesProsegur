@@ -1,26 +1,15 @@
-from functools import lru_cache
 
-
-import unicodedata
-import re
-
-# Compiled regex patterns for reuse
-_RE_NON_ALPHANUM = re.compile(r'[^a-z0-9]')
-_RE_Y = re.compile(r'\s+y\s+')
-_RE_REMOVE_OPS = re.compile(r'(suma el total|proyectar reg|totalParteEntera y totalParteDecimal|ordenar por [^,]+|proyectar campo reg concatenando los valores seg[úu]n la plantilla|sumar el monto de las transacciones|agrupar por fecha)', re.IGNORECASE)
-
-class AgenteGeneradorQueryMongo:
+class AgenteGeneradorQueryBaseline:
     @staticmethod
     def normaliza_campo_robusto(campo):
+        import unicodedata, re
         campo = unicodedata.normalize('NFKD', campo).encode('ASCII', 'ignore').decode('utf-8').lower()
-        campo = _RE_NON_ALPHANUM.sub('', campo)
+        campo = re.sub(r'[^a-z0-9]', '', campo)
         if len(campo) > 3 and campo.endswith('s'):
             campo = campo[:-1]
         return campo
 import re
 import json
-import unicodedata
-from difflib import SequenceMatcher
 from typing import Dict, List, Optional, Any, Union
 try:
     from dataset_manager import DatasetManager, create_default_dataset
@@ -30,23 +19,14 @@ except ImportError:
     from src.llm_suggestion_engine import LLMSuggestionEngine
 
 class SmartMongoQueryGenerator:
-    # Caché de sinónimos de colección a nivel de clase
-    _collection_synonyms = {
-        'transacciones': 'transactions_collection',
-        'transactions': 'transactions_collection',
-        'transaction': 'transactions_collection',
-        'movimientos': 'transactions_collection',
-        # Agrega más sinónimos si es necesario
-    }
-
     @staticmethod
     def normaliza_campo_robusto(campo):
+        import unicodedata, re
         campo = unicodedata.normalize('NFKD', campo).encode('ASCII', 'ignore').decode('utf-8').lower()
         campo = re.sub(r'[^a-z0-9]', '', campo)
         if len(campo) > 3 and campo.endswith('s'):
             campo = campo[:-1]
         return campo
-
     def _filtrar_project_global(self, pipeline, schema_fields):
         for i, stage in enumerate(pipeline):
             if "$project" in stage:
@@ -58,18 +38,24 @@ class SmartMongoQueryGenerator:
                 keys_a_borrar = [k for k in stage["$project"].keys() if k not in schema_fields and k not in generated_fields]
                 for k in keys_a_borrar:
                     del stage["$project"][k]
-
     def _normalize_collection(self, collection: str) -> str:
         """Normaliza el nombre de la colección usando sinónimos y heurísticas."""
         if not collection:
             return collection
         collection_norm = collection.lower().replace(' ', '').replace('_', '')
-        # Usa el caché de sinónimos de colección
-        if collection_norm in self._collection_synonyms:
-            return self._collection_synonyms[collection_norm]
+        # Diccionario de sinónimos de colecciones
+        collection_synonyms = {
+            'transacciones': 'transactions_collection',
+            'transactions': 'transactions_collection',
+            'transaction': 'transactions_collection',
+            'movimientos': 'transactions_collection',
+            # Agrega más sinónimos si es necesario
+        }
+        for syn, canonical in collection_synonyms.items():
+            if collection_norm == syn:
+                return canonical
         # Si no hay coincidencia, retorna el original
         return collection
-
     def __init__(self, dataset_manager: Optional[DatasetManager] = None, llm_engine: Optional[LLMSuggestionEngine] = None, threshold: float = 0.5, use_synonyms: bool = True, use_schema_resolver: bool = False):
         # GESTOR DE DATASET (Nuevo - Contexto de Datos)
         self.dataset_manager = dataset_manager or create_default_dataset()
@@ -163,9 +149,6 @@ class SmartMongoQueryGenerator:
     def _validate_field_with_dataset(self, field: str, collection_name: str = None) -> bool:
         if not self.dataset_manager:
             return True  # Sin dataset, asumir válido
-            # Refuerzo: para productos, siempre aceptar 'precio' como válido
-        if collection_name and collection_name.lower() == 'productos' and field == 'precio':
-            return True
         # Si se especifica colección, validar solo en esa
         if collection_name:
             return self.dataset_manager.validate_field(collection_name, field)
@@ -188,19 +171,16 @@ class SmartMongoQueryGenerator:
                 suggestions.extend(self.dataset_manager.suggest_fields(coll_name, partial_name))
         return list(set(suggestions))  # Eliminar duplicados
 
-    _norm_cache = {}
-
-    @staticmethod
-    @lru_cache(maxsize=1024)
-    def norm(campo):
-        campo_norm = unicodedata.normalize('NFKD', campo).encode('ASCII', 'ignore').decode('utf-8').lower()
-        campo_norm = _RE_NON_ALPHANUM.sub('', campo_norm)
-        if len(campo_norm) > 3 and campo_norm.endswith('s'):
-            campo_norm = campo_norm[:-1]
-        return campo_norm
-
     def _normalize_field(self, field: str, collection: str = None) -> str:
-        field_norm = self.norm(field)
+        import unicodedata, re
+        from difflib import SequenceMatcher
+        def norm(campo):
+            campo = unicodedata.normalize('NFKD', campo).encode('ASCII', 'ignore').decode('utf-8').lower()
+            campo = re.sub(r'[^a-z0-9]', '', campo)
+            if len(campo) > 3 and campo.endswith('s'):
+                campo = campo[:-1]
+            return campo
+        field_norm = norm(field)
         threshold = getattr(self, 'threshold', 0.8)
         use_synonyms = getattr(self, 'use_synonyms', True)
         # 1. Buscar en el dataset_manager la ruta real del campo (por path o sinónimos)
@@ -212,27 +192,27 @@ class SmartMongoQueryGenerator:
                     continue
                 # Coincidencia exacta
                 for fname, fdef in schema.fields.items():
-                    if field_norm == self.norm(fname):
+                    if field_norm == norm(fname):
                         return fdef.path if fdef.path else fname
                 # Coincidencia exacta en sinónimos (solo si use_synonyms)
                 if use_synonyms:
                     for fname, fdef in schema.fields.items():
                         for syn in fdef.synonyms:
-                            if field_norm == self.norm(syn):
+                            if field_norm == norm(syn):
                                 return fdef.path if fdef.path else fname
                 # Coincidencia por similitud (threshold) en nombres y sinónimos
                 best_match = None
                 best_ratio = 0
                 for fname, fdef in schema.fields.items():
                     # Comparar con nombre
-                    ratio = SequenceMatcher(None, field_norm, self.norm(fname)).ratio()
+                    ratio = SequenceMatcher(None, field_norm, norm(fname)).ratio()
                     if ratio > best_ratio:
                         best_match = fdef.path if fdef.path else fname
                         best_ratio = ratio
                     # Comparar con sinónimos (solo si use_synonyms)
                     if use_synonyms:
                         for syn in fdef.synonyms:
-                            ratio_syn = SequenceMatcher(None, field_norm, self.norm(syn)).ratio()
+                            ratio_syn = SequenceMatcher(None, field_norm, norm(syn)).ratio()
                             if ratio_syn > best_ratio:
                                 best_match = fdef.path if fdef.path else fname
                                 best_ratio = ratio_syn
@@ -244,24 +224,24 @@ class SmartMongoQueryGenerator:
         # 2. Fallback a FIELD_SYNONYMS (solo si use_synonyms)
         if use_synonyms:
             for canonical, synonyms in self.FIELD_SYNONYMS.items():
-                if field_norm == self.norm(canonical):
+                if field_norm == norm(canonical):
                     return canonical
                 for s in synonyms:
-                    if field_norm == self.norm(s):
+                    if field_norm == norm(s):
                         return canonical
         # 3. Coincidencia por similitud en sinónimos y nombres (threshold)
         best_match = None
         best_ratio = 0
         for canonical, synonyms in self.FIELD_SYNONYMS.items():
             # Comparar con nombre canónico
-            ratio = SequenceMatcher(None, field_norm, self.norm(canonical)).ratio()
+            ratio = SequenceMatcher(None, field_norm, norm(canonical)).ratio()
             if ratio > best_ratio:
                 best_match = canonical
                 best_ratio = ratio
             # Comparar con sinónimos (solo si use_synonyms)
             if use_synonyms:
                 for s in synonyms:
-                    ratio_syn = SequenceMatcher(None, field_norm, self.norm(s)).ratio()
+                    ratio_syn = SequenceMatcher(None, field_norm, norm(s)).ratio()
                     if ratio_syn > best_ratio:
                         best_match = canonical
                         best_ratio = ratio_syn
@@ -285,154 +265,36 @@ class SmartMongoQueryGenerator:
         return False
 
     def _extract_fields(self, field_str: str) -> list:
-        field_str = _RE_Y.sub(',', field_str)
+
+        field_str = re.sub(r'\s+y\s+', ',', field_str)
         # Quita frases comunes de operaciones
-        field_str = _RE_REMOVE_OPS.sub('', field_str)
+        field_str = re.sub(r'(suma el total|proyectar reg|totalParteEntera y totalParteDecimal|ordenar por [^,]+|proyectar campo reg concatenando los valores seg[úu]n la plantilla|sumar el monto de las transacciones|agrupar por fecha)', '', field_str, flags=re.IGNORECASE)
         fields = [f.strip() for f in field_str.split(',') if f.strip()]
         expanded = []
         # Obtener campos válidos del esquema si está disponible
-        valid_fields = None
+        valid_fields = set()
         if self.dataset_manager and hasattr(self.dataset_manager, 'schemas'):
             # Buscar en todas las colecciones
-            all_fields = []
             for schema in self.dataset_manager.schemas.values():
                 if hasattr(schema, 'fields'):
-                    all_fields.extend([fname.lower() for fname in schema.fields.keys()])
-            valid_fields = set(all_fields)
+                    valid_fields.update([fname.lower() for fname in schema.fields.keys()])
         for f in fields:
             # Solo agregar si es campo válido o si no hay esquema
-            if valid_fields is None or f.lower() in valid_fields:
+            if not valid_fields or f.lower() in valid_fields:
                 expanded.extend(self._expand_special_phrases(f))
         return expanded
 
     def parse_natural_language(self, natural_text: str, collection: str = None, campos_esperados: set = None) -> list:
-        # --- NUEVO: Patrón robusto para 'Filtra transacciones con método de pago ...' ---
-        
-                                       
-                               
-                        
+               
         import datetime
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
         pipeline = []
-        # --- NUEVO: Proyecta nombre y apellido de clientes de <ciudad> ---
-        match_proj_clientes_trujillo = re.search(
-            r"proyecta\s+nombre\s+y\s+apellido\s+de\s+clientes\s+de\s+([\wáéíóúüñÁÉÍÓÚÜÑ_ ]+)",
-            natural_text,
-            re.IGNORECASE
-        )
-        if match_proj_clientes_trujillo and (collection is None or collection.lower() in ["clientes"]):
-            ciudad = match_proj_clientes_trujillo.group(1).strip()
-            # Detectar campos en el esquema
-            nombre_field = "nombre"
-            apellido_field = "apellido"
-            ciudad_field = "ciudad"
-            if self.dataset_manager and "clientes" in self.dataset_manager.schemas:
-                schema = self.dataset_manager.schemas["clientes"]
-                # Fuzzy matching para campos
-                def fuzzy_field(target, fields):
-                    import difflib
-                    matches = difflib.get_close_matches(target, fields, n=1, cutoff=0.7)
-                    return matches[0] if matches else target
-                nombre_field = fuzzy_field("nombre", schema.fields.keys())
-                apellido_field = fuzzy_field("apellido", schema.fields.keys())
-                ciudad_field = fuzzy_field("ciudad", schema.fields.keys())
-            match_stage = {"$match": {ciudad_field: {"$regex": ciudad, "$options": "i"}}}
-            project_stage = {"$project": {nombre_field: 1, apellido_field: 1, "_id": 0}}
-            pipeline.extend([match_stage, project_stage])
-            return pipeline
-        
-        match_filtra_metodo_pago = re.search(
-            r"filtra\s+transacciones?\s+con\s+m[eé]todo\s+de\s+pago\s+'?([\wáéíóúüñÁÉÍÓÚÜÑ_ ]+)'?",
-            natural_text,
-            re.IGNORECASE
-        )
-        if match_filtra_metodo_pago and (collection is None or collection.lower() in ["transacciones", "transactions_collection", "transactions"]):
-            valor_metodo = match_filtra_metodo_pago.group(1).strip()
-            metodo_pago_field = None
-            colname_detected = None
-            for colname in ["transacciones", "transactions_collection", "transactions"]:
-                if self.dataset_manager and colname in self.dataset_manager.schemas:
-                    schema = self.dataset_manager.schemas[colname]
-                    # Buscar campo exacto o sinónimos
-                    for fname, fdef in schema.fields.items():
-                        all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
-                        if any(s in ["metodo_pago", "método_pago", "metodo de pago", "método de pago", "payment_method", "metodopago", "metodo", "método"] for s in all_syns):
-                            metodo_pago_field = fname
-                            colname_detected = colname
-                            break
-                    # Fuzzy matching para variantes
-                    if not metodo_pago_field:
-                        import difflib
-                        candidates = list(schema.fields.keys())
-                        sugerido = difflib.get_close_matches("metodo_pago", candidates, n=1, cutoff=0.4)
-                        if not sugerido:
-                            sugerido = difflib.get_close_matches("paymentmethod", candidates, n=1, cutoff=0.4)
-                        if sugerido:
-                            metodo_pago_field = sugerido[0]
-                            colname_detected = colname
-                    if metodo_pago_field:
-                        break
-            if not metodo_pago_field:
-                # Sugerir agregar el campo al esquema
-                return [{
-                    "$project": {
-                        "error": {"$literal": "No existe el campo 'metodo_pago'/'PaymentMethod' en la colección transacciones. Solución recomendada: agrega el campo 'PaymentMethod' o 'MetodoPago' al esquema y a los datos para soportar métodos de pago reales (tarjeta, efectivo, transferencia, etc.)."}
-                    }
-                }]
-            else:
-                match_stage = {"$match": {metodo_pago_field: {"$regex": valor_metodo, "$options": "i"}}}
-                project_stage = {"$project": {"_id": 0}}
-                if self.dataset_manager and colname_detected and colname_detected in self.dataset_manager.schemas:
-                    schema = self.dataset_manager.schemas[colname_detected]
-                    for fname in schema.fields.keys():
-                        project_stage["$project"][fname] = 1
-                pipeline.extend([match_stage, project_stage])
-                return pipeline
 
         # REGLA MEJORADA: Proyección avanzada dinámica para dateMascara y reg
         for line in lines:
-                # MEJORA: Proyección dinámica para cualquier campo, formato y número de caracteres
-                match_proj_fecha = re.search(r"Proyecta el campo ([\w]+) como la fecha en formato ([A-Z0-9]+) usando los primeros (\d+) caracteres del campo ([\w\d_]+)", line, re.IGNORECASE)
-                if match_proj_fecha:
-                    campo_destino = match_proj_fecha.group(1)
-                    formato = match_proj_fecha.group(2)
-                    num_caracteres = int(match_proj_fecha.group(3))
-                    campo_origen = match_proj_fecha.group(4)
-                    # Buscar el campo de origen en el esquema, si no existe, buscar sinónimos de fecha
-                    if collection and self.dataset_manager and collection in self.dataset_manager.schemas:
-                        schema = self.dataset_manager.schemas[collection]
-                        def get_first_fecha_field(schema):
-                            fecha_synonyms = ["date", "fecha", "fecha_venta", "fecha de venta", "fecha venta", "fecha_transaccion", "fechaoperacion", "fechaventa", "fechatransaccion", "fechadeventa", "fechadeoperacion", "fecha_compra", "fecha_registro", "registro"]
-                            for fname, fdef in schema.fields.items():
-                                all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
-                                if any(s in fecha_synonyms for s in all_syns):
-                                    return fname
-                            return None
-                        if campo_origen not in schema.fields:
-                            first_fecha = get_first_fecha_field(schema)
-                            if first_fecha:
-                                campo_origen = first_fecha
-                    project_stage = {
-                        "$project": {
-                            "_id": 0,
-                            campo_destino: {
-                                "$dateToString": {
-                                    "date": {
-                                        "$dateFromString": {
-                                            "dateString": {"$substr": [f"${campo_origen}", 0, num_caracteres]}
-                                        }
-                                    },
-                                    "format": f"%{formato}"
-                                }
-                            }
-                        }
-                    }
-                    pipeline.append(project_stage)
-                    return pipeline
             # Detecta instrucciones para proyección avanzada
-        match_date = re.search(r'Proyecta el campo ([\w]+) como la fecha en formato ([A-Z0-9]+) usando los primeros (\d+) caracteres del campo ([\w]+)', line)
-        match_reg = re.search(r'Proyecta el campo ([\w]+) concatenando: ([^,]+), ([^,]+), la fecha en formato ([A-Z0-9]+) usando los primeros (\d+) caracteres del campo ([\w]+), ([^,]+), ([^,]+), un espacio y un salto de línea', line)
-        if match_date and match_reg:
+            match_date = re.search(r'Proyecta el campo ([\w]+) como la fecha en formato ([A-Z0-9]+) usando los primeros (\d+) caracteres del campo ([\w]+)', line)
+            match_reg = re.search(r'Proyecta el campo ([\w]+) concatenando: ([^,]+), ([^,]+), la fecha en formato ([A-Z0-9]+) usando los primeros (\d+) caracteres del campo ([\w]+), ([^,]+), ([^,]+), un espacio y un salto de línea', line)
             if match_date and match_reg:
                 # Extrae parámetros dinámicamente
                 campo_dateMascara = match_date.group(1)
@@ -448,68 +310,6 @@ class SmartMongoQueryGenerator:
                 campo_origen_reg = match_reg.group(6)
                 concat_3 = match_reg.group(7)
                 concat_4 = match_reg.group(8)
-
-                # Refuerzo: si el campo origen no existe, buscar sinónimos de fecha
-                if collection and self.dataset_manager and collection in self.dataset_manager.schemas:
-                    schema = self.dataset_manager.schemas[collection]
-                    # Si el campo de origen no existe, buscar el primer campo de fecha válido
-                    def get_first_fecha_field(schema):
-                        fecha_synonyms = ["date", "fecha", "fecha_venta", "fecha de venta", "fecha venta", "fecha_transaccion", "fechaoperacion", "fechaventa", "fechatransaccion", "fechadeventa", "fechadeoperacion", "fecha_compra", "fecha_registro", "registro"]
-                        for fname, fdef in schema.fields.items():
-                            all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
-                            if any(s in fecha_synonyms for s in all_syns):
-                                return fname
-                        return None
-                    if campo_origen_dateMascara not in schema.fields:
-                        first_fecha = get_first_fecha_field(schema)
-                        if first_fecha:
-                            campo_origen_dateMascara = first_fecha
-                    if campo_origen_reg not in schema.fields:
-                        first_fecha = get_first_fecha_field(schema)
-                        if first_fecha:
-                            campo_origen_reg = first_fecha
-                # Asegura que 'dateMascara' nunca se elimine del $project si está en el esquema
-                if collection and self.dataset_manager and collection in self.dataset_manager.schemas:
-                    schema = self.dataset_manager.schemas[collection]
-                    if "dateMascara" in schema.fields:
-                        pass  # El $project lo incluirá siempre si está en el esquema
-                project_stage = {
-                    "$project": {
-                        "_id": 0,
-                        campo_dateMascara: {
-                            "$dateToString": {
-                                "date": {
-                                    "$dateFromString": {
-                                        "dateString": {"$substr": [f"${campo_origen_dateMascara}", 0, num_caracteres_dateMascara]}
-                                    }
-                                },
-                                "format": f"%{formato_dateMascara}"
-                            }
-                        },
-                        campo_reg: {
-                            "$concat": [
-                                concat_1,
-                                concat_2,
-                                {
-                                    "$dateToString": {
-                                        "date": {
-                                            "$dateFromString": {
-                                                "dateString": {"$substr": [f"${campo_origen_reg}", 0, num_caracteres_reg]}
-                                            }
-                                        },
-                                        "format": f"%{formato_reg}"
-                                    }
-                                },
-                                concat_3,
-                                concat_4,
-                                " ",
-                                "\n"
-                            ]
-                        }
-                    }
-                }
-                pipeline.append(project_stage)
-                return pipeline
 
                 project_stage = {
                     "$project": {
@@ -774,77 +574,6 @@ class SmartMongoQueryGenerator:
             project_stage = {"$project": {campo_norm: "$_id", "count": 1, "_id": 0}}
             pipeline.extend([group_stage, project_stage])
             return pipeline
-         # --- NUEVO: Soporte para 'Filtra transacciones con método de pago ...' ---
-        match_metodo_pago = re.search(r"transacciones? con m[eé]todo de pago '?([\wáéíóúüñÁÉÍÓÚÜÑ_ ]+)'?", natural_text, re.IGNORECASE)
-        if match_metodo_pago and (collection is None or collection.lower() in ["transacciones", "transactions_collection", "transactions"]):
-            valor_metodo = match_metodo_pago.group(1).strip()
-            metodo_pago_field = None
-            colname_detected = None
-            for colname in ["transacciones", "transactions_collection", "transactions"]:
-                if self.dataset_manager and colname in self.dataset_manager.schemas:
-                    schema = self.dataset_manager.schemas[colname]
-                    for fname, fdef in schema.fields.items():
-                        all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
-                        if any(s in ["metodo_pago", "método_pago", "metodo de pago", "método de pago", "payment_method", "metodo", "método"] for s in all_syns):
-                            metodo_pago_field = fname
-                            colname_detected = colname
-                            break
-                    if not metodo_pago_field:
-                        # Fuzzy matching para campo más parecido
-                        import difflib
-                        candidates = list(schema.fields.keys())
-                        sugerido = difflib.get_close_matches("metodo_pago", candidates, n=1, cutoff=0.5)
-                        if sugerido:
-                            metodo_pago_field = sugerido[0]
-                            colname_detected = colname
-                    if metodo_pago_field:
-                        break
-            if not metodo_pago_field or (self.dataset_manager and colname_detected and colname_detected in self.dataset_manager.schemas and metodo_pago_field not in self.dataset_manager.schemas[colname_detected].fields):
-                # Si no se encontró el campo ni sugerido, devolver error explícito
-                return [{
-                    "$project": {
-                        "error": {"$literal": "El campo de método de pago no existe ni se encontró campo similar en la colección transacciones. Revisa el nombre del campo o el esquema."}
-                    }
-                }]
-            else:
-                match_stage = {"$match": {metodo_pago_field: {"$regex": valor_metodo, "$options": "i"}}}
-                project_stage = {"$project": {"_id": 0}}
-                if self.dataset_manager and colname_detected and colname_detected in self.dataset_manager.schemas:
-                    schema = self.dataset_manager.schemas[colname_detected]
-                    for fname in schema.fields.keys():
-                        project_stage["$project"][fname] = 1
-                pipeline.extend([match_stage, project_stage])
-                return pipeline
-                                   
-         # MEJORA: Sinónimos robustos para productos (stock -> item/categoria/precio)
-        if collection and collection.lower() == "productos":
-            # Si la instrucción menciona 'stock', procesar solo si existe en el esquema
-            match_stock = re.search(r"stock\s*(menor|mayor|igual|=|<|>|<=|>=)?\s*a?\s*(\d+)", natural_text, re.IGNORECASE)
-            if match_stock:
-                schema = self.dataset_manager.schemas.get(collection) if self.dataset_manager and collection in self.dataset_manager.schemas else None
-                if schema and "stock" in schema.fields:
-                    # Extraer operador y valor
-                    operador = match_stock.group(1)
-                    valor = int(match_stock.group(2))
-                    # Mapear operador a MongoDB
-                    op_map = {
-                        "menor": "$lt", "<": "$lt", "<=": "$lte",
-                        "mayor": "$gt", ">": "$gt", ">=": "$gte",
-                        "igual": "$eq", "=": "$eq"
-                    }
-                    mongo_op = op_map.get(operador, "$eq")
-                    pipeline = [
-                        {"$match": {"stock": {mongo_op: valor}}},
-                        {"$project": {"item": 1, "categoria": 1, "precio": 1, "stock": 1, "_id": 0}}
-                    ]
-                    return pipeline
-                else:
-                    # No existe campo stock, sugerir campos válidos
-                    return [{
-                        "$project": {
-                          "error": {"$literal": "El campo 'stock' no existe en la colección productos. Campos válidos: item, categoria, precio."}
-                                    }
-                                }]
          # Regla específica para transacciones mayores a un monto en un mes
         match_transacciones_monto_mes = re.search(r'transacciones? mayores? a \$?(\d+)[^\d]*(en|de)?\s*(noviembre|diciembre|enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|octubre)?', natural_text, re.IGNORECASE)
         if match_transacciones_monto_mes and collection and collection.lower() == "transactions_collection":
@@ -1173,84 +902,6 @@ class SmartMongoQueryGenerator:
             project_stage = {"$project": {campo: "$_id", f"{field_entidad}s": 1, "_id": 0}}
             pipeline.extend([group_stage, project_stage])
             return pipeline
-
-        # --- NUEVO: Soporte para 'Obtén usuarios registrados en 2025' y variantes ---
-        match_usuarios_registrados = re.search(r"usuarios? registrados? en (\d{4})", natural_text, re.IGNORECASE)
-        if match_usuarios_registrados and (collection is None or collection.lower() in ["usuarios", "usuario"]):
-            anio = match_usuarios_registrados.group(1)
-            # Detectar campo de fecha de registro
-            fecha_registro_field = None
-            if self.dataset_manager and "usuarios" in self.dataset_manager.schemas:
-                schema = self.dataset_manager.schemas["usuarios"]
-                for fname, fdef in schema.fields.items():
-                    all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
-                    if any(s in ["fecha_registro", "fecha_registro", "fecha de registro", "fecharegistro", "registro", "fecha", "created_at", "fecha_creacion"] for s in all_syns):
-                        fecha_registro_field = fname
-                        break
-            if not fecha_registro_field:
-                fecha_registro_field = "fecha_registro"
-            # $match por año
-            match_stage = {"$match": {
-                fecha_registro_field: {"$regex": f"^{anio}-"}
-            }}
-            # $project con campos típicos
-            project_stage = {"$project": {"_id": 0}}
-            if self.dataset_manager and "usuarios" in self.dataset_manager.schemas:
-                schema = self.dataset_manager.schemas["usuarios"]
-                for fname in schema.fields.keys():
-                    project_stage["$project"][fname] = 1
-            pipeline.extend([match_stage, project_stage])
-            return pipeline
-        
-        match_precio_promedio_ult_mes = re.search(r'(calcula|dame|muestra|obt[eé]n|proporciona)? ?el? ?precio promedio de productos vendidos en el (último|ultimo) mes', natural_text, re.IGNORECASE)
-        if match_precio_promedio_ult_mes and collection and collection.lower() == "productos":
-                        # Buscar campo de precio
-            schema = self.dataset_manager.schemas.get(collection) if self.dataset_manager and collection in self.dataset_manager.schemas else None
-            precio_field = "precio"
-            if schema:
-              if "precio" not in schema.fields:
-                                # Buscar sinónimos
-                  for fname, fdef in schema.fields.items():
-                      if "precio" in [s.lower() for s in fdef.synonyms] or "precio" in fname.lower():
-                          precio_field = fname
-                          break
-            pipeline = [
-                            {"$group": {"_id": None, "precio_promedio": {"$avg": f"${precio_field}"}}},
-                            {"$project": {"precio_promedio": 1, "_id": 0}}
-                    ]
-            return pipeline
-         # MEJORA: Sinónimos robustos para empleados (cargo -> departamento)
-        if collection and collection.lower() == "empleados":
-                                    # Si la instrucción menciona 'cargo', mapear a 'departamento'
-            match_cargo = re.search(r"cargo\s*:?\s*'?([\wáéíóúüñÁÉÍÓÚÜÑ ]+)'?", natural_text, re.IGNORECASE)
-            if match_cargo:
-                valor = match_cargo.group(1).strip()
-                pipeline = [
-                    {"$match": {"cargo": valor}}
-                ]
-                                        # Proyectar campos típicos si se requiere
-                pipeline.append({"$project": {"nombre": 1, "cargo": 1, "_id": 0}})
-                return pipeline
-            # --- NUEVO: Patrón robusto para 'ventas mayores a N' ---
-        match_ventas_mayores = re.search(r'ventas? mayores? a (\d+)', natural_text, re.IGNORECASE)
-        if match_ventas_mayores and collection and collection.lower() == "ventas":
-            monto = float(match_ventas_mayores.group(1))
-                                # Buscar campo de monto/total en el esquema
-            schema = self.dataset_manager.schemas.get(collection) if self.dataset_manager and collection in self.dataset_manager.schemas else None
-            monto_field = "total_venta"
-            monto_synonyms = ["total_venta", "monto", "importe", "total"]
-            if schema:
-                for fname in schema.fields:
-                    for syn in monto_synonyms:
-                        if syn.lower() in fname.lower():
-                            monto_field = fname
-                            break
-            pipeline = [
-                            {"$match": {monto_field: {"$gt": monto}}},
-                            {"$project": {monto_field: 1, "_id": 0}}
-                         ]
-            return pipeline
-                    # --- NUEVO: Patrón explícito para 'precio promedio de productos vendidos en el último mes' ---
         # --- FIN REGLAS ESPECÍFICAS ---
         # --- MEJORA: Usar campos del esquema real si está disponible ---
         if self.dataset_manager and collection in self.dataset_manager.schemas:
@@ -1640,11 +1291,10 @@ class SmartMongoQueryGenerator:
 
         # --- NUEVO: Soporte para $match con $regex para instrucciones tipo 'busca empleados cuyo nombre comience con ...' ---
         for line in lines:
-            # Soporte para 'busca ... cuyo ... comience con ...' y 'filtra ... cuyo ... comience con ...'
-            regex_match = re.search(r"(busca|filtra) [\wáéíóúüñÁÉÍÓÚÜÑ ]+ cuyo ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) comience con '([^']+)'", line, re.IGNORECASE)
+            regex_match = re.search(r"busca [\wáéíóúüñÁÉÍÓÚÜÑ ]+ cuyo ([\wáéíóúüñÁÉÍÓÚÜÑ_]+) comience con '([^']+)'", line, re.IGNORECASE)
             if regex_match:
-                field = regex_match.group(2).strip()
-                value = regex_match.group(3)
+                field = regex_match.group(1).strip()
+                value = regex_match.group(2)
                 field_norm = self._normalize_field(field, collection=collection)
                 match_stage = {"$match": {field_norm: {"$regex": f"^{value}", "$options": "i"}}}
                 return [match_stage]
@@ -2510,6 +2160,7 @@ class SmartMongoQueryGenerator:
         Devuelve el pipeline como lista de etapas (no string JSON).
         """
         # --- Si parse_natural_language soporta la instrucción, usar su resultado ---
+
         pipeline_nlp = self.parse_natural_language(natural_text, collection=collection, campos_esperados=campos_esperados)
         if pipeline_nlp and isinstance(pipeline_nlp, list) and len(pipeline_nlp) > 0:
             return pipeline_nlp
@@ -2528,10 +2179,7 @@ class SmartMongoQueryGenerator:
         if (
             ("venta" in lower_text or "ventas" in lower_text)
             and ("último mes" in lower_text or "ultimo mes" in lower_text or "mes pasado" in lower_text)
-            and (
-                "total" in lower_text or "suma" in lower_text or "cuánto" in lower_text or "cuanto" in lower_text
-                or "precio promedio" in lower_text or "promedio" in lower_text
-            )
+            and ("total" in lower_text or "suma" in lower_text or "cuánto" in lower_text or "cuanto" in lower_text)
         ):
             # Detectar si los campos ya son del tipo correcto
             is_fecha_date = False
@@ -2704,16 +2352,6 @@ class SmartMongoQueryGenerator:
                                 if ratio_syn >= threshold:
                                     return fname
                 return None
-                # Depuración: imprime el valor de campo y colección
-            print(f"[DEBUG] buscar_equivalente: campo='{campo}', schema.name='{getattr(schema, 'name', None)}'")
-                # Refuerzo específico para colección 'clientes':
-                # Si el campo es 'nombre' y existe 'nombre_cliente', mapearlo aunque no se haya encontrado por los métodos normales
-            if hasattr(schema, 'name') and schema.name == 'clientes' and campo.strip().lower() == 'nombre':
-                if 'nombre_cliente' in schema.fields:
-                        print("[DEBUG] Mapeo forzado: 'nombre' -> 'nombre_cliente'")
-                return 'nombre_cliente'
-            
-            
             project_dict = {}
             campos_encontrados = 0
             if self.dataset_manager and collection in self.dataset_manager.schemas:
@@ -2909,60 +2547,11 @@ class SmartMongoQueryGenerator:
             ]
             return pipeline
 
-
-        # 3. Precio promedio de productos (soporta variantes con 'último mes' y fallback si no hay fecha)
+        # 3. Precio promedio de productos
         if ("precio promedio" in lower_text or "precio" in lower_text) and "producto" in lower_text:
-            # Si la colección es productos y no tiene campo de fecha/venta, hacer promedio global
-            if collection and collection.lower() == "productos":
-                schema = self.dataset_manager.schemas.get(collection) if self.dataset_manager and collection in self.dataset_manager.schemas else None
-                has_fecha = False
-                precio_field = "precio"
-                precio_synonyms = ["precio", "costo", "valor", "price", "cost", "valor_unitario", "precio_unitario", "preciofinal", "precioventa", "preciocompra", "precio_bruto", "precio_neto", "precio estimado", "precio sugerido", "precio_promedio", "precio_unitario", "precio_total"]
-                precio_candidates = []
-                if schema:
-                    # Buscar campo de fecha/venta
-                    for fname in schema.fields:
-                        if "fecha" in fname.lower() or "venta" in fname.lower():
-                            has_fecha = True
-                        # Buscar campo de precio o sinónimos
-                        for syn in precio_synonyms:
-                            if syn.lower() in fname.lower():
-                                precio_candidates.append(fname)
-                    if precio_candidates:
-                        precio_field = precio_candidates[0]
-                    else:
-                        # Buscar en sinónimos definidos en el schema
-                        for fname, fdef in schema.fields.items():
-                            if any(syn in [s.lower() for s in fdef.synonyms] for syn in precio_synonyms):
-                                precio_field = fname
-                                break
-                        else:
-                            # No se encontró ningún campo relacionado a precio
-                            return [{"$project": {"error": "No se encontró ningún campo de precio en la colección productos", "_id": 0}}]
-                # Si la instrucción menciona 'último mes' pero no hay campo fecha, hacer promedio global
-                if ("último mes" in lower_text or "ultimo mes" in lower_text) and not has_fecha:
-                    pipeline = [
-                        {"$group": {"_id": None, "precio_promedio": {"$avg": f"${precio_field}"}}},
-                        {"$project": {"precio_promedio": 1, "_id": 0}}
-                    ]
-                    return pipeline
-                # Si hay campo fecha, se podría filtrar, pero por defecto promedio global
-                pipeline = [
-                    {"$group": {"_id": None, "precio_promedio": {"$avg": f"${precio_field}"}}},
-                    {"$project": {"precio_promedio": 1, "_id": 0}}
-                ]
-                return pipeline
-            # Si la colección es ventas, mantener lógica anterior
-            elif collection and collection.lower() == "ventas":
-                pipeline = [
-                    {"$group": {"_id": "$producto", "precio_promedio": {"$avg": "$precio"}}},
-                    {"$project": {"producto": "$_id", "precio": "$precio_promedio", "_id": 0}}
-                ]
-                return pipeline
-            # Fallback: promedio global de precio si existe campo precio
             pipeline = [
-                {"$group": {"_id": None, "precio_promedio": {"$avg": "$precio"}}},
-                {"$project": {"precio_promedio": 1, "_id": 0}}
+                {"$group": {"_id": "$producto", "precio_promedio": {"$avg": "$precio"}}},
+                {"$project": {"producto": "$_id", "precio": "$precio_promedio", "_id": 0}}
             ]
             return pipeline
 
@@ -3004,9 +2593,6 @@ class SmartMongoQueryGenerator:
             except Exception:
                 print(f"Error al aplicar resolver de esquema: {e}")
 
-        # Asegura que el pipeline siempre sea una lista
-        if not isinstance(pipeline, list):
-            pipeline = [pipeline]
         return pipeline
 
     def _fuzzy_equiv_fallback(self, k, ce):
