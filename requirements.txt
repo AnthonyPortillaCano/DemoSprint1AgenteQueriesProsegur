@@ -4,5 +4,4 @@ gunicorn
 typing-extensions
 openai
 python-dotenv
-streamlit
 requests
