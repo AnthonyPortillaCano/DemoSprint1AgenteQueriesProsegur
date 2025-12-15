@@ -1,4 +1,10 @@
+
 from functools import lru_cache
+import os
+import requests
+
+# --- Función auxiliar para usar GPT-4 vía OpenAI API ---
+
 
 
 import unicodedata
@@ -38,7 +44,7 @@ class SmartMongoQueryGenerator:
         'movimientos': 'transactions_collection',
         # Agrega más sinónimos si es necesario
     }
-
+     
     @staticmethod
     def normaliza_campo_robusto(campo):
         campo = unicodedata.normalize('NFKD', campo).encode('ASCII', 'ignore').decode('utf-8').lower()
@@ -46,7 +52,54 @@ class SmartMongoQueryGenerator:
         if len(campo) > 3 and campo.endswith('s'):
             campo = campo[:-1]
         return campo
-
+    def gpt4_generate_mongo_query(self, instruccion, coleccion, api_key=None, deployment=None, endpoint=None):
+        """
+        Llama a la API de Azure OpenAI para generar un pipeline MongoDB a partir de una instrucción en lenguaje natural.
+        """
+        import json
+        try:
+            api_key = api_key or os.getenv("AZURE_OPENAI_API_KEY")
+            endpoint = endpoint or os.getenv("AZURE_OPENAI_ENDPOINT")
+            deployment = deployment or os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1")
+            if not api_key or not endpoint or not deployment:
+                raise ValueError("Debes definir AZURE_OPENAI_API_KEY, AZURE_OPENAI_ENDPOINT y AZURE_OPENAI_DEPLOYMENT en variables de entorno o argumentos.")
+            url = f"{endpoint}/openai/deployments/{deployment}/chat/completions?api-version=2023-07-01-preview"
+            system_prompt = "Eres un experto en bases de datos MongoDB. Dada una instrucción en lenguaje natural y el nombre de la colección, genera únicamente el pipeline de agregación en formato JSON (no incluyas explicaciones)."
+            user_prompt = f"Colección: {coleccion}\nInstrucción: {instruccion}\nPipeline:"
+            headers = {
+                "api-key": api_key,
+                "Content-Type": "application/json"
+            }
+            payload = {
+                "messages": [
+                    {"role": "system", "content": system_prompt},
+                    {"role": "user", "content": user_prompt}
+                ],
+                "max_tokens": 800,
+                "temperature": 0.0
+            }
+            response = requests.post(url, headers=headers, json=payload)
+            response.raise_for_status()
+            data = response.json()
+            content = data["choices"][0]["message"]["content"]
+            try:
+                pipeline = json.loads(content)
+            except Exception:
+                pipeline = content
+            return {
+                "suggestions": pipeline,
+                "model_used": deployment,
+                "tokens_used": data.get("usage", {}).get("total_tokens", None),
+                "cost_estimate": None
+            }
+        except Exception as e:
+            return {
+                "suggestions": f"Error generando sugerencias con Azure OpenAI: {str(e)}",
+                "model_used": None,
+                "tokens_used": 0,
+                "cost_estimate": 0.0
+            }
+      
     def _filtrar_project_global(self, pipeline, schema_fields):
         for i, stage in enumerate(pipeline):
             if "$project" in stage:
@@ -203,14 +256,14 @@ class SmartMongoQueryGenerator:
         field_norm = self.norm(field)
         threshold = getattr(self, 'threshold', 0.8)
         use_synonyms = getattr(self, 'use_synonyms', True)
-        # 1. Buscar en el dataset_manager la ruta real del campo (por path o sinónimos)
+        # 1. Buscar coincidencia exacta en el dataset_manager
         if self.dataset_manager:
             collections = [collection] if collection else list(self.dataset_manager.schemas.keys())
             for coll in collections:
                 schema = self.dataset_manager.schemas.get(coll)
                 if not schema:
                     continue
-                # Coincidencia exacta
+                # Coincidencia exacta en nombre
                 for fname, fdef in schema.fields.items():
                     if field_norm == self.norm(fname):
                         return fdef.path if fdef.path else fname
@@ -220,27 +273,6 @@ class SmartMongoQueryGenerator:
                         for syn in fdef.synonyms:
                             if field_norm == self.norm(syn):
                                 return fdef.path if fdef.path else fname
-                # Coincidencia por similitud (threshold) en nombres y sinónimos
-                best_match = None
-                best_ratio = 0
-                for fname, fdef in schema.fields.items():
-                    # Comparar con nombre
-                    ratio = SequenceMatcher(None, field_norm, self.norm(fname)).ratio()
-                    if ratio > best_ratio:
-                        best_match = fdef.path if fdef.path else fname
-                        best_ratio = ratio
-                    # Comparar con sinónimos (solo si use_synonyms)
-                    if use_synonyms:
-                        for syn in fdef.synonyms:
-                            ratio_syn = SequenceMatcher(None, field_norm, self.norm(syn)).ratio()
-                            if ratio_syn > best_ratio:
-                                best_match = fdef.path if fdef.path else fname
-                                best_ratio = ratio_syn
-                if best_match and best_ratio >= threshold:
-                    return best_match
-                # Si el threshold es muy bajo (<0.5), permite devolver el campo más parecido aunque no llegue al umbral
-                if best_match and threshold < 0.5 and best_ratio > 0.4:
-                    return best_match
         # 2. Fallback a FIELD_SYNONYMS (solo si use_synonyms)
         if use_synonyms:
             for canonical, synonyms in self.FIELD_SYNONYMS.items():
@@ -249,22 +281,40 @@ class SmartMongoQueryGenerator:
                 for s in synonyms:
                     if field_norm == self.norm(s):
                         return canonical
-        # 3. Coincidencia por similitud en sinónimos y nombres (threshold)
+        # 3. Coincidencia por similitud (solo si no se encontró antes)
         best_match = None
         best_ratio = 0
-        for canonical, synonyms in self.FIELD_SYNONYMS.items():
-            # Comparar con nombre canónico
-            ratio = SequenceMatcher(None, field_norm, self.norm(canonical)).ratio()
-            if ratio > best_ratio:
-                best_match = canonical
-                best_ratio = ratio
-            # Comparar con sinónimos (solo si use_synonyms)
-            if use_synonyms:
-                for s in synonyms:
-                    ratio_syn = SequenceMatcher(None, field_norm, self.norm(s)).ratio()
-                    if ratio_syn > best_ratio:
-                        best_match = canonical
-                        best_ratio = ratio_syn
+        # Primero busca en dataset_manager si existe
+        if self.dataset_manager:
+            collections = [collection] if collection else list(self.dataset_manager.schemas.keys())
+            for coll in collections:
+                schema = self.dataset_manager.schemas.get(coll)
+                if not schema:
+                    continue
+                for fname, fdef in schema.fields.items():
+                    ratio = SequenceMatcher(None, field_norm, self.norm(fname)).ratio()
+                    if ratio > best_ratio:
+                        best_match = fdef.path if fdef.path else fname
+                        best_ratio = ratio
+                    if use_synonyms:
+                        for syn in fdef.synonyms:
+                            ratio_syn = SequenceMatcher(None, field_norm, self.norm(syn)).ratio()
+                            if ratio_syn > best_ratio:
+                                best_match = fdef.path if fdef.path else fname
+                                best_ratio = ratio_syn
+        # Si no hay dataset_manager o no se encontró, busca en FIELD_SYNONYMS
+        if not best_match:
+            for canonical, synonyms in self.FIELD_SYNONYMS.items():
+                ratio = SequenceMatcher(None, field_norm, self.norm(canonical)).ratio()
+                if ratio > best_ratio:
+                    best_match = canonical
+                    best_ratio = ratio
+                if use_synonyms:
+                    for s in synonyms:
+                        ratio_syn = SequenceMatcher(None, field_norm, self.norm(s)).ratio()
+                        if ratio_syn > best_ratio:
+                            best_match = canonical
+                            best_ratio = ratio_syn
         if best_match and best_ratio >= threshold:
             return best_match
         if best_match and threshold < 0.5 and best_ratio > 0.4:
@@ -2503,12 +2553,15 @@ class SmartMongoQueryGenerator:
         plt.legend()
         plt.show()
 
-    def generate_query(self, collection: str, natural_text: str, campos_esperados: set = None):
+    def generate_query(self, collection: str, natural_text: str, campos_esperados: set = None, use_gpt4=False, gpt4_api_key=None):
         """
         Genera una pipeline de MongoDB a partir de una consulta en lenguaje natural.
         Si se proporcionan campos_esperados, solo proyecta esos campos (filtro estricto) SOLO si la instrucción es simple.
         Devuelve el pipeline como lista de etapas (no string JSON).
+        Si use_gpt4=True, usa GPT-4 para instrucciones complejas.
         """
+        if use_gpt4:
+            return gpt4_generate_mongo_query(natural_text, collection, api_key=gpt4_api_key)
         # --- Si parse_natural_language soporta la instrucción, usar su resultado ---
         pipeline_nlp = self.parse_natural_language(natural_text, collection=collection, campos_esperados=campos_esperados)
         if pipeline_nlp and isinstance(pipeline_nlp, list) and len(pipeline_nlp) > 0:

@@ -14,7 +14,7 @@ class LLMSuggestionEngine:
     def __init__(self, api_key: Optional[str] = None, endpoint: Optional[str] = None, deployment: Optional[str] = None):
         self.api_key = api_key or os.getenv("AZURE_OPENAI_API_KEY")
         self.endpoint = endpoint or os.getenv("AZURE_OPENAI_ENDPOINT")
-        self.deployment = deployment or os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-35-turbo")
+        self.deployment = deployment or os.getenv("AZURE_OPENAI_DEPLOYMENT", "gpt-4.1")
         self.api_version = os.getenv("AZURE_OPENAI_API_VERSION", "2023-05-15")
         if self.api_key and self.endpoint:
             self.client = openai.AzureOpenAI(
