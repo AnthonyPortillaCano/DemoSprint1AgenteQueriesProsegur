@@ -14,8 +14,8 @@ jobs:
       FRONTEND_IMAGE: proseguracr2025.azurecr.io/frontend:latest
       BACKEND_DOCKERFILE: Dockerfile
       FRONTEND_DOCKERFILE: Dockerfile-frontend
-      BACKEND_APP: prosegur-backend-app
-      FRONTEND_APP: prosegur-frontend-app
+      BACKEND_APP: prosegur-backend-app2025
+      FRONTEND_APP: prosegur-frontend-app2025
 
     steps:
     - name: Checkout code
