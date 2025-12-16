@@ -1,0 +1,56 @@
+name: CI/CD Docker Backend & Frontend to Azure
+
+on:
+  push:
+    branches:
+      - sprint4-02
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+    env:
+      REGISTRY: proseguracr2025.azurecr.io
+      BACKEND_IMAGE: proseguracr2025.azurecr.io/backend:latest
+      FRONTEND_IMAGE: proseguracr2025.azurecr.io/frontend:latest
+      BACKEND_DOCKERFILE: Dockerfile
+      FRONTEND_DOCKERFILE: Dockerfile-frontend
+      BACKEND_APP: prosegur-backend-app
+      FRONTEND_APP: prosegur-frontend-app
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Azure Login
+      uses: azure/login@v1
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+    - name: Azure Container Registry Login
+      uses: azure/docker-login@v1
+      with:
+        login-server: ${{ env.REGISTRY }}
+        username: ${{ secrets.ACR_USERNAME }}
+        password: ${{ secrets.ACR_PASSWORD }}
+
+    - name: Build and push backend image
+      run: |
+        docker build -f $BACKEND_DOCKERFILE -t $BACKEND_IMAGE .
+        docker push $BACKEND_IMAGE
+
+    - name: Build and push frontend image
+      run: |
+        docker build -f $FRONTEND_DOCKERFILE -t $FRONTEND_IMAGE .
+        docker push $FRONTEND_IMAGE
+
+    - name: Deploy backend to Azure Web App
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: ${{ env.BACKEND_APP }}
+        images: ${{ env.BACKEND_IMAGE }}
+
+    - name: Deploy frontend to Azure Web App
+      uses: azure/webapps-deploy@v3
+      with:
+        app-name: ${{ env.FRONTEND_APP }}
+        images: ${{ env.FRONTEND_IMAGE }}
