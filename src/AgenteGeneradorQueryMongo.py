@@ -86,12 +86,7 @@ class SmartMongoQueryGenerator:
                 pipeline = json.loads(content)
             except Exception:
                 pipeline = content
-            return {
-                "suggestions": pipeline,
-                "model_used": deployment,
-                "tokens_used": data.get("usage", {}).get("total_tokens", None),
-                "cost_estimate": None
-            }
+            return pipeline
         except Exception as e:
             return {
                 "suggestions": f"Error generando sugerencias con Azure OpenAI: {str(e)}",

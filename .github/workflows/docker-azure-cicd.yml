@@ -3,7 +3,7 @@ name: CI/CD Docker Backend & Frontend to Azure
 on:
   push:
     branches:
-      - sprint4-02
+      - sprint4-03
 
 jobs:
   build-and-deploy:
