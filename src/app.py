@@ -9,8 +9,8 @@ Este app te permite generar queries MongoDB desde lenguaje natural.
 """)
 
 
-API_URL = "http://localhost:8000/assist/"
-#API_URL = "https://prosegur-backend-app2025-hqe5f4dgb0fsfefs.eastus-01.azurewebsites.net/assist/"
+#API_URL = "http://localhost:8000/assist/"
+API_URL = "https://prosegur-backend-app2025-hqe5f4dgb0fsfefs.eastus-01.azurewebsites.net/assist/"
 
 
 # Entrada del usuario solo para la instrucción
