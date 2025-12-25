@@ -36,6 +36,7 @@ except ImportError:
     from src.llm_suggestion_engine import LLMSuggestionEngine
 
 class SmartMongoQueryGenerator:
+       
     # Caché de sinónimos de colección a nivel de clase
     _collection_synonyms = {
         'transacciones': 'transactions_collection',
@@ -351,14 +352,103 @@ class SmartMongoQueryGenerator:
         return expanded
 
     def parse_natural_language(self, natural_text: str, collection: str = None, campos_esperados: set = None) -> list:
+                # --- REGLA AVANZADA: Consulta compleja Devices/ServicePoints/ShipOutCycles/Transactions ---
+               
         # --- NUEVO: Patrón robusto para 'Filtra transacciones con método de pago ...' ---
-        
-                                       
-                               
-                        
+              
         import datetime
         lines = [l.strip() for l in natural_text.split('\n') if l.strip()]
         pipeline = []
+        # --- BLOQUE DINÁMICO: Desanidar y agrupar con nombres personalizados detectados ---
+        # --- BLOQUE DINÁMICO: Desanidar y agrupar con cualquier branchCodeX ---
+        match_dynamic_devices = re.search(
+            r"desanida.*devices.*(servicepoints\w*).*shipoutcycles.*(transactions\w*).*agrupa.*fecha.*(deviceid).*([a-zA-Z0-9_]+code[0-9_]*|hcode[0-9_]*)?.*subchannelcode.*shipoutcode.*currencycode.*confirmationcode.*suma.*total.*proyecta.*totalparteentera.*totalpartedecimal.*reg.*orden[ae]?.*deviceid.*shipoutcode.*subchannelcode.*currencycode",
+            natural_text.replace("\n", " ").lower(),
+            re.DOTALL
+        )
+        if match_dynamic_devices:
+            # Usar los nombres detectados exactamente como aparecen en el lenguaje natural
+            service_points_field = match_dynamic_devices.group(1) if match_dynamic_devices.group(1) else "ServicePoints"
+            transactions_field = match_dynamic_devices.group(2) if match_dynamic_devices.group(2) else "Transactions"
+            device_id_field = match_dynamic_devices.group(3) if match_dynamic_devices.group(3) else "deviceId"
+            branch_code_field = match_dynamic_devices.group(4) if match_dynamic_devices.group(4) else "branchCode"
+            sub_channel_code_field = "subChannelCode"
+            ship_out_code_field = "shipOutCode"
+            currency_code_field = "currencyCode"
+            confirmation_code_field = "confirmationCode"
+            fecha_field = "fecha"
+
+            pipeline = [
+                {"$unwind": "$Devices"},
+                {"$unwind": f"$Devices.{service_points_field}"},
+                {"$unwind": {"path": f"$Devices.{service_points_field}.ShipOutCycles", "preserveNullAndEmptyArrays": True}},
+                {"$unwind": {"path": f"$Devices.{service_points_field}.ShipOutCycles.{transactions_field}", "preserveNullAndEmptyArrays": True}},
+                {"$group": {
+                    "_id": {
+                        device_id_field: f"$Devices.{device_id_field}",
+                        branch_code_field: f"$Devices.{branch_code_field}",
+                        sub_channel_code_field: f"$Devices.{service_points_field}.ShipOutCycles.{sub_channel_code_field}",
+                        ship_out_code_field: f"$Devices.{service_points_field}.ShipOutCycles.{ship_out_code_field}",
+                        currency_code_field: f"$Devices.{service_points_field}.ShipOutCycles.{transactions_field}.{currency_code_field}",
+                        confirmation_code_field: f"$Devices.{service_points_field}.ShipOutCycles.{transactions_field}.{confirmation_code_field}",
+                        fecha_field: f"$Devices.{service_points_field}.ShipOutCycles.{transactions_field}.{fecha_field}"
+                    },
+                    "total": {"$sum": f"$Devices.{service_points_field}.ShipOutCycles.{transactions_field}.Total"}
+                }},
+                {"$project": {
+                    device_id_field: f"$_id.{device_id_field}",
+                    branch_code_field: f"$_id.{branch_code_field}",
+                    sub_channel_code_field: f"$_id.{sub_channel_code_field}",
+                    ship_out_code_field: f"$_id.{ship_out_code_field}",
+                    currency_code_field: f"$_id.{currency_code_field}",
+                    confirmation_code_field: f"$_id.{confirmation_code_field}",
+                    fecha_field: f"$_id.{fecha_field}",
+                    "totalParteEntera": {
+                        "$arrayElemAt": [
+                            {"$split": [ {"$toString": {"$toDecimal": "$total"}}, "."] }, 0
+                        ]
+                    },
+                    "totalParteDecimal": {
+                        "$ifNull": [
+                            {"$concat": [
+                                {"$arrayElemAt": [
+                                    {"$split": [ {"$toString": {"$toDecimal": "$total"}}, "."] }, 1
+                                ]},
+                                "0"
+                            ]},
+                            "00"
+                        ]
+                    },
+                    "total": 1,
+                    "reg": {
+                        "$concat": [
+                            f"$_id.{device_id_field}", "-", f"$_id.{branch_code_field}", "-", f"$_id.{sub_channel_code_field}", "-", f"$_id.{ship_out_code_field}", "-", f"$_id.{currency_code_field}", "-", f"$_id.{confirmation_code_field}", "-", f"$_id.{fecha_field}", "-", 
+                            {"$arrayElemAt": [
+                                {"$split": [ {"$toString": {"$toDecimal": "$total"}}, "."] }, 0
+                            ]},
+                            ".",
+                            {
+                                "$ifNull": [
+                                    {"$concat": [
+                                        {"$arrayElemAt": [
+                                            {"$split": [ {"$toString": {"$toDecimal": "$total"}}, "."] }, 1
+                                        ]},
+                                        "0"
+                                    ]},
+                                    "00"
+                                ]
+                            }
+                        ]
+                    }
+                }},
+                {"$sort": {
+                    device_id_field: 1,
+                    branch_code_field: 1,
+                    sub_channel_code_field: 1,
+                    currency_code_field: 1
+                }}
+            ]
+            return pipeline
         # --- NUEVO: Proyecta nombre y apellido de clientes de <ciudad> ---
         match_proj_clientes_trujillo = re.search(
             r"proyecta\s+nombre\s+y\s+apellido\s+de\s+clientes\s+de\s+([\wáéíóúüñÁÉÍÓÚÜÑ_ ]+)",
@@ -386,6 +476,88 @@ class SmartMongoQueryGenerator:
             pipeline.extend([match_stage, project_stage])
             return pipeline
         
+        match_advanced_devices = re.search(
+            r"desanida.*devices.*(servicepoints\w*).*shipoutcycles.*transactions.*agrupa.*fecha.*(deviceid).*([a-zA-Z0-9_]+code).*subchannelcode.*shipoutcode.*currencycode.*confirmationcode.*suma.*total.*proyecta.*totalparteentera.*totalpartedecimal.*reg.*orden[ae]?.*deviceid.*shipoutcode.*subchannelcode.*currencycode",
+            natural_text.replace("\n", " ").lower(),
+            re.DOTALL
+        )
+        if match_advanced_devices:
+            # Detecta nombres personalizados de campos
+            service_points_field = match_advanced_devices.group(1).capitalize() if match_advanced_devices.group(1) else "ServicePoints"
+            device_id_field = match_advanced_devices.group(2) if match_advanced_devices.group(2) else "Id"
+            branch_code_field = match_advanced_devices.group(3) if match_advanced_devices.group(3) else "BranchCode"
+
+            pipeline = [
+                {"$unwind": "$Devices"},
+                {"$unwind": f"$Devices.{service_points_field}"},
+                {"$unwind": {"path": f"$Devices.{service_points_field}.ShipOutCycles", "preserveNullAndEmptyArrays": True}},
+                {"$unwind": {"path": f"$Devices.{service_points_field}.ShipOutCycles.Transactions", "preserveNullAndEmptyArrays": True}},
+                {"$group": {
+                    "_id": {
+                        "deviceId": f"$Devices.{device_id_field}",
+                        "branchCode": f"$Devices.{branch_code_field}",
+                        "subChannelCode": f"$Devices.{service_points_field}.ShipOutCycles.SubChannelCode",
+                        "shipOutCode": f"$Devices.{service_points_field}.ShipOutCycles.Code",
+                        "currencyCode": f"$Devices.{service_points_field}.ShipOutCycles.Transactions.CurrencyCode",
+                        "confirmationCode": f"$Devices.{service_points_field}.ShipOutCycles.Transactions.ConfirmationCode",
+                        "fecha": f"$Devices.{service_points_field}.ShipOutCycles.Transactions.Date"
+                    },
+                    "total": {"$sum": f"$Devices.{service_points_field}.ShipOutCycles.Transactions.Total"}
+                }},
+                {"$project": {
+                    "deviceId": "$_id.deviceId",
+                    "branchCode": "$_id.branchCode",
+                    "subChannelCode": "$_id.subChannelCode",
+                    "shipOutCode": "$_id.shipOutCode",
+                    "currencyCode": "$_id.currencyCode",
+                    "confirmationCode": "$_id.confirmationCode",
+                    "fecha": "$_id.fecha",
+                    "totalParteEntera": {
+                        "$arrayElemAt": [
+                            {"$split": [{"$toString": {"$toDecimal": "$total"}}, "."]}, 0
+                        ]
+                    },
+                    "totalParteDecimal": {
+                        "$ifNull": [
+                            {"$concat": [
+                                {"$arrayElemAt": [
+                                    {"$split": [{"$toString": {"$toDecimal": "$total"}}, "."]}, 1
+                                ]},
+                                "0"
+                            ]},
+                            "00"
+                        ]
+                    },
+                    "total": 1,
+                    "reg": {
+                        "$concat": [
+                            "$_id.deviceId", "-", "$_id.branchCode", "-", "$_id.subChannelCode", "-", "$_id.shipOutCode", "-", "$_id.currencyCode", "-", "$_id.confirmationCode", "-", "$_id.fecha", "-", 
+                            {"$arrayElemAt": [
+                                {"$split": [{"$toString": {"$toDecimal": "$total"}}, "."]}, 0
+                            ]},
+                            ".",
+                            {
+                                "$ifNull": [
+                                    {"$concat": [
+                                        {"$arrayElemAt": [
+                                            {"$split": [{"$toString": {"$toDecimal": "$total"}}, "."]}, 1
+                                        ]},
+                                        "0"
+                                    ]},
+                                    "00"
+                                ]
+                            }
+                        ]
+                    }
+                }},
+                {"$sort": {
+                    "deviceId": 1,
+                    "shipOutCode": 1,
+                    "subChannelCode": 1,
+                    "currencyCode": 1
+                }}
+            ]
+            return pipeline
         match_filtra_metodo_pago = re.search(
             r"filtra\s+transacciones?\s+con\s+m[eé]todo\s+de\s+pago\s+'?([\wáéíóúüñÁÉÍÓÚÜÑ_ ]+)'?",
             natural_text,
@@ -436,14 +608,84 @@ class SmartMongoQueryGenerator:
 
         # REGLA MEJORADA: Proyección avanzada dinámica para dateMascara y reg
         for line in lines:
-                # MEJORA: Proyección dinámica para cualquier campo, formato y número de caracteres
-                match_proj_fecha = re.search(r"Proyecta el campo ([\w]+) como la fecha en formato ([A-Z0-9]+) usando los primeros (\d+) caracteres del campo ([\w\d_]+)", line, re.IGNORECASE)
-                if match_proj_fecha:
+                # MEJORA: Proyección dinámica para cualquier campo, formato y número de caracteres (soporta más de 2 dígitos)
+                match_proj_fecha = re.search(r"Proyecta el campo ([\w]+) como la fecha en formato ([A-Z0-9]+) usando los primeros (\d{1,4}) caracteres del campo ([\w\d_]+)", line, re.IGNORECASE)
+                match_proj_reg = re.search(r"Proyecta el campo ([\w]+) concatenando: ([^,]+), ([^,]+), la fecha en formato ([A-Z0-9]+) usando los primeros (\d{1,4}) caracteres del campo ([\w\d_]+), ([^,]+), ([^,]+), un espacio y un salto de línea", line, re.IGNORECASE)
+                if match_proj_fecha and match_proj_reg:
+                    # Ambos campos: dateMascara y reg
                     campo_destino = match_proj_fecha.group(1)
                     formato = match_proj_fecha.group(2)
                     num_caracteres = int(match_proj_fecha.group(3))
                     campo_origen = match_proj_fecha.group(4)
+                    campo_reg = match_proj_reg.group(1)
+                    concat_1 = match_proj_reg.group(2)
+                    concat_2 = match_proj_reg.group(3)
+                    formato_reg = match_proj_reg.group(4)
+                    num_caracteres_reg = int(match_proj_reg.group(5))
+                    campo_origen_reg = match_proj_reg.group(6)
+                    concat_3 = match_proj_reg.group(7)
+                    concat_4 = match_proj_reg.group(8)
                     # Buscar el campo de origen en el esquema, si no existe, buscar sinónimos de fecha
+                    if collection and self.dataset_manager and collection in self.dataset_manager.schemas:
+                        schema = self.dataset_manager.schemas[collection]
+                        def get_first_fecha_field(schema):
+                            fecha_synonyms = ["date", "fecha", "fecha_venta", "fecha de venta", "fecha venta", "fecha_transaccion", "fechaoperacion", "fechaventa", "fechatransaccion", "fechadeventa", "fechadeoperacion", "fecha_compra", "fecha_registro", "registro"]
+                            for fname, fdef in schema.fields.items():
+                                all_syns = [fname.lower()] + [s.lower() for s in getattr(fdef, 'synonyms', [])]
+                                if any(s in fecha_synonyms for s in all_syns):
+                                    return fname
+                            return None
+                        if campo_origen not in schema.fields:
+                            first_fecha = get_first_fecha_field(schema)
+                            if first_fecha:
+                                campo_origen = first_fecha
+                        if campo_origen_reg not in schema.fields:
+                            first_fecha = get_first_fecha_field(schema)
+                            if first_fecha:
+                                campo_origen_reg = first_fecha
+                    project_stage = {
+                        "$project": {
+                            "_id": 0,
+                            campo_destino: {
+                                "$dateToString": {
+                                    "date": {
+                                        "$dateFromString": {
+                                            "dateString": {"$substr": [f"${campo_origen}", 0, num_caracteres]}
+                                        }
+                                    },
+                                    "format": f"%{formato}"
+                                }
+                            },
+                            campo_reg: {
+                                "$concat": [
+                                    concat_1,
+                                    concat_2,
+                                    {
+                                        "$dateToString": {
+                                            "date": {
+                                                "$dateFromString": {
+                                                    "dateString": {"$substr": [f"${campo_origen_reg}", 0, num_caracteres_reg]}
+                                                }
+                                            },
+                                            "format": f"%{formato_reg}"
+                                        }
+                                    },
+                                    concat_3,
+                                    concat_4,
+                                    " ",
+                                    "\n"
+                                ]
+                            }
+                        }
+                    }
+                    pipeline.append(project_stage)
+                    return pipeline
+                elif match_proj_fecha:
+                    # Solo dateMascara
+                    campo_destino = match_proj_fecha.group(1)
+                    formato = match_proj_fecha.group(2)
+                    num_caracteres = int(match_proj_fecha.group(3))
+                    campo_origen = match_proj_fecha.group(4)
                     if collection and self.dataset_manager and collection in self.dataset_manager.schemas:
                         schema = self.dataset_manager.schemas[collection]
                         def get_first_fecha_field(schema):
@@ -475,8 +717,8 @@ class SmartMongoQueryGenerator:
                     pipeline.append(project_stage)
                     return pipeline
             # Detecta instrucciones para proyección avanzada
-        match_date = re.search(r'Proyecta el campo ([\w]+) como la fecha en formato ([A-Z0-9]+) usando los primeros (\d+) caracteres del campo ([\w]+)', line)
-        match_reg = re.search(r'Proyecta el campo ([\w]+) concatenando: ([^,]+), ([^,]+), la fecha en formato ([A-Z0-9]+) usando los primeros (\d+) caracteres del campo ([\w]+), ([^,]+), ([^,]+), un espacio y un salto de línea', line)
+        match_date = re.search(r'Proyecta el campo ([\w]+) como la fecha en formato ([A-Z0-9]+) usando los primeros (\d{1,4}) caracteres del campo ([\w]+)', line)
+        match_reg = re.search(r'Proyecta el campo ([\w]+) concatenando: ([^,]+), ([^,]+), la fecha en formato ([A-Z0-9]+) usando los primeros (\d{1,4}) caracteres del campo ([\w]+), ([^,]+), ([^,]+), un espacio y un salto de línea', line)
         if match_date and match_reg:
             if match_date and match_reg:
                 # Extrae parámetros dinámicamente
